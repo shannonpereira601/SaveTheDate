@@ -21,12 +21,11 @@
  *
  */
 $(document).on('click', function(){
-    document.getElementById("my_audio").play();
     console.log('Shaadi me zaroor aana');
 });
 
 // Set the date we're counting down to
-var countDownDate = new Date("Nov 29, 2024 00:00:00").getTime();
+var countDownDate = new Date("Dec 19, 2026 00:00:00").getTime();
 
 // Update the count down every 1 second
 var x = setInterval(function() {
@@ -85,7 +84,7 @@ var styles2 = [
     , 'font-size: 32px'
 ].join(';');
 
-console.log('\n\n%c SAVE THE DATE: 29th Nov, 2020!', styles);
+console.log('\n\n%c SAVE THE DATE: 19th Dec, 2026!', styles);
 
 console.log('%cYour presence is requested!%c\n\nRegards: Vinit Shahdeo', styles1, styles2);
 
