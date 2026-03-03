@@ -1,94 +1,77 @@
-/**
- * @author Vinit Shahdeo <vinitshahdeo@gmail.com>
- */
-(function ($) {
-    "use strict";
-      $('.sakura-falling').sakura();
-})(jQuery);
-
-/**
- *
- * Despite so many new Bollywood and English song options, I prefered to use two-decade-old song, Din Shagna Da!
- *
- * Ever attended a North Indian Wedding? As soon as the DJ plays Din Shagna Da song, it means that the much-awaited moment is here
- * and the bride is all set to put her first foot forward to the wedding venue under a breathtaking phoolon ki chaadar.
- * Let's keep the sky-high status of this song untouched!
- *
- * When the website is backed up with a soul-stirring track, the feeling becomes absolutely surreal. 
- * Choose a heart-touching track! 🎵 ❤️
- *
- * Listen here: https://youtu.be/X0MDALpV29s
- *
- */
-$(document).on('click', function(){
-    console.log('Shaadi me zaroor aana');
-});
-
-// Set the date we're counting down to
 var countDownDate = new Date("Dec 19, 2026 00:00:00").getTime();
+var timerEl = document.getElementById("time");
+var leavesHost = document.getElementById("falling-leaves");
 
-// Update the count down every 1 second
-var x = setInterval(function() {
+function renderCountdown(days, hours, minutes, seconds) {
+    timerEl.innerHTML =
+        "<div class='countdown'>" +
+        "<div class='time-block'><span class='time-value'>" + days + "</span><span class='time-label'>Days</span></div>" +
+        "<div class='time-block'><span class='time-value'>" + hours + "</span><span class='time-label'>Hours</span></div>" +
+        "<div class='time-block'><span class='time-value'>" + minutes + "</span><span class='time-label'>Minutes</span></div>" +
+        "<div class='time-block'><span class='time-value'>" + seconds + "</span><span class='time-label'>Seconds</span></div>" +
+        "</div>";
+}
 
-    // Get todays date and time
+function updateCountdown() {
     var now = new Date().getTime();
-    
-    // Find the distance between now and the count down date
     var distance = countDownDate - now;
-    
-    // Time calculations for days, hours, minutes and seconds
+
+    if (distance < 0) {
+        clearInterval(intervalId);
+        timerEl.innerHTML = "<p class='countdown-ended'>The celebration has begun!</p>";
+        return;
+    }
+
     var days = Math.floor(distance / (1000 * 60 * 60 * 24));
     var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    
-    // Output the result in an element with id="demo"
-    document.getElementById("time").innerHTML = "<div class='container'><div class='days block'>"+ days + "<br>Days</div>" + "<div class='hours block'>" + hours + "<br>Hours</div>" + "<div class='minutes block'>" + minutes + "<br>Minutes</div>" + "<div class='seconds block'>" + seconds + "<br>Seconds</div></div>";
-    
-    // If the count down is over, write some text 
-    if (distance < 0) {
-        clearInterval(x);
-        document.getElementById("time").innerHTML = "Bless the married couple for happy life!";
+
+    renderCountdown(days, hours, minutes, seconds);
+}
+
+updateCountdown();
+var intervalId = setInterval(updateCountdown, 1000);
+
+function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function createLeaf() {
+    var leaf = document.createElement("span");
+    leaf.className = "falling-leaf";
+
+    var size = randomBetween(10, 22);
+    var leftPos = randomBetween(0, 100);
+    var driftX = randomBetween(-90, 90);
+    var startRotation = randomBetween(-120, 120);
+    var endRotation = randomBetween(180, 560);
+    var fallDuration = randomBetween(10, 20);
+    var swayDuration = randomBetween(2.6, 5.2);
+    var delay = randomBetween(-20, 0);
+
+    leaf.style.setProperty("--leaf-size", size.toFixed(1) + "px");
+    leaf.style.setProperty("--left-pos", leftPos.toFixed(2) + "%");
+    leaf.style.setProperty("--drift-x", driftX.toFixed(1) + "px");
+    leaf.style.setProperty("--start-rotation", startRotation.toFixed(0) + "deg");
+    leaf.style.setProperty("--end-rotation", endRotation.toFixed(0) + "deg");
+    leaf.style.setProperty("--fall-duration", fallDuration.toFixed(1) + "s");
+    leaf.style.setProperty("--sway-duration", swayDuration.toFixed(1) + "s");
+    leaf.style.setProperty("--fall-delay", delay.toFixed(1) + "s");
+    leaf.style.setProperty("--sway-delay", (delay / 2).toFixed(1) + "s");
+
+    leavesHost.appendChild(leaf);
+}
+
+function initFallingLeaves() {
+    if (!leavesHost) {
+        return;
     }
-}, 1000);
 
-// being a bit cool :p  
-var styles = [
-    'background: linear-gradient(#D33106, #571402)'
-    , 'border: 4px solid #3E0E02'
-    , 'color: white'
-    , 'display: block'
-    , 'text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3)'
-    , 'box-shadow: 0 2px 0 rgba(255, 255, 255, 0.4) inset, 0 5px 3px -5px rgba(0, 0, 0, 0.5), 0 -13px 5px -10px rgba(255, 255, 255, 0.4) inset'
-    , 'line-height: 40px'
-    , 'text-align: center'
-    , 'font-weight: bold'
-    , 'font-size: 32px'
-].join(';');
+    var leafCount = window.innerWidth < 768 ? 12 : 20;
+    for (var i = 0; i < leafCount; i += 1) {
+        createLeaf();
+    }
+}
 
-var styles1 = [
-    'color: #FF6C37'
-    , 'display: block'
-    , 'text-shadow: 0 2px 0 rgba(0, 0, 0, 1)'
-    , 'line-height: 40px'
-    , 'font-weight: bold'
-    , 'font-size: 32px'
-].join(';');
-
-var styles2 = [
-    'color: teal'
-    , 'display: block'
-    , 'text-shadow: 0 2px 0 rgba(0, 0, 0, 1)'
-    , 'line-height: 40px'
-    , 'font-weight: bold'
-    , 'font-size: 32px'
-].join(';');
-
-console.log('\n\n%c SAVE THE DATE: 19th Dec, 2026!', styles);
-
-console.log('%cYour presence is requested!%c\n\nRegards: Vinit Shahdeo', styles1, styles2);
-
-console.log(
-    `%cShaadi me zaroor aana!\n\n`,
-    'color: yellow; background:tomato; font-size: 24pt; font-weight: bold',
-)
+initFallingLeaves();
