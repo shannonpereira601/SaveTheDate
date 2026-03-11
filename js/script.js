@@ -1,6 +1,9 @@
-var countDownDate = new Date("Dec 19, 2026 00:00:00").getTime();
 var timerEl = document.getElementById("time");
 var leavesHost = document.getElementById("falling-leaves");
+var isRocePage = document.body.classList.contains("roce-page");
+var countdownTarget = timerEl ? timerEl.getAttribute("data-countdown-date") : null;
+var countDownDate = new Date(countdownTarget || "Dec 19, 2026 00:00:00").getTime();
+var intervalId = null;
 
 function renderCountdown(days, hours, minutes, seconds) {
     timerEl.innerHTML =
@@ -30,8 +33,10 @@ function updateCountdown() {
     renderCountdown(days, hours, minutes, seconds);
 }
 
-updateCountdown();
-var intervalId = setInterval(updateCountdown, 1000);
+if (timerEl) {
+    updateCountdown();
+    intervalId = setInterval(updateCountdown, 1000);
+}
 
 function randomBetween(min, max) {
     return Math.random() * (max - min) + min;
@@ -40,6 +45,9 @@ function randomBetween(min, max) {
 function createLeaf() {
     var leaf = document.createElement("span");
     leaf.className = "falling-leaf";
+    if (isRocePage) {
+        leaf.classList.add(Math.random() < 0.5 ? "leaf-pink" : "leaf-green");
+    }
 
     var size = randomBetween(10, 22);
     var leftPos = randomBetween(0, 100);

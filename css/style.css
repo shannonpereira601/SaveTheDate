@@ -59,6 +59,22 @@ body {
 		leaf-sway var(--sway-duration, 4s) ease-in-out var(--sway-delay, 0s) infinite alternate;
 }
 
+.roce-page .falling-leaf.leaf-green {
+	background: linear-gradient(
+		135deg,
+		rgba(104, 168, 110, 0.95),
+		rgba(142, 196, 151, 0.9)
+	);
+}
+
+.roce-page .falling-leaf.leaf-pink {
+	background: linear-gradient(
+		135deg,
+		rgba(220, 114, 161, 0.95),
+		rgba(244, 168, 201, 0.9)
+	);
+}
+
 @keyframes leaf-fall {
 	0% {
 		transform: translate3d(0, -10vh, 0) rotate(var(--start-rotation, 0deg));
@@ -203,12 +219,31 @@ body {
 	margin: 8px 0 20px;
 }
 
+.event-list {
+	width: min(560px, 100%);
+	margin: 4px 0 14px;
+	padding: 10px 14px;
+	border: 1px solid var(--color-border-soft);
+	border-radius: 12px;
+	background: var(--color-bg-soft);
+}
+
+.event-item {
+	margin: 6px 0;
+	color: var(--color-green-mid);
+	font-size: clamp(0.98rem, 3vw, 1.1rem);
+}
+
 .actions {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	gap: 10px;
 	margin-bottom: 16px;
+}
+
+.page-switch {
+	margin-bottom: 18px;
 }
 
 .venue-button {
