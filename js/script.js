@@ -83,3 +83,31 @@ function initFallingLeaves() {
 }
 
 initFallingLeaves();
+
+function initBackgroundVideoTransition() {
+    var bgVideo = document.querySelector(".bg-video");
+    if (!bgVideo) {
+        return;
+    }
+
+    var hasRevealed = false;
+    function revealVideo() {
+        if (hasRevealed) {
+            return;
+        }
+        hasRevealed = true;
+        document.body.classList.add("video-visible");
+    }
+
+    function revealWithDelay() {
+        setTimeout(revealVideo, 1500);
+    }
+
+    if (bgVideo.readyState >= 2) {
+        revealWithDelay();
+    } else {
+        bgVideo.addEventListener("loadeddata", revealWithDelay, { once: true });
+    }
+}
+
+initBackgroundVideoTransition();

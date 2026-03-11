@@ -29,6 +29,10 @@
       <link rel="stylesheet" href="./css/style.css">
    </head>
    <body class="roce-page">
+      <video class="bg-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+         <source src="./assets/img/montego1.mp4" type="video/mp4">
+      </video>
+      <div class="bg-overlay" aria-hidden="true"></div>
       <div class="falling-leaves" id="falling-leaves" aria-hidden="true"></div>
       <div class="page">
          <main class="invitation">
@@ -37,8 +41,22 @@
             <p class="subtitle">Roce + Wedding Reception</p>
 
             <div class="event-list">
-               <p class="event-item"><strong>Roce:</strong> 18th December 2026</p>
-               <p class="event-item"><strong>Wedding Reception:</strong> 19th December 2026</p>
+               <div class="event-item">
+                  <span class="event-name">Roce</span>
+                  <div class="event-ribbon" aria-label="Roce date: 18 December 2026">
+                     <span class="event-month">Dec</span>
+                     <span class="event-day">18</span>
+                     <span class="event-year">2026</span>
+                  </div>
+               </div>
+               <div class="event-item">
+                  <span class="event-name">Wedding Reception</span>
+                  <div class="event-ribbon" aria-label="Wedding Reception date: 19 December 2026">
+                     <span class="event-month">Dec</span>
+                     <span class="event-day">19</span>
+                     <span class="event-year">2026</span>
+                  </div>
+               </div>
             </div>
 
             <p class="venue-text">Montego Bay Beach Village - Beach Resort In North Goa, Vithaldas Waddo, Morjim, Goa 403512</p>
@@ -54,6 +72,11 @@
                   Get Directions
                </a>
             </div>
+
+            <div class="couple-photo-wrap">
+               <img class="couple-photo" src="./assets/img/plushy.png" alt="Gloria and Shannon">
+            </div>
+            <p class="closing-message">With love, Gloria &amp; Shannon &#10084;</p>
 
          </main>
       </div>
