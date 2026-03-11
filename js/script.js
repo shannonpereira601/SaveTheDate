@@ -91,22 +91,35 @@ function initBackgroundVideoTransition() {
     }
 
     var hasRevealed = false;
+    var fallbackTimer = null;
+
     function revealVideo() {
         if (hasRevealed) {
             return;
         }
         hasRevealed = true;
+        if (fallbackTimer) {
+            clearTimeout(fallbackTimer);
+        }
         document.body.classList.add("video-visible");
     }
 
-    function revealWithDelay() {
-        setTimeout(revealVideo, 1500);
+    function scheduleRevealIfPlayable() {
+        fallbackTimer = setTimeout(function() {
+            if (!bgVideo.error && bgVideo.readyState >= 2) {
+                revealVideo();
+            }
+        }, 1500);
     }
 
+    // Reveal only when the video is actually playable, with a short graceful delay.
+    bgVideo.addEventListener("playing", revealVideo, { once: true });
+
     if (bgVideo.readyState >= 2) {
-        revealWithDelay();
+        scheduleRevealIfPlayable();
     } else {
-        bgVideo.addEventListener("loadeddata", revealWithDelay, { once: true });
+        bgVideo.addEventListener("loadeddata", scheduleRevealIfPlayable, { once: true });
+        bgVideo.addEventListener("canplay", scheduleRevealIfPlayable, { once: true });
     }
 }
 
