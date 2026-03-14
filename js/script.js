@@ -124,3 +124,89 @@ function initBackgroundVideoTransition() {
 }
 
 initBackgroundVideoTransition();
+
+function initBackgroundAudio() {
+    var audioEl = document.getElementById("bg-audio");
+    var audioToggleBtn = document.getElementById("audio-toggle");
+    if (!audioEl) {
+        return;
+    }
+
+    var ICON_ON = "fa fa-volume-up";
+    var ICON_OFF = "fa fa-volume-off";
+    var iconEl = audioToggleBtn ? audioToggleBtn.querySelector("i") : null;
+    audioEl.volume = 0.55;
+    audioEl.currentTime = 0;
+
+    function setIcon(isOn) {
+        if (!iconEl) {
+            return;
+        }
+        iconEl.className = isOn ? ICON_ON : ICON_OFF;
+    }
+
+    function playWithSound() {
+        audioEl.muted = false;
+        var p = audioEl.play();
+        if (p && typeof p.then === "function") {
+            p.then(function() {
+                setIcon(true);
+            }).catch(function() {
+                setIcon(false);
+            });
+        }
+    }
+
+    function playMutedFallback() {
+        audioEl.muted = true;
+        var p = audioEl.play();
+        if (p && typeof p.then === "function") {
+            p.then(function() {
+                setIcon(false);
+            }).catch(function() {
+                setIcon(false);
+            });
+        }
+    }
+
+    function toggleAudio() {
+        if (audioEl.paused || audioEl.muted) {
+            playWithSound();
+            return;
+        }
+        audioEl.pause();
+        setIcon(false);
+    }
+
+    // Try to start with sound by default.
+    playWithSound();
+    // If blocked by autoplay policy, at least keep the stream warmed up silently.
+    setTimeout(function() {
+        if (audioEl.paused) {
+            playMutedFallback();
+        }
+    }, 300);
+
+    if (audioToggleBtn) {
+        audioToggleBtn.addEventListener("click", toggleAudio);
+    }
+
+    function tryStartFromGesture() {
+        if (audioEl.paused || audioEl.muted) {
+            playWithSound();
+        }
+    }
+
+    document.addEventListener("click", tryStartFromGesture, { once: true });
+    document.addEventListener("touchstart", tryStartFromGesture, { once: true });
+    document.addEventListener("keydown", tryStartFromGesture, { once: true });
+    document.addEventListener("pointerdown", tryStartFromGesture, { once: true });
+
+    window.addEventListener("pageshow", function() {
+        if (audioEl.paused || audioEl.muted) {
+            playWithSound();
+        }
+    });
+}
+
+initBackgroundAudio();

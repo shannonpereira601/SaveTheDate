@@ -26,17 +26,27 @@
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
-      <link rel="stylesheet" href="./css/style.css?v=20260312b">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <link rel="stylesheet" href="./css/style.css?v=20260312d">
    </head>
    <body class="roce-page">
       <video class="bg-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-         <source src="./assets/img/montego1.mp4?v=20260312b" type="video/mp4">
+         <source src="./assets/img/montego1.mp4?v=20260312d" type="video/mp4">
       </video>
       <div class="bg-overlay" aria-hidden="true"></div>
       <div class="falling-leaves" id="falling-leaves" aria-hidden="true"></div>
+      <audio id="bg-audio" autoplay muted loop preload="auto">
+         <source src="./assets/img/Omusic.mp3" type="audio/mpeg">
+      </audio>
+      <button id="audio-toggle" class="audio-toggle" type="button" aria-label="Toggle music playback">
+         <i class="fa fa-volume-up" aria-hidden="true"></i>
+      </button>
       <div class="page">
          <main class="invitation">
             <p class="script-text script-intro">Save the Date</p>
+            <div class="couple-photo-wrap">
+               <img class="couple-photo" src="./assets/img/plushy.png" alt="Gloria and Shannon">
+            </div>
             <h1 class="names">Gloria <span>&</span> Shannon</h1>
             <p class="subtitle">Roce + Wedding Reception</p>
 
@@ -73,14 +83,11 @@
                </a>
             </div>
 
-            <div class="couple-photo-wrap">
-               <img class="couple-photo" src="./assets/img/plushy.png" alt="Gloria and Shannon">
-            </div>
             <p class="closing-message">With love, Gloria &amp; Shannon &#10084;</p>
 
          </main>
       </div>
 
-      <script src="./js/script.js?v=20260312b"></script>
+      <script src="./js/script.js?v=20260312d"></script>
    </body>
 </html>

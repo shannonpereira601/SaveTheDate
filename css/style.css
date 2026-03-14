@@ -77,6 +77,28 @@ body.video-visible .bg-overlay {
 	z-index: 2;
 }
 
+.audio-toggle {
+	position: fixed;
+	right: 14px;
+	bottom: 14px;
+	z-index: 5;
+	width: 44px;
+	height: 44px;
+	border: 1px solid rgba(255, 255, 255, 0.85);
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.62);
+	color: #ffffff;
+	font-family: "Playfair Display", serif;
+	font-size: 18px;
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+}
+
+.audio-toggle i {
+	pointer-events: none;
+}
+
 .falling-leaf {
 	position: absolute;
 	top: -12%;
@@ -162,7 +184,7 @@ body.video-visible .bg-overlay {
 }
 
 .names {
-	margin: 14px 0 4px;
+	margin: 0 0 4px;
 	font-family: "Playfair Display", serif;
 	font-weight: 600;
 	letter-spacing: 0.04em;
@@ -182,7 +204,7 @@ body.video-visible .bg-overlay {
 
 .couple-photo {
 	display: block;
-	width: min(190px, 56vw);
+	width: min(145px, 42vw);
 	height: auto;
 	border-radius: 12px;
 }
