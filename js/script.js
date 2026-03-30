@@ -86,15 +86,26 @@ initFallingLeaves();
 
 function initBackgroundVideoTransition() {
     var bgVideo = document.querySelector(".bg-video");
+    var videoToggleBtn = document.getElementById("video-toggle");
     if (!bgVideo) {
         return;
     }
 
+    var iconEl = videoToggleBtn ? videoToggleBtn.querySelector("i") : null;
     var hasRevealed = false;
     var fallbackTimer = null;
+    var isVideoEnabled = true;
+
+    function setVideoIcon(enabled) {
+        if (!iconEl || !videoToggleBtn) {
+            return;
+        }
+        iconEl.className = "fa fa-video-camera";
+        videoToggleBtn.classList.toggle("is-off", !enabled);
+    }
 
     function revealVideo() {
-        if (hasRevealed) {
+        if (hasRevealed || !isVideoEnabled) {
             return;
         }
         hasRevealed = true;
@@ -102,22 +113,55 @@ function initBackgroundVideoTransition() {
             clearTimeout(fallbackTimer);
         }
         document.body.classList.add("video-visible");
+        document.body.classList.remove("video-disabled");
     }
 
     function scheduleRevealIfPlayable() {
         fallbackTimer = setTimeout(function() {
-            if (!bgVideo.error && bgVideo.readyState >= 2) {
+            if (isVideoEnabled && !bgVideo.error && bgVideo.readyState >= 2) {
                 revealVideo();
             }
         }, 1500);
     }
 
-    // Reveal only when the video is actually playable, with a short graceful delay.
+    function enableVideo() {
+        isVideoEnabled = true;
+        hasRevealed = false;
+        document.body.classList.remove("video-disabled");
+        bgVideo.play().catch(function() {
+            // Ignore play rejection; user can retry with interaction.
+        });
+        if (bgVideo.readyState >= 2) {
+            scheduleRevealIfPlayable();
+        }
+        setVideoIcon(true);
+    }
+
+    function disableVideo() {
+        isVideoEnabled = false;
+        document.body.classList.remove("video-visible");
+        document.body.classList.add("video-disabled");
+        bgVideo.pause();
+        setVideoIcon(false);
+    }
+
+    function toggleVideo() {
+        if (isVideoEnabled) {
+            disableVideo();
+        } else {
+            enableVideo();
+        }
+    }
+
+    // Reveal only when the video is playable and enabled.
     bgVideo.addEventListener("playing", revealVideo, { once: true });
 
-    if (bgVideo.readyState >= 2) {
-        scheduleRevealIfPlayable();
-    } else {
+    if (videoToggleBtn) {
+        videoToggleBtn.addEventListener("click", toggleVideo);
+    }
+
+    enableVideo();
+    if (bgVideo.readyState < 2) {
         bgVideo.addEventListener("loadeddata", scheduleRevealIfPlayable, { once: true });
         bgVideo.addEventListener("canplay", scheduleRevealIfPlayable, { once: true });
     }
@@ -201,6 +245,9 @@ function initBackgroundAudio() {
     document.addEventListener("touchstart", tryStartFromGesture, { once: true });
     document.addEventListener("keydown", tryStartFromGesture, { once: true });
     document.addEventListener("pointerdown", tryStartFromGesture, { once: true });
+    window.addEventListener("scroll", tryStartFromGesture, { once: true, passive: true });
+    window.addEventListener("wheel", tryStartFromGesture, { once: true, passive: true });
+    window.addEventListener("touchmove", tryStartFromGesture, { once: true, passive: true });
 
     window.addEventListener("pageshow", function() {
         if (audioEl.paused || audioEl.muted) {

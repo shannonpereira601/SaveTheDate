@@ -61,6 +61,14 @@ body.video-visible .bg-overlay {
 	opacity: 0.66;
 }
 
+body.video-disabled .bg-video {
+	opacity: 0 !important;
+}
+
+body.video-disabled .bg-overlay {
+	opacity: 1 !important;
+}
+
 .page {
 	position: relative;
 	z-index: 3;
@@ -97,6 +105,20 @@ body.video-visible .bg-overlay {
 
 .audio-toggle i {
 	pointer-events: none;
+}
+
+.video-toggle {
+	bottom: 66px;
+}
+
+.video-toggle.is-off::after {
+	content: "";
+	position: absolute;
+	width: 26px;
+	height: 2px;
+	background: #ffffff;
+	transform: rotate(-42deg);
+	border-radius: 2px;
 }
 
 .falling-leaf {
