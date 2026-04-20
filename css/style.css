@@ -321,6 +321,12 @@ body.video-disabled .bg-overlay {
 	margin: 8px 0 20px;
 }
 
+.formal-note {
+	font-size: clamp(1.75rem, 5.6vw, 2.4rem);
+	margin: 6px 0 14px;
+	color: var(--color-green);
+}
+
 .event-list {
 	width: min(420px, 100%);
 	margin: 4px 0 14px;
