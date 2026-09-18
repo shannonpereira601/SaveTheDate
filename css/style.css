@@ -494,3 +494,249 @@ body.video-disabled .bg-overlay {
 		min-height: 100dvh;
 	}
 }
+
+/* ── RSVP Form ──────────────────────────────────────────────────────────────── */
+
+.rsvp-section {
+	width: min(560px, 100%);
+	margin: 0 auto 20px;
+	text-align: left;
+}
+
+.rsvp-card {
+	background: rgba(251, 253, 251, 0.82);
+	border: 1px solid var(--color-border-soft);
+	border-radius: 16px;
+	padding: clamp(20px, 5vw, 36px);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+
+.rsvp-intro-text {
+	margin: 0 0 22px;
+	text-align: center;
+	font-size: 0.92rem;
+	color: var(--color-green-muted);
+	letter-spacing: 0.02em;
+}
+
+.rsvp-field {
+	margin-bottom: 18px;
+}
+
+.rsvp-label {
+	display: block;
+	font-size: 0.78rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--color-green-mid);
+	font-weight: 700;
+	margin-bottom: 8px;
+	font-family: "Playfair Display", serif;
+}
+
+.rsvp-optional {
+	font-weight: 400;
+	letter-spacing: 0.04em;
+	text-transform: none;
+	color: var(--color-green-soft);
+	font-size: 0.85em;
+}
+
+.rsvp-question {
+	font-size: 0.78rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--color-green-mid);
+	font-weight: 700;
+	margin: 0 0 10px;
+	font-family: "Playfair Display", serif;
+}
+
+.rsvp-input,
+.rsvp-select,
+.rsvp-textarea {
+	width: 100%;
+	padding: 11px 14px;
+	border: 1px solid var(--color-border-soft);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.9);
+	color: var(--color-green-dark);
+	font-family: "Playfair Display", serif;
+	font-size: 1rem;
+	outline: none;
+	transition: border-color 0.18s ease, box-shadow 0.18s ease;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.rsvp-input:focus,
+.rsvp-select:focus,
+.rsvp-textarea:focus {
+	border-color: var(--color-green);
+	box-shadow: 0 0 0 3px rgba(90, 143, 102, 0.15);
+}
+
+.rsvp-select {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a8f66' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 14px center;
+	padding-right: 38px;
+	cursor: pointer;
+}
+
+.rsvp-textarea {
+	resize: vertical;
+	min-height: 82px;
+}
+
+/* Attending radio cards */
+.rsvp-attend-group {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.rsvp-attend-btn {
+	cursor: pointer;
+	position: relative;
+	display: block;
+}
+
+.rsvp-attend-btn input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.rsvp-attend-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 14px 10px;
+	border: 1px solid var(--color-border-soft);
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.78);
+	transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+	text-align: center;
+	min-height: 78px;
+}
+
+.rsvp-attend-btn:hover .rsvp-attend-inner {
+	border-color: var(--color-green);
+	background: rgba(245, 251, 247, 0.95);
+}
+
+.rsvp-attend-btn input:checked + .rsvp-attend-inner {
+	border-color: var(--color-green);
+	background: rgba(90, 143, 102, 0.09);
+	box-shadow: 0 0 0 2px rgba(90, 143, 102, 0.3);
+}
+
+.rsvp-attend-icon {
+	font-size: 1.5rem;
+	line-height: 1;
+}
+
+.rsvp-attend-text {
+	font-size: 0.8rem;
+	letter-spacing: 0.05em;
+	color: var(--color-green-mid);
+	font-family: "Playfair Display", serif;
+}
+
+/* Submit */
+.rsvp-actions {
+	margin-top: 24px;
+	display: flex;
+	justify-content: center;
+}
+
+.rsvp-submit {
+	min-width: 160px;
+	background: var(--color-green);
+	color: #ffffff;
+	border-color: var(--color-green);
+	cursor: pointer;
+	font-size: 0.95rem;
+}
+
+.rsvp-submit:hover:not(:disabled),
+.rsvp-submit:focus-visible:not(:disabled) {
+	background: var(--color-green-mid);
+	border-color: var(--color-green-mid);
+	color: #ffffff;
+}
+
+.rsvp-submit:disabled {
+	opacity: 0.65;
+	cursor: default;
+}
+
+/* RSVP CTA button on the save-the-date pages */
+.rsvp-cta {
+	background: var(--color-green);
+	color: #ffffff;
+}
+
+.rsvp-cta:hover,
+.rsvp-cta:focus-visible {
+	background: var(--color-green-mid);
+	border-color: var(--color-green-mid);
+	color: #ffffff;
+}
+
+/* Success state */
+.rsvp-success-state {
+	text-align: center;
+	padding: 16px 0 8px;
+}
+
+.rsvp-thanks {
+	font-size: clamp(2.8rem, 9vw, 4rem);
+	color: var(--color-green);
+	margin: 0 0 12px;
+	line-height: 1.1;
+}
+
+.rsvp-success-msg {
+	font-size: clamp(0.95rem, 3vw, 1.1rem);
+	color: var(--color-green-mid);
+	line-height: 1.65;
+	margin: 0;
+}
+
+/* Inline error */
+.rsvp-error-msg {
+	margin-top: 14px;
+	padding: 10px 14px;
+	border: 1px solid #e8a0a0;
+	border-radius: 8px;
+	background: rgba(220, 80, 80, 0.06);
+	color: #b83232;
+	font-size: 0.9rem;
+	text-align: center;
+	line-height: 1.5;
+}
+
+/* Honeypot — visually hidden but not display:none so screen readers skip it */
+.rsvp-honeypot {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+@media (max-width: 400px) {
+	.rsvp-attend-group {
+		grid-template-columns: 1fr;
+	}
+
+	.rsvp-card {
+		padding: 18px 16px;
+	}
+}

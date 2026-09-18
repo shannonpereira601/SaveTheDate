@@ -1,0 +1,180 @@
+/* Password gate — wedding.html (maroon/cream) and rsvp-roce.html (green) */
+
+html.is-gated {
+  overflow: hidden;
+}
+
+html.is-gated body > *:not(.site-gate) {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+html.is-unlocked .site-gate {
+  display: none !important;
+}
+
+.site-gate {
+  --gate-bg: #F4F2EB;
+  --gate-card: #FBF9F3;
+  --gate-ink: #3A1510;
+  --gate-muted: #7A4E46;
+  --gate-line: #C9A96E;
+  --gate-btn-bg: #3A1510;
+  --gate-btn-fg: #F4F2EB;
+  --gate-btn-hover: #5C2A24;
+  --gate-input-border: #d9c9a3;
+  --gate-focus: rgba(201, 169, 110, 0.35);
+  --gate-script: Allura, "Great Vibes", "Dancing Script", cursive;
+  --gate-serif: "Playfair Display", Georgia, serif;
+  --gate-label: Jost, "Helvetica Neue", sans-serif;
+
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--gate-bg);
+  color: var(--gate-ink);
+}
+
+body.roce-page .site-gate {
+  --gate-bg: #f7faf7;
+  --gate-card: rgba(251, 253, 251, 0.96);
+  --gate-ink: #183326;
+  --gate-muted: #5d7467;
+  --gate-line: #5a8f66;
+  --gate-btn-bg: #5a8f66;
+  --gate-btn-fg: #ffffff;
+  --gate-btn-hover: #2f4f3f;
+  --gate-input-border: #d4e3d7;
+  --gate-focus: rgba(90, 143, 102, 0.22);
+  --gate-script: "Great Vibes", "Dancing Script", Allura, cursive;
+  --gate-label: "Playfair Display", Georgia, serif;
+}
+
+.site-gate-card {
+  width: min(420px, 100%);
+  padding: clamp(28px, 6vw, 44px) clamp(22px, 5vw, 36px);
+  background: var(--gate-card);
+  border: 1px solid var(--gate-line);
+  text-align: center;
+}
+
+.site-gate-kicker {
+  margin: 0 0 8px;
+  font-family: var(--gate-script);
+  font-size: clamp(2.1rem, 6vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--gate-ink);
+}
+
+.site-gate-title {
+  margin: 0 0 10px;
+  font-family: var(--gate-label);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.site-gate-desc {
+  margin: 0 0 28px;
+  font-family: var(--gate-serif);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--gate-muted);
+}
+
+.site-gate-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--gate-label);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--gate-muted);
+}
+
+.site-gate-input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--gate-input-border);
+  border-radius: 2px;
+  background: #fff;
+  color: var(--gate-ink);
+  font-family: var(--gate-serif);
+  font-size: 16px;
+  outline: none;
+}
+
+.site-gate-input:focus {
+  border-color: var(--gate-line);
+  box-shadow: 0 0 0 3px var(--gate-focus);
+}
+
+.site-gate-input[aria-invalid="true"] {
+  border-color: #b4554a;
+}
+
+.site-gate-error {
+  margin: 0 0 14px;
+  font-family: var(--gate-serif);
+  font-size: 0.88rem;
+  color: #b4554a;
+}
+
+.site-gate-btn {
+  display: inline-block;
+  min-width: 160px;
+  margin-top: 8px;
+  padding: 12px 36px;
+  border: 0;
+  background: var(--gate-btn-bg);
+  color: var(--gate-btn-fg);
+  font-family: var(--gate-label);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.site-gate-btn:hover,
+.site-gate-btn:focus-visible {
+  background: var(--gate-btn-hover);
+}
+
+.site-gate-btn:focus-visible {
+  outline: 2px solid var(--gate-line);
+  outline-offset: 3px;
+}
+
+.site-gate.is-shake .site-gate-card {
+  animation: gate-shake 0.42s ease;
+}
+
+@keyframes gate-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@media (max-width: 540px) {
+  .site-gate-card {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-gate.is-shake .site-gate-card {
+    animation: none;
+  }
+}
