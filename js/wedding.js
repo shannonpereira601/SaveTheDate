@@ -113,10 +113,10 @@
 
   /* ── Figures: sequential pie + bar draw ─────────────────────────────────── */
   var MAROON = {
-    deep: "#3A1510",
-    mid:  "#6B2E2A",
-    dust: "#8E4A46",
-    rose: "#B56E6A"
+    deep: "#3D1534",
+    mid:  "#6B2E56",
+    dust: "#8E4A78",
+    rose: "#B56E9A"
   };
 
   var PIES = {

@@ -1,4 +1,4 @@
-/* Password gate — wedding.html (maroon/cream) and rsvp-roce.html (green) */
+/* Password gate — wedding.html (deep plum/cream) and rsvp-roce.html (green) */
 
 html.is-gated {
   overflow: hidden;
@@ -16,12 +16,12 @@ html.is-unlocked .site-gate {
 .site-gate {
   --gate-bg: #F4F2EB;
   --gate-card: #FBF9F3;
-  --gate-ink: #3A1510;
-  --gate-muted: #7A4E46;
+  --gate-ink: #3D1534;
+  --gate-muted: #7D4E6A;
   --gate-line: #C9A96E;
-  --gate-btn-bg: #3A1510;
+  --gate-btn-bg: #3D1534;
   --gate-btn-fg: #F4F2EB;
-  --gate-btn-hover: #5C2A24;
+  --gate-btn-hover: #5F2A48;
   --gate-input-border: #d9c9a3;
   --gate-focus: rgba(201, 169, 110, 0.35);
   --gate-script: Allura, "Great Vibes", "Dancing Script", cursive;

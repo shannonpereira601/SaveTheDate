@@ -1,5 +1,5 @@
 /* ============================================================
-   wedding.css  — maroon/cream long-form wedding page
+   wedding.css  — deep plum/cream long-form wedding page
    Loaded only by wedding.html  •  never by existing pages
    ============================================================ */
 
@@ -25,9 +25,9 @@ body {
 
 /* ── Design tokens ─────────────────────────────────────────────────────────── */
 :root {
-  --maroon:       #3A1510;
-  --maroon-mid:   #5C2A24;
-  --maroon-light: #7A4E46;
+  --maroon:       #3D1534;
+  --maroon-mid:   #5F2A48;
+  --maroon-light: #7D4E6A;
   --cream:        #F4F2EB;
   --cream-dark:   #E8E5DC;
   --cream-dim:    rgba(244,242,235,0.08);
@@ -113,7 +113,7 @@ body {
 }
 
 /* ── IMAGE PLACEHOLDERS ────────────────────────────────────────────────────── */
-/* Dark-section placeholder (maroon bg) */
+/* Dark-section placeholder (deep plum bg) */
 .ph {
   position: relative;
   display: flex;
@@ -285,15 +285,15 @@ body {
   background-color: var(--maroon);
   background-image:
     linear-gradient(100deg,
-      rgba(14,5,4,0.46) 0%,
-      rgba(14,5,4,0.28) 34%,
-      rgba(14,5,4,0.12) 66%,
-      rgba(14,5,4,0.10) 100%),
+      rgba(22,8,18,0.46) 0%,
+      rgba(22,8,18,0.28) 34%,
+      rgba(22,8,18,0.12) 66%,
+      rgba(22,8,18,0.10) 100%),
     linear-gradient(to bottom,
-      rgba(14,5,4,0.28) 0%,
-      rgba(14,5,4,0) 22%,
-      rgba(14,5,4,0) 68%,
-      rgba(14,5,4,0.30) 100%);
+      rgba(22,8,18,0.28) 0%,
+      rgba(22,8,18,0) 22%,
+      rgba(22,8,18,0) 68%,
+      rgba(22,8,18,0.30) 100%);
   overflow: hidden;
   padding: clamp(104px, 15vh, 160px) 0 clamp(96px, 13vh, 132px);
 }
@@ -416,7 +416,7 @@ body {
   --booth-pad: 10px;
   --booth-gap: 7px;
   width: 100%;
-  filter: drop-shadow(0 16px 28px rgba(8, 4, 3, 0.55));
+  filter: drop-shadow(0 16px 28px rgba(14, 6, 12, 0.55));
 }
 
 .photobooth-bezel {
@@ -445,7 +445,7 @@ body {
   border-radius: 12px;
   padding: var(--booth-pad);
   background:
-    linear-gradient(180deg, #120a09 0%, #1c0f0d 100%);
+    linear-gradient(180deg, #120a12 0%, #1c0f18 100%);
   box-shadow:
     inset 0 2px 6px rgba(0, 0, 0, 0.65),
     inset 0 0 0 1px rgba(0, 0, 0, 0.4);
@@ -461,7 +461,7 @@ body {
   margin: 0;
   overflow: hidden;
   border-radius: 3px;
-  background: #0d0706;
+  background: #0d070c;
   aspect-ratio: 4 / 3;
 }
 
@@ -477,10 +477,10 @@ body {
   user-select: none;
 }
 
-.photobooth-shot:nth-child(1) img { animation-delay: 0.18s; object-position: center 32%; }
-.photobooth-shot:nth-child(2) img { animation-delay: 0.98s; object-position: center 38%; }
-.photobooth-shot:nth-child(3) img { animation-delay: 1.78s; object-position: center 22%; }
-.photobooth-shot:nth-child(4) img { animation-delay: 2.58s; object-position: center 36%; }
+.photobooth-shot:nth-child(1) img { animation-delay: 0.18s; object-position: center center; }
+.photobooth-shot:nth-child(2) img { animation-delay: 0.98s; object-position: center 42%; }
+.photobooth-shot:nth-child(3) img { animation-delay: 1.78s; object-position: center center; }
+.photobooth-shot:nth-child(4) img { animation-delay: 2.58s; object-position: center 30%; }
 
 @keyframes photoboothReelIn {
   from { transform: translateY(-108%); }
@@ -734,10 +734,10 @@ body {
   background: currentColor;
   font-style: normal;
 }
-.swatch[data-tone="deep"] { background: #3A1510; }
-.swatch[data-tone="mid"]  { background: #6B2E2A; }
-.swatch[data-tone="dust"] { background: #8E4A46; }
-.swatch[data-tone="rose"] { background: #B56E6A; }
+.swatch[data-tone="deep"] { background: #3D1534; }
+.swatch[data-tone="mid"]  { background: #6B2E56; }
+.swatch[data-tone="dust"] { background: #8E4A78; }
+.swatch[data-tone="rose"] { background: #B56E9A; }
 .pie-disk {
   display: block;
   width: 100%;
@@ -838,7 +838,7 @@ body {
 }
 
 .bar-rect {
-  stroke: #3A1510;
+  stroke: #3D1534;
   stroke-width: 1.25;
 }
 
@@ -868,7 +868,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.02em;
   fill: var(--cream);
-  stroke: #3A1510;
+  stroke: #3D1534;
   stroke-width: 1.6px;
   paint-order: stroke fill;
   stroke-linejoin: round;
@@ -881,7 +881,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.02em;
   fill: var(--cream);
-  stroke: #3A1510;
+  stroke: #3D1534;
   stroke-width: 1.6px;
   paint-order: stroke fill;
   stroke-linejoin: round;
@@ -942,7 +942,7 @@ html:not(.js-motion) .envelope-scene::before,
   z-index: 1;
   border-radius: 0 0 8px 8px;
   background: linear-gradient(180deg, #F4EBDB 0%, #E8D9C0 100%);
-  box-shadow: 0 16px 32px rgba(14, 5, 4, 0.42);
+  box-shadow: 0 16px 32px rgba(22, 8, 18, 0.42);
 }
 
 .envelope-paper-clip {
@@ -980,7 +980,7 @@ html:not(.js-motion) .envelope-scene::before,
   border-radius: 2px 2px 0 0;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 -8px 18px rgba(14, 5, 4, 0.2);
+    0 -8px 18px rgba(22, 8, 18, 0.2);
   transform: translateY(0);
   opacity: 1;
   transition:
@@ -1018,7 +1018,7 @@ html:not(.js-motion) .envelope-scene::before,
   object-fit: cover;
   user-select: none;
   clip-path: circle(46.5%);
-  filter: drop-shadow(0 6px 12px rgba(14, 5, 4, 0.45));
+  filter: drop-shadow(0 6px 12px rgba(22, 8, 18, 0.45));
 }
 
 .envelope-lid {
@@ -1037,7 +1037,7 @@ html:not(.js-motion) .envelope-scene::before,
   inset: 0;
   background: linear-gradient(180deg, #F4EBDB 0%, #E1CFAF 52%, #D4C09E 100%);
   clip-path: polygon(0% 50%, 100% 50%, 50% 0%);
-  filter: drop-shadow(0 0 0.7px #C9A96E) drop-shadow(0 8px 12px rgba(14, 5, 4, 0.3));
+  filter: drop-shadow(0 0 0.7px #C9A96E) drop-shadow(0 8px 12px rgba(22, 8, 18, 0.3));
   transition: clip-path 1.45s var(--env-ease);
 }
 
@@ -1326,6 +1326,7 @@ html:not(.js-motion) .envelope-scene::before,
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: #d8d0c2;
+  border: 1px solid rgba(58,21,16,0.14);
 }
 .timeline-photo img {
   display: block;
@@ -1337,7 +1338,7 @@ html:not(.js-motion) .envelope-scene::before,
 .timeline-item:nth-child(3) .timeline-photo img {
   object-position: center 72%;
 }
-.timeline-item:nth-child(4) .timeline-photo img {
+.timeline-item:nth-child(5) .timeline-photo img {
   object-position: center 30%;
 }
 .timeline-polaroid .ph-light {
@@ -1348,7 +1349,7 @@ html:not(.js-motion) .envelope-scene::before,
   background: #d8d0c2;
 }
 .timeline-polaroid .ph-light::after {
-  color: rgba(58,21,16,0.35);
+  color: rgba(61, 21, 52, 0.35);
 }
 .timeline-heading {
   text-align: center;
