@@ -1,5 +1,5 @@
 /**
- * rsvp.js — handles the RSVP form on rsvp-roce.html
+ * rsvp.js — handles the RSVP form on rsvp.html
  *
  * BEFORE GOING LIVE — update both constants below:
  *
@@ -124,7 +124,7 @@
       }
     }
 
-    // Events (Roce page only — the <select name="events"> is only on rsvp-roce.html)
+    // Events (Roce page only — the <select name="events"> is only on rsvp.html)
     var eventsEl = form.querySelector('[name="events"]');
     var events   = eventsEl ? eventsEl.value : "";
 

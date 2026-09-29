@@ -1,5 +1,5 @@
 /**
- * gate.js — password overlay for wedding.html and rsvp-roce.html
+ * gate.js — password overlay for wedding.html and rsvp.html
  * Unlocking once in this browser tab unlocks both pages for the session.
  */
 (function () {

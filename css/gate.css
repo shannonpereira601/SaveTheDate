@@ -1,4 +1,4 @@
-/* Password gate — wedding.html (deep plum/cream) and rsvp-roce.html (green) */
+/* Password gate — wedding.html and rsvp.html (deep plum/cream). Roce pages override to green. */
 
 html.is-gated {
   overflow: hidden;
