@@ -75,7 +75,6 @@ body {
 .venue-title,
 .venue-illustrated-title,
 .itinerary-rotated-title,
-.details-col-title,
 .faq-title,
 #w-mobile-menu a {
   font-family: var(--ff-display);
@@ -1543,111 +1542,88 @@ html:not(.js-motion) .envelope-scene::before,
   font-size: clamp(0.88rem, 2vw, 1rem);
   color: rgba(244,242,235,0.65);
   text-align: center;
-  margin-bottom: 52px;
+  line-height: 1.6;
+  margin-bottom: 14px;
 }
 
-.venue-media-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  align-items: start;
-  margin-bottom: 72px;
-}
-
-.venue-photos-stack {
-  position: relative;
-  height: clamp(300px, 45vw, 480px);
-}
-.venue-polaroid-1,
-.venue-polaroid-2,
-.venue-polaroid-3 {
-  position: absolute;
-  background: #fff;
-  box-shadow: 0 6px 28px rgba(0,0,0,0.3);
-}
-.venue-polaroid-1 {
-  width: 55%; padding: 8px 8px 24px;
-  top: 0; left: 0;
-  transform: rotate(-3deg);
-  z-index: 1;
-}
-.venue-polaroid-2 {
-  width: 55%; padding: 8px 8px 24px;
-  top: 20%; right: 0;
-  transform: rotate(2.5deg);
-  z-index: 2;
-}
-.venue-polaroid-3 {
-  width: 55%; padding: 8px 8px 24px;
-  bottom: 0; left: 12%;
-  transform: rotate(-1deg);
-  z-index: 3;
-}
-.venue-polaroid-img {
-  width: 100%;
-  aspect-ratio: 1;
-  background: rgba(255,255,255,0.08);
-  border: 1.5px dashed rgba(58,21,16,0.2);
+.venue-links {
   display: flex;
-  align-items: center;
   justify-content: center;
-}
-.venue-polaroid-img::after {
-  content: attr(data-label);
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
   font-family: var(--ff-label);
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(58,21,16,0.4);
+}
+.venue-links a {
+  color: var(--gold-light);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.venue-links a:hover,
+.venue-links a:focus-visible {
+  color: var(--cream);
+  border-bottom-color: var(--gold);
+}
+.venue-links span {
+  color: rgba(244,242,235,0.35);
+}
+
+.venue-photos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  align-items: start;
+  margin-bottom: 18px;
+}
+
+.venue-shot {
+  margin: 0;
+  background: #fff;
+  padding: 8px 8px 22px;
+  box-shadow: 0 8px 24px rgba(14, 6, 12, 0.28);
+}
+
+.venue-shot:nth-child(1) { transform: rotate(-1.4deg); }
+.venue-shot:nth-child(2) { transform: rotate(1.1deg); margin-top: 18px; }
+.venue-shot:nth-child(3) { transform: rotate(-0.6deg); }
+
+.venue-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.venue-shot:nth-child(3) img {
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  object-position: 22% center;
+}
+
+.venue-photo-credit {
+  margin: 8px 0 36px;
   text-align: center;
-  padding: 8px;
+  font-family: var(--ff-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244,242,235,0.4);
 }
 
 .venue-map-embed {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 2px solid rgba(244,242,235,0.1);
 }
+
 .venue-map-embed iframe {
   width: 100%;
   height: 100%;
   border: none;
   filter: grayscale(30%) sepia(20%);
-}
-
-/* Illustrated map block */
-.venue-illustrated-title {
-  font-size: clamp(1.75rem, 3.4vw, 2.45rem);
-  color: var(--cream);
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.venue-map-img {
-  width: 100%;
-  max-width: 760px;
-  aspect-ratio: 4/3;
-  margin: 0 auto 36px;
-  display: block;
-  border: 8px solid rgba(244,242,235,0.08);
-}
-
-.venue-legend {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 48px;
-  max-width: 640px;
-  margin-inline: auto;
-}
-.venue-legend-item {
-  font-family: var(--ff-serif);
-  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
-  color: rgba(244,242,235,0.72);
-  line-height: 1.5;
-}
-.venue-legend-item strong {
-  color: var(--cream);
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -1746,49 +1722,6 @@ html:not(.js-motion) .envelope-scene::before,
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   SECTION 9 · ADDITIONAL INFORMATION
-   ──────────────────────────────────────────────────────────────────────────── */
-.s-details {
-  padding: var(--section-pad-v) 0;
-}
-
-.details-header {
-  text-align: center;
-  margin-bottom: 52px;
-}
-.details-header-title {
-  font-family: var(--ff-serif);
-  font-weight: 700;
-  font-size: clamp(0.9rem, 2vw, 1.05rem);
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--cream);
-  display: inline-block;
-  padding: 12px 0;
-  border-top: 1.5px solid rgba(244,242,235,0.3);
-  border-bottom: 1.5px solid rgba(244,242,235,0.3);
-}
-
-.details-cols {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-}
-
-.details-col-title {
-  font-size: clamp(1.55rem, 2.6vw, 2.05rem);
-  color: var(--cream);
-  margin-bottom: 14px;
-}
-
-.details-col-body {
-  font-family: var(--ff-serif);
-  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
-  line-height: 1.8;
-  color: rgba(244,242,235,0.7);
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
    SECTION 10 · FULL FAQ
    ──────────────────────────────────────────────────────────────────────────── */
 .s-faq {
@@ -1883,10 +1816,11 @@ html:not(.js-motion) .envelope-scene::before,
 @media (max-width: 900px) {
   :root { --section-pad-h: clamp(20px, 5vw, 52px); }
 
-  /* Venue media grid → 1 col */
-  .venue-media-grid { grid-template-columns: 1fr; }
-  .venue-photos-stack { height: clamp(260px, 60vw, 380px); }
-  .venue-map-embed { aspect-ratio: 4/3; }
+  .venue-photos { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; }
+  .venue-map-embed { aspect-ratio: 4 / 3; }
+  .venue-shot,
+  .venue-shot:nth-child(2),
+  .venue-shot:nth-child(3) { transform: none; margin-top: 0; }
 
   /* FAQ full grid → 1 col */
   .faq-full-grid { grid-template-columns: 1fr; gap: 0; }
@@ -2010,9 +1944,6 @@ html:not(.js-motion) .envelope-scene::before,
     margin-bottom: 12px;
   }
 
-  /* Details 3-col → 1 col */
-  .details-cols { grid-template-columns: 1fr; gap: 32px; }
-
   /* Itinerary rotated title → normal */
   .itinerary-layout { flex-direction: column; gap: 20px; }
   .itinerary-rotated-title {
@@ -2027,7 +1958,6 @@ html:not(.js-motion) .envelope-scene::before,
 }
 
 @media (max-width: 480px) {
-  .venue-polaroid-1, .venue-polaroid-2, .venue-polaroid-3 { width: 48%; }
   .w-timer-num { font-size: clamp(2.15rem, 11vw, 3.1rem); }
   .w-timer-lbl { font-size: clamp(1.05rem, 4.6vw, 1.35rem); }
   .envelope-note { font-size: clamp(1.25rem, 5.4vw, 1.6rem); }
