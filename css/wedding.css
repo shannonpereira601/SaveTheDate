@@ -610,6 +610,10 @@ html.is-unlocked .photobooth-shot img {
   color: var(--maroon-light);
 }
 
+.welcome-parents + .welcome-with {
+  margin-top: 12px;
+}
+
 .welcome-parents {
   font-family: var(--ff-serif);
   font-style: italic;
@@ -2167,6 +2171,38 @@ html:not(.js-motion) .envelope-scene::before,
   .w-timer-num { font-size: clamp(2.15rem, 11vw, 3.1rem); }
   .w-timer-lbl { font-size: clamp(1.05rem, 4.6vw, 1.35rem); }
   .envelope-note { font-size: clamp(1.25rem, 5.4vw, 1.6rem); }
+}
+
+/* Phones: keep labels at 13px+ and reading text at 16px+ so older guests can read without zooming */
+@media (max-width: 720px) {
+  .hero-meta { font-size: 0.85rem; font-weight: 400; }
+  .welcome-with { font-size: 0.8rem; }
+  .welcome-parents { font-size: 1.1rem; }
+  .welcome-body p { font-size: 1.06rem; }
+  .letter-read { font-size: 0.85rem; }
+
+  .figures-kicker { font-size: 0.8rem; }
+  .pie-callouts li { font-size: 0.95rem; }
+  .pie-fig-cap { font-size: 0.85rem; }
+  .figures-reasons p { font-size: 1.06rem; }
+  .countdown-cta { font-size: 0.9rem; }
+
+  .timeline-year { font-size: 0.82rem; }
+  .timeline-caption { font-size: 1rem; }
+
+  .venue-address { font-size: 1rem; color: rgba(244,242,235,0.82); }
+  .venue-photo-credit { font-size: 0.7rem; }
+
+  .itinerary-day-title { font-size: 0.8rem; letter-spacing: 0.16em; }
+  .itinerary-time { font-size: 1rem; color: rgba(244,242,235,0.72); }
+  .itinerary-event { font-size: 1.06rem; }
+  .itinerary-place { font-size: 0.9em; }
+
+  .faq-category-title { font-size: 0.85rem; }
+  .faq-full-q { font-size: 1.08rem; }
+  .faq-full-a { font-size: 1rem; line-height: 1.7; }
+
+  .w-footer-date { font-size: 0.78rem; }
 }
 
 /* ── Scroll fade-up ───────────────────────────────────────────────────────── */

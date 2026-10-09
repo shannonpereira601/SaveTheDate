@@ -183,6 +183,15 @@ body.roce-page .site-gate {
   }
 }
 
+/* Phones: keep labels at 13px+ so older guests can read without zooming */
+@media (max-width: 720px) {
+  .site-gate-title { font-size: 0.85rem; }
+  .site-gate-desc { font-size: 1.05rem; }
+  .site-gate-label { font-size: 0.85rem; }
+  .site-gate-error { font-size: 1rem; }
+  .site-gate-btn { font-size: 0.9rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-gate.is-shake .site-gate-card {
     animation: none;

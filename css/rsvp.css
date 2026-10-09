@@ -490,6 +490,18 @@ html.tier-reception .rsvp-dates {
     width: 84px;
     height: 84px;
   }
+
+  /* Keep labels at 13px+ and reading text at 16px+ so older guests can read without zooming */
+  .rsvp-back { font-size: 0.8rem; }
+  .rsvp-meta { font-size: 0.85rem; font-weight: 400; }
+  .rsvp-date-name { font-size: 0.8rem; }
+  .rsvp-venue { font-size: 1.05rem; }
+  .rsvp-label,
+  .rsvp-question { font-size: 0.88rem; }
+  .rsvp-attend-text { font-size: 1.1rem; }
+  .rsvp-submit { font-size: 0.9rem; }
+  .rsvp-error-msg { font-size: 1rem; }
+  .rsvp-success-msg { font-size: 1.1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
