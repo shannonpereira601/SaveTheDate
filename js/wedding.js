@@ -412,6 +412,10 @@
     } else {
       playFigures();
     }
+
+    if (document.documentElement.classList.contains("is-print")) {
+      playFigures();
+    }
   }
 
   /* ── Section fade-up on scroll ──────────────────────────────────────────── */
