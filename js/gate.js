@@ -1,33 +1,53 @@
 /**
- * gate.js — password overlay for wedding.html and rsvp.html
- * Unlocking once in this browser tab unlocks both pages for the session.
+ * gate.js — two-tier password gate for wedding.html and rsvp.html
+ *
+ * Tier "full"      : family/close friends — sees Roce + Reception
+ * Tier "reception" : all other guests     — sees Reception only
+ *
+ * Unlocking once persists for the browser session (sessionStorage), so moving
+ * between wedding.html and rsvp.html does not re-prompt.
+ *
+ * To change a password:
+ *   1. Choose your new password (case-insensitive, leading/trailing spaces stripped).
+ *   2. Run in a terminal:
+ *        node -e "const c=require('crypto');console.log(c.createHash('sha256').update('<password>').digest('hex'));"
+ *   3. Paste the result into HASHES.full or HASHES.reception below.
  */
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "gs-unlocked";
-  var HASH = "48f77ede63a14c927642ed850073edcc21057d143cd3f02cb650db7b5034ef2c";
+  /* ── Hashes (SHA-256 of the password, trimmed + lower-cased) ────────────── */
+  var HASHES = {
+    full      : "c88dc7a713fd1463461c1ac6bc93274d7cde047cee48f0d7ed404795d85f239e", // "gloshan"
+    reception : "b6057615d0477c7bbea4027d34d9c3383d1790fcf71fcff450b8b027f0d31d9e"  // "morjim"
+  };
 
-  var root = document.documentElement;
-  var gate = document.getElementById("site-gate");
-  var form = document.getElementById("site-gate-form");
-  var input = document.getElementById("site-gate-password");
+  var TIER_KEY   = "gs-tier";   // sessionStorage key  →  "full" | "reception"
+
+  /* ── DOM refs ────────────────────────────────────────────────────────────── */
+  var root    = document.documentElement;
+  var gate    = document.getElementById("site-gate");
+  var form    = document.getElementById("site-gate-form");
+  var input   = document.getElementById("site-gate-password");
   var errorEl = document.getElementById("site-gate-error");
 
-  function isUnlocked() {
-    try {
-      return sessionStorage.getItem(STORAGE_KEY) === "1";
-    } catch (e) {
-      return false;
+  /* ── Tier helpers ────────────────────────────────────────────────────────── */
+  function storedTier() {
+    try { return sessionStorage.getItem(TIER_KEY) || ""; } catch (e) { return ""; }
+  }
+
+  function persistTier(tier) {
+    try { sessionStorage.setItem(TIER_KEY, tier); } catch (e) { /* private mode — in-memory only */ }
+  }
+
+  function applyTier(tier) {
+    root.classList.remove("tier-full", "tier-reception");
+    if (tier === "full" || tier === "reception") {
+      root.classList.add("tier-" + tier);
     }
   }
 
-  function persistUnlock() {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, "1");
-    } catch (e) { /* private mode — unlock this page only */ }
-  }
-
+  /* ── Page reveal ─────────────────────────────────────────────────────────── */
   function revealPage() {
     root.classList.remove("is-gated");
     root.classList.add("is-unlocked");
@@ -36,6 +56,7 @@
     }
   }
 
+  /* ── Error / shake ───────────────────────────────────────────────────────── */
   function showError() {
     if (!errorEl || !input) { return; }
     errorEl.removeAttribute("hidden");
@@ -43,16 +64,17 @@
     input.select();
     if (gate) {
       gate.classList.remove("is-shake");
-      void gate.offsetWidth;
+      void gate.offsetWidth; // force reflow to restart animation
       gate.classList.add("is-shake");
     }
   }
 
   function clearError() {
     if (errorEl) { errorEl.setAttribute("hidden", ""); }
-    if (input) { input.removeAttribute("aria-invalid"); }
+    if (input)   { input.removeAttribute("aria-invalid"); }
   }
 
+  /* ── SHA-256 helper ──────────────────────────────────────────────────────── */
   function hex(buffer) {
     return Array.from(new Uint8Array(buffer))
       .map(function (b) { return b.toString(16).padStart(2, "0"); })
@@ -66,18 +88,19 @@
         .digest("SHA-256", new TextEncoder().encode(normalized))
         .then(hex);
     }
-    try {
-      return Promise.resolve(normalized === atob("Z2Fsb3JpYQ==") ? HASH : "");
-    } catch (e) {
-      return Promise.resolve("");
-    }
+    // Fallback for very old browsers: cannot hash — reject silently
+    return Promise.resolve("");
   }
 
-  if (isUnlocked()) {
+  /* ── Bootstrap ───────────────────────────────────────────────────────────── */
+  var tier = storedTier();
+  if (tier === "full" || tier === "reception") {
+    applyTier(tier);
     revealPage();
     return;
   }
 
+  // No valid tier in storage — show the gate
   root.classList.add("is-gated");
   root.classList.remove("is-unlocked");
 
@@ -97,8 +120,15 @@
     }
 
     hashPassword(value).then(function (digest) {
-      if (digest === HASH) {
-        persistUnlock();
+      if (digest === HASHES.full) {
+        persistTier("full");
+        applyTier("full");
+        revealPage();
+        return;
+      }
+      if (digest === HASHES.reception) {
+        persistTier("reception");
+        applyTier("reception");
         revealPage();
         return;
       }

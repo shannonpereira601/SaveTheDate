@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <meta name="description" content="Gloria & Shannon's wedding — Roce on 18 December 2026 and Reception on 19 December 2026 at Montego Bay Beach Village, Morjim, Goa.">
+  <meta name="description" content="Gloria & Shannon's Wedding Reception on 19 December 2026 at Montego Bay Beach Village, Morjim, Goa.">
   <meta name="author" content="Gloria & Shannon">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Gloria & Shannon | 18–19 December 2026 | Morjim, Goa">
-  <meta property="og:description" content="Roce on 18 December and Wedding Reception on 19 December 2026 at Montego Bay Beach Village, Morjim, Goa.">
-  <title>Gloria &amp; Shannon | 18–19 December 2026 | Morjim, Goa</title>
+  <meta property="og:title" content="Gloria & Shannon | 19 December 2026 | Morjim, Goa">
+  <meta property="og:description" content="Wedding Reception on 19 December 2026 at Montego Bay Beach Village, Morjim, Goa.">
+  <title>Gloria &amp; Shannon | 19 December 2026 | Morjim, Goa</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,15 +17,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Tangerine:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="shortcut icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="./css/wedding.css?v=plum8">
+  <link rel="stylesheet" href="./css/wedding.css?v=plum14">
   <link rel="stylesheet" href="./css/gate.css?v=plum1">
   <script>
+    document.documentElement.classList.add("js");
     if (window.matchMedia && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       document.documentElement.classList.add("js-motion");
     }
     try {
-      if (sessionStorage.getItem("gs-unlocked") === "1") {
-        document.documentElement.classList.add("is-unlocked");
+      var _tier = sessionStorage.getItem("gs-tier");
+      if (_tier === "full" || _tier === "reception") {
+        document.documentElement.classList.add("is-unlocked", "tier-" + _tier);
       } else {
         document.documentElement.classList.add("is-gated");
       }
@@ -47,7 +49,7 @@
     <button class="site-gate-btn" type="submit">Enter</button>
   </form>
 </div>
-<script src="./js/gate.js?v=1"></script>
+<script src="./js/gate.js?v=2"></script>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
      NAVIGATION
@@ -140,7 +142,8 @@
       </h1>
 
       <p class="hero-meta fu fu-body">
-        <span>18 &amp; 19 December 2026</span>
+        <span data-tier="full">18 &amp; 19 December 2026</span>
+        <span data-tier="reception">19 December 2026</span>
         <span class="hero-meta-rule" aria-hidden="true"></span>
         <span>Morjim, Goa</span>
       </p>
@@ -152,16 +155,16 @@
           <div class="photobooth-well">
             <div class="photobooth-reel">
               <figure class="photobooth-shot">
-                <img src="./assets/img/photobooth/01.jpg?v=3" alt="Gloria and Shannon, photobooth frame 1" width="800" height="600">
+                <img src="./assets/img/photobooth/01.jpg?v=4" alt="Gloria and Shannon, photobooth frame 1" width="800" height="600">
               </figure>
               <figure class="photobooth-shot">
-                <img src="./assets/img/photobooth/02.jpeg?v=3" alt="Gloria and Shannon, photobooth frame 2" width="800" height="600">
+                <img src="./assets/img/photobooth/02.jpg?v=4" alt="Gloria and Shannon, photobooth frame 2" width="800" height="600">
               </figure>
               <figure class="photobooth-shot">
-                <img src="./assets/img/photobooth/03.jpeg?v=3" alt="Gloria and Shannon, photobooth frame 3" width="800" height="600">
+                <img src="./assets/img/photobooth/03.jpeg?v=4" alt="Gloria and Shannon, photobooth frame 3" width="800" height="600">
               </figure>
               <figure class="photobooth-shot">
-                <img src="./assets/img/photobooth/04.jpg?v=3" alt="Gloria and Shannon, photobooth frame 4" width="800" height="600">
+                <img src="./assets/img/photobooth/04.jpg?v=4" alt="Gloria and Shannon, photobooth frame 4" width="800" height="600">
               </figure>
             </div>
           </div>
@@ -193,24 +196,39 @@
         <span class="section-eyebrow">With all our love</span>
         <h2 class="welcome-title fu fu-title">You are invited</h2>
 
-        <div class="welcome-body fu fu-body">
-          <p>
-            We met in the most unexpected way: on a blind date. If it hadn't been a blind date, maybe Gloria would've second-guessed it. But luckily, she decided to listen to our mutual best friend, who forced us to go out. There was very little texting beforehand, just diving straight into an unexpectedly perfect first meeting.
-          </p>
-          <p>
-            Even though Gloria is usually the shyer of the two and takes a long time to get comfortable with anyone, she surprisingly warmed up right away. She led the entire conversation, while Shannon was busy blushing the whole time. We immediately hit it off. Over time, our relationship just kept getting stronger, deeper, and childishly pure, and before long, we became inseparable. Shannon found someone who would laugh at all his pathetic jokes, and Gloria found someone she could be her truest, most childish self with.
-          </p>
-          <p>
-            And now, we are so excited to finally begin our next chapter: two kids turning into husband and wife.
-          </p>
-          <p>
-            This is more than just a celebration for us. We want this day to be truly intimate, surrounded by the people we deeply love, celebrating in a place we truly love as well. We cannot wait to share our special day with you. You have been a part of our life's journey in one way or another, and we would now love for you to witness our lives becoming one. Your presence means the world to us, and we are so excited to make some awesome memories with all of you!
-          </p>
-        </div>
+        <p class="welcome-couple fu fu-body">Shannon Earl Pereira <span class="welcome-couple-amp">&amp;</span> Gloria Noronha</p>
+        <p class="welcome-kin fu fu-body">
+          <span class="welcome-with">Together with our parents</span>
+          <span class="welcome-parents">Eric &amp; Severine Pereira <span class="welcome-parents-dot" aria-hidden="true">&middot;</span> Ambrose &amp; Rita Noronha</span>
+        </p>
 
-        <div class="welcome-signoff fu fu-body">
-          <span class="welcome-signoff-line">With all our love,</span>
-          <span class="welcome-signoff-names">Gloria and Shannon</span>
+        <div class="invite-letter" id="invite-letter">
+          <div class="invite-sheet">
+            <p class="invite-kicker">A letter to you</p>
+            <button type="button" class="letter-read" id="letter-read" aria-expanded="false" aria-controls="invite-letter-body">
+              Read Letter
+            </button>
+            <div class="invite-letter-body" id="invite-letter-body">
+              <div class="welcome-body">
+                <p>
+                  We met in the most unexpected way: on a blind date. If it hadn't been a blind date, maybe Gloria would've second-guessed it. But luckily, she decided to listen to our mutual best friend, who forced us to go out. There was very little texting beforehand, just diving straight into an unexpectedly perfect first meeting.
+                </p>
+                <p>
+                  Even though Gloria is usually the shyer of the two and takes a long time to get comfortable with anyone, she surprisingly warmed up right away. She led the entire conversation, while Shannon was busy blushing the whole time. We immediately hit it off. Over time, our relationship just kept getting stronger, deeper, and childishly pure, and before long, we became inseparable. Shannon found someone who would laugh at all his pathetic jokes, and Gloria found someone she could be her truest, most childish self with.
+                </p>
+                <p>
+                  And now, we are so excited to finally begin our next chapter: two kids turning into husband and wife.
+                </p>
+                <p>
+                  This is more than just a celebration for us. We want this day to be truly intimate, surrounded by the people we deeply love, celebrating in a place we truly love as well. We cannot wait to share our special day with you. You have been a part of our life's journey in one way or another, and we would now love for you to witness our lives becoming one. Your presence means the world to us, and we are so excited to make some awesome memories with all of you!
+                </p>
+              </div>
+              <div class="welcome-signoff">
+                <span class="welcome-signoff-line">With all our love,</span>
+                <span class="welcome-signoff-names">Gloria and Shannon</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -227,6 +245,178 @@
     </div>
   </div>
 </section><!-- /s-welcome -->
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SECTION 4 · MEMORY LANE
+     ══════════════════════════════════════════════════════════════════════════ -->
+<section id="memory-lane" class="s-story s-cream">
+  <div class="w-inner">
+
+    <h2 class="story-title fu fu-title">Memory Lane</h2>
+    <p class="story-body fu fu-body">
+      A few of the days that brought us from that first date to here.
+    </p>
+
+    <div class="timeline fu fu-body" role="list">
+
+      <article class="timeline-item" role="listitem">
+        <div class="timeline-polaroid">
+          <div class="timeline-photo">
+            <img src="./assets/img/memorylane/1.jpg" alt="Gloria and Shannon, the blind date" width="800" height="1000">
+          </div>
+          <h3 class="timeline-heading">The blind date</h3>
+        </div>
+        <div class="timeline-year-wrap">
+          <time class="timeline-year" datetime="2023-03-04">4 Mar 2023</time>
+        </div>
+        <p class="timeline-caption">
+          We first met on a blind date, introduced and firmly forced into it by our mutual best friend Rebecca. She offered a movie, shopping, church, or dinner. We played it safe with a simple dinner, and immediately hit it off.
+        </p>
+      </article>
+
+      <article class="timeline-item" role="listitem">
+        <div class="timeline-polaroid">
+          <div class="timeline-photo">
+            <img src="./assets/img/memorylane/2.jpg" alt="Gloria and Shannon, making it official" width="800" height="1000">
+          </div>
+          <h3 class="timeline-heading">Official</h3>
+        </div>
+        <div class="timeline-year-wrap">
+          <time class="timeline-year" datetime="2023-05-04">4 May 2023</time>
+        </div>
+        <p class="timeline-caption">
+          After countless calls, meetups, and long conversations, we made it official on 4 May 2023. Star Wars is only the second-best thing that happens on that day.
+        </p>
+      </article>
+
+      <article class="timeline-item" role="listitem">
+        <div class="timeline-polaroid">
+          <div class="timeline-photo">
+            <img src="./assets/img/memorylane/3.jpg" alt="Gloria and Shannon, the proposal in Munnar" width="800" height="1000">
+          </div>
+          <h3 class="timeline-heading">The proposal</h3>
+        </div>
+        <div class="timeline-year-wrap">
+          <time class="timeline-year" datetime="2026-01-07">7 Jan 2026</time>
+        </div>
+        <p class="timeline-caption">
+          Shannon proposed to Gloria in Munnar, Kerala, on 7 January 2026, under a sky full of stars in a remote, beautiful spot. He forgot to film it, but he does have audio of Gloria crying. Ask him nicely if you want to hear it.
+        </p>
+      </article>
+
+      <article class="timeline-item" role="listitem">
+        <div class="timeline-polaroid">
+          <div class="timeline-photo">
+            <img src="./assets/img/memorylane/4.jpg" alt="Gloria proposing to Shannon" width="800" height="1000">
+          </div>
+          <h3 class="timeline-heading">Gloria's proposal</h3>
+        </div>
+        <div class="timeline-year-wrap">
+          <time class="timeline-year" datetime="2026-02-08">8 Feb 2026</time>
+        </div>
+        <p class="timeline-caption">
+          On 8 February 2026, Gloria proposed to Shannon too, and gave him a ring. Shannon's had the stars. Gloria's was sweeter and cuter. The score is 1-1.
+        </p>
+      </article>
+
+      <article class="timeline-item" role="listitem">
+        <div class="timeline-polaroid">
+          <div class="timeline-photo">
+            <img src="./assets/img/memorylane/5.jpg" alt="Gloria and Shannon, civilly married" width="800" height="1000">
+          </div>
+          <h3 class="timeline-heading">Civilly married</h3>
+        </div>
+        <div class="timeline-year-wrap">
+          <time class="timeline-year" datetime="2026-04-24">24 Apr 2026</time>
+        </div>
+        <p class="timeline-caption">
+          We got civilly married on 24 April 2026. So yes, we are already legally married. We do not count it. Most days we are still boyfriend and girlfriend. On a good day, fiancé and fiancée.
+        </p>
+      </article>
+
+      <article class="timeline-item" role="listitem">
+        <div class="timeline-polaroid">
+          <div class="timeline-photo">
+            <img src="./assets/img/memorylane/6.jpg" alt="Gloria and Shannon on their wedding day" width="800" height="1000">
+          </div>
+          <h3 class="timeline-heading">The wedding</h3>
+        </div>
+        <div class="timeline-year-wrap">
+          <time class="timeline-year" datetime="2026-12-19">19 Dec 2026</time>
+        </div>
+        <p class="timeline-caption">
+          19 December 2026. Soon. This is the one that actually counts.
+        </p>
+      </article>
+
+    </div><!-- /timeline -->
+
+  </div>
+</section><!-- /s-story -->
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SECTION 3 · COUNTDOWN + RSVP CTA
+     ══════════════════════════════════════════════════════════════════════════ -->
+<section id="countdown" class="s-countdown s-olive">
+  <h2 class="countdown-title fu fu-title">Our forever begins in</h2>
+
+  <div class="envelope-scene">
+    <div class="envelope" id="w-envelope">
+      <!-- Layer 1: reverse of the envelope -->
+      <div class="envelope-back" aria-hidden="true"></div>
+
+      <!-- Layer 2: letter, clipped so it can only exit out the top -->
+      <div class="envelope-paper-clip">
+        <div class="envelope-paper">
+          <div class="envelope-letter">
+            <div id="w-countdown" class="w-timer" aria-live="polite" aria-label="Countdown to wedding"></div>
+            <p class="envelope-note">Can you make it?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 3: white front + wax seal. Paper peeks through the V. -->
+      <div class="envelope-front" aria-hidden="true">
+        <svg class="envelope-art" viewBox="0 0 800 432" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+          <defs>
+            <linearGradient id="env-left" x1="0" y1="0" x2="1" y2="0.4">
+              <stop offset="0%" stop-color="#EFE4D0"/>
+              <stop offset="100%" stop-color="#D9C6A6"/>
+            </linearGradient>
+            <linearGradient id="env-right" x1="1" y1="0" x2="0" y2="0.4">
+              <stop offset="0%" stop-color="#E9D8BC"/>
+              <stop offset="100%" stop-color="#D4C09E"/>
+            </linearGradient>
+            <linearGradient id="env-bottom" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#D7C4A6"/>
+              <stop offset="100%" stop-color="#F0E5D1"/>
+            </linearGradient>
+          </defs>
+          <polygon points="0,150 0,432 400,240" fill="url(#env-left)"/>
+          <polygon points="800,150 800,432 400,240" fill="url(#env-right)"/>
+          <polygon points="0,432 0,316 400,224 800,316 800,432" fill="url(#env-bottom)"/>
+          <path d="M0,316 L400,224 L800,316" fill="none" stroke="#B8956A" stroke-width="1.3" opacity="0.5"/>
+          <path d="M1.2,8 L1.2,430.8 L798.8,430.8 L798.8,8" fill="none" stroke="#C9A96E" stroke-width="1.6" opacity="0.45"/>
+        </svg>
+      </div>
+
+      <!-- Layer 4: one flap. Same triangle, tip travels from down to up. -->
+      <div class="envelope-lid" aria-hidden="true">
+        <div class="flap"></div>
+      </div>
+
+      <div class="countdown-seal" aria-hidden="true">
+        <img src="./assets/img/wax.png" alt="" width="800" height="800">
+      </div>
+    </div>
+  </div>
+
+  <a href="./rsvp.html" class="countdown-cta fu fu-body" aria-label="RSVP for Gloria and Shannon's wedding">
+    RSVP
+  </a>
+</section><!-- /s-countdown -->
 
 
 <!-- ══════════════════════════════════════════════════════════════════════════
@@ -310,7 +500,8 @@
               <span class="figures-ico" aria-hidden="true">
                 <svg viewBox="0 0 32 32"><rect x="6" y="8" width="20" height="18" rx="2"/><path d="M6 13h20"/><path d="M11 5v5"/><path d="M21 5v5"/><path d="M11 18h4"/><path d="M17 18h4"/><path d="M11 22h8"/></svg>
               </span>
-              <p>you're not doing anything else more interesting on 18 &amp; 19 December</p>
+              <p data-tier="full">you're not doing anything else more interesting on 18 &amp; 19 December</p>
+              <p data-tier="reception">you're not doing anything else more interesting on 19 December</p>
             </li>
           </ul>
         </figure>
@@ -338,215 +529,79 @@
 
 
 <!-- ══════════════════════════════════════════════════════════════════════════
-     SECTION 3 · COUNTDOWN + RSVP CTA
-     ══════════════════════════════════════════════════════════════════════════ -->
-<section id="countdown" class="s-countdown s-olive">
-  <h2 class="countdown-title fu fu-title">Our forever begins in</h2>
-
-  <div class="envelope-scene">
-    <div class="envelope" id="w-envelope">
-      <!-- Layer 1: reverse of the envelope -->
-      <div class="envelope-back" aria-hidden="true"></div>
-
-      <!-- Layer 2: letter, clipped so it can only exit out the top -->
-      <div class="envelope-paper-clip">
-        <div class="envelope-paper">
-          <div class="envelope-letter">
-            <div id="w-countdown" class="w-timer" aria-live="polite" aria-label="Countdown to wedding"></div>
-            <p class="envelope-note">Can you make it?</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Layer 3: white front + wax seal. Paper peeks through the V. -->
-      <div class="envelope-front" aria-hidden="true">
-        <svg class="envelope-art" viewBox="0 0 800 432" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
-          <defs>
-            <linearGradient id="env-left" x1="0" y1="0" x2="1" y2="0.4">
-              <stop offset="0%" stop-color="#EFE4D0"/>
-              <stop offset="100%" stop-color="#D9C6A6"/>
-            </linearGradient>
-            <linearGradient id="env-right" x1="1" y1="0" x2="0" y2="0.4">
-              <stop offset="0%" stop-color="#E9D8BC"/>
-              <stop offset="100%" stop-color="#D4C09E"/>
-            </linearGradient>
-            <linearGradient id="env-bottom" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#D7C4A6"/>
-              <stop offset="100%" stop-color="#F0E5D1"/>
-            </linearGradient>
-          </defs>
-          <polygon points="0,150 0,432 400,240" fill="url(#env-left)"/>
-          <polygon points="800,150 800,432 400,240" fill="url(#env-right)"/>
-          <polygon points="0,432 0,316 400,224 800,316 800,432" fill="url(#env-bottom)"/>
-          <path d="M0,316 L400,224 L800,316" fill="none" stroke="#B8956A" stroke-width="1.3" opacity="0.5"/>
-          <path d="M1.2,8 L1.2,430.8 L798.8,430.8 L798.8,8" fill="none" stroke="#C9A96E" stroke-width="1.6" opacity="0.45"/>
-        </svg>
-      </div>
-
-      <!-- Layer 4: one flap. Same triangle, tip travels from down to up. -->
-      <div class="envelope-lid" aria-hidden="true">
-        <div class="flap"></div>
-      </div>
-
-      <div class="countdown-seal" aria-hidden="true">
-        <img src="./assets/img/wax.png" alt="" width="800" height="800">
-      </div>
-    </div>
-  </div>
-
-  <a href="./rsvp.html" class="countdown-cta fu fu-body" aria-label="RSVP for Gloria and Shannon's wedding">
-    RSVP
-  </a>
-</section><!-- /s-countdown -->
-
-
-<!-- ══════════════════════════════════════════════════════════════════════════
-     SECTION 4 · MEMORY LANE
-     ══════════════════════════════════════════════════════════════════════════ -->
-<section id="memory-lane" class="s-story s-cream">
-  <div class="w-inner">
-
-    <h2 class="story-title fu fu-title">Memory Lane</h2>
-    <p class="story-body fu fu-body">
-      A few of the days that brought us from that first date to here.
-    </p>
-
-    <div class="timeline fu fu-body" role="list">
-
-      <article class="timeline-item" role="listitem">
-        <div class="timeline-polaroid">
-          <div class="timeline-photo">
-            <img src="./assets/img/memorylane/1.jpg" alt="Gloria and Shannon, the blind date" width="800" height="1000">
-          </div>
-          <h3 class="timeline-heading">The blind date</h3>
-        </div>
-        <div class="timeline-year-wrap">
-          <time class="timeline-year" datetime="2023-03-04">4 Mar 2023</time>
-        </div>
-        <p class="timeline-caption">
-          We first met on 4 March 2023 on a blind date — introduced, and forced into it, by our mutual best friend Rebecca, who thought we were perfect for each other. We immediately hit it off.
-        </p>
-      </article>
-
-      <article class="timeline-item" role="listitem">
-        <div class="timeline-polaroid">
-          <div class="timeline-photo">
-            <img src="./assets/img/memorylane/2.jpg" alt="Gloria and Shannon, making it official" width="800" height="1000">
-          </div>
-          <h3 class="timeline-heading">Official</h3>
-        </div>
-        <div class="timeline-year-wrap">
-          <time class="timeline-year" datetime="2023-05-04">4 May 2023</time>
-        </div>
-        <p class="timeline-caption">
-          After countless calls, meets and conversations, we finally made it official on 4 May 2023. Star Wars is the second-best thing that happens on that day.
-        </p>
-      </article>
-
-      <article class="timeline-item" role="listitem">
-        <div class="timeline-polaroid">
-          <div class="timeline-photo">
-            <img src="./assets/img/memorylane/3.jpg" alt="Gloria and Shannon, the proposal in Munnar" width="800" height="1000">
-          </div>
-          <h3 class="timeline-heading">The proposal</h3>
-        </div>
-        <div class="timeline-year-wrap">
-          <time class="timeline-year" datetime="2026-01-07">7 Jan 2026</time>
-        </div>
-        <p class="timeline-caption">
-          We were already sure of getting married, but Shannon proposed to Gloria in Munnar, Kerala, on 7 January 2026 — under a sky full of stars, in a remote, beautiful location.
-        </p>
-      </article>
-
-      <article class="timeline-item" role="listitem">
-        <div class="timeline-polaroid">
-          <div class="timeline-photo">
-            <img src="./assets/img/memorylane/4.jpg" alt="Gloria proposing to Shannon" width="800" height="1000">
-          </div>
-          <h3 class="timeline-heading">Gloria's proposal</h3>
-        </div>
-        <div class="timeline-year-wrap">
-          <time class="timeline-year" datetime="2026-02-08">8 Feb 2026</time>
-        </div>
-        <p class="timeline-caption">
-          On 8 February 2026, Gloria proposed to Shannon too, and gave him a ring.
-        </p>
-      </article>
-
-      <article class="timeline-item" role="listitem">
-        <div class="timeline-polaroid">
-          <div class="timeline-photo">
-            <img src="./assets/img/memorylane/5.jpg" alt="Gloria and Shannon, civilly married" width="800" height="1000">
-          </div>
-          <h3 class="timeline-heading">Civilly married</h3>
-        </div>
-        <div class="timeline-year-wrap">
-          <time class="timeline-year" datetime="2026-04-24">24 Apr 2026</time>
-        </div>
-        <p class="timeline-caption">
-          We got civil married on 24 April 2026. So yes — we are already legally married, but we do not count it, and still call each other boyfriend and girlfriend. 19 December is when we officially get married.
-        </p>
-      </article>
-
-      <article class="timeline-item" role="listitem">
-        <div class="timeline-polaroid">
-          <div class="timeline-photo">
-            <img src="./assets/img/memorylane/6.jpg" alt="Gloria and Shannon on their wedding day" width="800" height="1000">
-          </div>
-          <h3 class="timeline-heading">The wedding</h3>
-        </div>
-        <div class="timeline-year-wrap">
-          <time class="timeline-year" datetime="2026-12-19">19 Dec 2026</time>
-        </div>
-        <p class="timeline-caption">
-          19 December 2026. Soon to come.
-        </p>
-      </article>
-
-    </div><!-- /timeline -->
-
-  </div>
-</section><!-- /s-story -->
-
-
-<!-- ══════════════════════════════════════════════════════════════════════════
      SECTION 7 · VENUE
      ══════════════════════════════════════════════════════════════════════════ -->
 <section id="venue" class="s-venue s-olive">
   <div class="w-inner">
 
-    <h2 class="venue-title fu fu-title">Montego Bay Beach Village</h2>
-    <p class="venue-address fu fu-body">
-      Vithaldas Waddo, Morjim, Pernem, Goa&nbsp;403512<br>
-      On Morjim Beach, North Goa
-    </p>
-    <p class="venue-links fu fu-body">
-      <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Montego+Bay+Beach+Village,+Vithaldas+Waddo,+Morjim,+Pernem,+Goa+403512&amp;travelmode=driving" target="_blank" rel="noopener noreferrer">Get directions</a>
-      <span aria-hidden="true">·</span>
-      <a href="https://montegobaygoa.com/" target="_blank" rel="noopener noreferrer">Resort website</a>
-    </p>
+    <div class="venue-place">
+      <h2 class="venue-title fu fu-title">Montego Bay Beach Village</h2>
+      <p class="venue-address fu fu-body">
+        Vithaldas Waddo, Morjim, Pernem, Goa&nbsp;403512<br>
+        On Morjim Beach, North Goa
+      </p>
+      <p class="venue-links fu fu-body">
+        <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Montego+Bay+Beach+Village,+Vithaldas+Waddo,+Morjim,+Pernem,+Goa+403512&amp;travelmode=driving" target="_blank" rel="noopener noreferrer">Get directions</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://montegobaygoa.com/" target="_blank" rel="noopener noreferrer">Resort website</a>
+      </p>
 
-    <div class="venue-photos fu fu-body">
-      <figure class="venue-shot">
-        <img src="./assets/img/venue/lawn.jpg" alt="The lawn at Montego Bay Beach Village, with palms, loungers, and thatched seating" width="1200" height="800">
-      </figure>
-      <figure class="venue-shot">
-        <img src="./assets/img/venue/cottages.jpg" alt="Wooden cottages and a stone path through the resort garden" width="1024" height="768">
-      </figure>
-      <figure class="venue-shot">
-        <img src="./assets/img/venue/beach.jpg" alt="Garden cottages and a hanging chair among the palms at Montego Bay" width="1024" height="466">
-      </figure>
+      <div class="venue-photos venue-photos--resort fu fu-body">
+        <figure class="venue-shot">
+          <img src="./assets/img/venue/lawn.jpg" alt="The lawn at Montego Bay Beach Village, with palms, loungers, and thatched seating" width="1200" height="800">
+        </figure>
+        <figure class="venue-shot">
+          <img src="./assets/img/venue/cottages.jpg" alt="Wooden cottages and a stone path through the resort garden" width="1024" height="768">
+        </figure>
+        <figure class="venue-shot">
+          <img src="./assets/img/venue/beach.jpg" alt="Garden cottages and a hanging chair among the palms at Montego Bay" width="1024" height="466">
+        </figure>
+      </div>
+      <p class="venue-photo-credit fu fu-body">Montego Bay Beach Village, Morjim</p>
+
+      <div class="venue-map-embed">
+        <iframe
+          src="https://maps.google.com/maps?q=Montego+Bay+Beach+Village,+Vithaldas+Waddo,+Morjim,+Pernem,+Goa+403512&amp;ll=15.6277051,73.7284384&amp;z=16&amp;output=embed"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Montego Bay Beach Village, Vithaldas Waddo, Morjim, Goa on Google Maps"
+        ></iframe>
+      </div>
     </div>
-    <p class="venue-photo-credit fu fu-body">Montego Bay Beach Village, Morjim</p>
 
-    <div class="venue-map-embed">
-      <iframe
-        src="https://maps.google.com/maps?q=Montego+Bay+Beach+Village,+Vithaldas+Waddo,+Morjim,+Pernem,+Goa+403512&amp;ll=15.6277051,73.7284384&amp;z=16&amp;output=embed"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        title="Montego Bay Beach Village, Vithaldas Waddo, Morjim, Goa on Google Maps"
-      ></iframe>
+    <div class="venue-place">
+      <h2 class="venue-title fu fu-title">Our Lady of the Sea Church</h2>
+      <p class="venue-address fu fu-body">
+        Oxel, Siolim, Bardez, Goa&nbsp;403517<br>
+        Nuptial Mass, 19 December
+      </p>
+      <p class="venue-links fu fu-body">
+        <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Our+Lady+of+the+Sea+Church,+Oxel,+Siolim,+Goa+403517&amp;travelmode=driving" target="_blank" rel="noopener noreferrer">Get directions</a>
+      </p>
+
+      <div class="venue-photos venue-photos--church fu fu-body">
+        <figure class="venue-shot">
+          <img src="./assets/img/venue/church1.jpg" alt="The white and blue facade of Our Lady of the Sea Church, Oxel, with a stone cross in the foreground" width="1280" height="720">
+        </figure>
+        <figure class="venue-shot">
+          <img src="./assets/img/venue/church2.jpg" alt="Our Lady of the Sea Church in Oxel, set against a forested hill" width="495" height="619">
+        </figure>
+        <figure class="venue-shot">
+          <img src="./assets/img/venue/church3.jpg" alt="The view from the church steps over palms and fields in Oxel" width="1684" height="947">
+        </figure>
+      </div>
+      <p class="venue-photo-credit fu fu-body">Our Lady of the Sea Church, Oxel</p>
+
+      <div class="venue-map-embed">
+        <iframe
+          src="https://maps.google.com/maps?q=Our+Lady+of+the+Sea+Church,+Oxel,+Siolim,+Goa+403517&amp;ll=15.629982,73.778737&amp;z=16&amp;output=embed"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Our Lady of the Sea Church, Oxel, Siolim, Goa on Google Maps"
+        ></iframe>
+      </div>
     </div>
 
   </div>
@@ -567,42 +622,44 @@
       <div class="itinerary-card fu fu-body" aria-label="Wedding itinerary">
         <div class="itinerary-card-inner">
 
-          <!-- Day 1: Roce -->
-          <p class="itinerary-day-title">18 December 2026 &nbsp;—&nbsp; Roce Ceremony</p>
-          <div class="itinerary-grid">
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 3:00 PM</span>
-            <span class="itinerary-event">Guests arrive &amp; welcome drinks</span>
+          <!-- Day 1: Roce (family/close-friends only) -->
+          <div data-tier="full">
+            <p class="itinerary-day-title">18 December 2026 &nbsp;—&nbsp; Roce Ceremony</p>
+            <div class="itinerary-grid">
+              <span class="itinerary-time">3:00 PM</span>
+              <span class="itinerary-event">Arrival</span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 4:00 PM</span>
-            <span class="itinerary-event">Roce Ceremony begins</span>
+              <span class="itinerary-time">4:30 PM</span>
+              <span class="itinerary-event">Roce Ceremony begins</span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 5:30 PM</span>
-            <span class="itinerary-event">Blessing &amp; family photos</span>
+              <span class="itinerary-time">5:30 PM</span>
+              <span class="itinerary-event">Blessings &amp; family photos</span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 7:00 PM</span>
-            <span class="itinerary-event">Cocktails &amp; dinner</span>
+              <span class="itinerary-time">7:00 PM</span>
+              <span class="itinerary-event">Celebrations</span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 10:00 PM</span>
-            <span class="itinerary-event">Dancing &amp; celebration</span>
+              <span class="itinerary-time">9:30 PM</span>
+              <span class="itinerary-event">Dinner</span>
+            </div>
           </div>
 
-          <!-- Day 2: Reception -->
-          <p class="itinerary-day-title">19 December 2026 &nbsp;—&nbsp; Wedding Reception</p>
+          <!-- Day 2: Wedding -->
+          <p class="itinerary-day-title">19 December 2026 &nbsp;—&nbsp; Wedding</p>
           <div class="itinerary-grid">
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 6:00 PM</span>
-            <span class="itinerary-event">Guests arrive &amp; cocktail hour</span>
+            <span class="itinerary-time">4:00 PM</span>
+            <span class="itinerary-event">Nuptial Mass<span class="itinerary-place">Our Lady of the Sea Church, Oxel</span></span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 7:30 PM</span>
-            <span class="itinerary-event">Grand entrance of the couple</span>
+            <span class="itinerary-time">6:30 PM</span>
+            <span class="itinerary-event">Guests arrive for the reception</span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 8:00 PM</span>
-            <span class="itinerary-event">Dinner &amp; toasts</span>
+            <span class="itinerary-time">7:00 PM</span>
+            <span class="itinerary-event">Couple&rsquo;s entrance</span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 9:30 PM</span>
-            <span class="itinerary-event">First dance &amp; open floor</span>
+            <span class="itinerary-time">8:30 PM</span>
+            <span class="itinerary-event">Open floor &amp; dancing</span>
 
-            <span class="itinerary-time"><!-- PLACEHOLDER --> 12:00 AM</span>
-            <span class="itinerary-event">Farewell &amp; goodnight</span>
+            <span class="itinerary-time">9:00 PM</span>
+            <span class="itinerary-event">Dinner</span>
           </div>
 
         </div><!-- /itinerary-card-inner -->
@@ -628,15 +685,21 @@
 
         <div class="faq-full-item">
           <p class="faq-full-q">When and where is the wedding?</p>
-          <p class="faq-full-a">
+          <p class="faq-full-a" data-tier="full">
             <!-- PLACEHOLDER -->
-            The Roce Ceremony is on 18 December 2026 and the Wedding Reception is on
-            19 December 2026. Both events are at Montego Bay Beach Village, Vithaldas
+            The Roce Ceremony is on 18 December 2026 at Montego Bay Beach Village, Morjim.
+            On 19 December, the Nuptial Mass is at 4:00&nbsp;PM at Our Lady of the Sea Church, Oxel,
+            and the reception follows that evening at Montego Bay Beach Village, Vithaldas
+            Waddo, Morjim, North Goa, 403512.
+          </p>
+          <p class="faq-full-a" data-tier="reception">
+            The Nuptial Mass is on 19 December 2026 at 4:00&nbsp;PM at Our Lady of the Sea Church, Oxel.
+            The reception is the same evening at Montego Bay Beach Village, Vithaldas
             Waddo, Morjim, North Goa, 403512.
           </p>
         </div>
 
-        <div class="faq-full-item">
+        <div class="faq-full-item" data-tier="full">
           <p class="faq-full-q">Do I need to attend both days?</p>
           <p class="faq-full-a">
             <!-- PLACEHOLDER -->
@@ -647,20 +710,30 @@
 
         <div class="faq-full-item">
           <p class="faq-full-q">What is the dress code?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            Smart-casual to semi-formal. We encourage guests to wear vibrant colours
-            and beach-friendly footwear. Please avoid all-white outfits out of
+          <p class="faq-full-a" data-tier="full">
+            Indo-Western fusion for the Roce. In plain terms, Indian festive wear
+            that went on a date with a Western outfit and neither of them went home:
+            a kurta with trousers, a modern saree, or anything that looks ready for
+            a wedding and a party at the same time. Formals for the Reception.
+            Please avoid all-white outfits out of courtesy to the bride.
+          </p>
+          <p class="faq-full-a" data-tier="reception">
+            Formals for the Reception. Please avoid all-white outfits out of
             courtesy to the bride.
           </p>
         </div>
 
         <div class="faq-full-item">
           <p class="faq-full-q">Are children welcome?</p>
-          <p class="faq-full-a">
+          <p class="faq-full-a" data-tier="full">
             <!-- PLACEHOLDER -->
             Yes, absolutely! We love your little ones and welcome children at both
             events. Please do let us know on the RSVP if you are bringing children
+            so we can ensure appropriate seating.
+          </p>
+          <p class="faq-full-a" data-tier="reception">
+            Yes, absolutely! We love your little ones and welcome children at the
+            Reception. Please do let us know on the RSVP if you are bringing children
             so we can ensure appropriate seating.
           </p>
         </div>
@@ -677,10 +750,8 @@
         <div class="faq-full-item">
           <p class="faq-full-q">Will there be a shuttle or transport service?</p>
           <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            We are arranging limited shuttle services from select hotels. Details
-            will be shared closer to the date. We also recommend booking a local
-            driver for convenience.
+            A shuttle runs from Montego Bay Beach Village to Our Lady of the Sea
+            Church and back, on the reception day only.
           </p>
         </div>
 
@@ -692,91 +763,46 @@
       <p class="faq-category-title">Food &amp; Drinks</p>
       <div class="faq-full-grid">
 
+        <div class="faq-full-item" data-tier="full">
+          <p class="faq-full-q">Will meals be provided?</p>
+          <p class="faq-full-a">
+            Yes, lunch and dinner will be provided on both days.
+          </p>
+        </div>
+
         <div class="faq-full-item">
           <p class="faq-full-q">Will there be vegetarian options?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
+          <p class="faq-full-a" data-tier="full">
             Yes, both the Roce dinner and the Reception will have a full vegetarian
-            menu alongside non-vegetarian options. Please mention any dietary
-            requirements on your RSVP.
+            menu alongside non-vegetarian options.
+          </p>
+          <p class="faq-full-a" data-tier="reception">
+            Yes, the Reception will have a full vegetarian menu alongside non-vegetarian
+            options.
           </p>
         </div>
 
         <div class="faq-full-item">
           <p class="faq-full-q">Is there an open bar?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            Yes! An open bar with a selection of cocktails, wine, beer, and soft
+          <p class="faq-full-a" data-tier="full">
+            Yes! An open bar with a selection of wine, beer, and soft
             drinks will be available throughout both evenings. We encourage you to
+            celebrate responsibly and arrange a safe ride.
+          </p>
+          <p class="faq-full-a" data-tier="reception">
+            Yes! An open bar with a selection of wine, beer, and soft
+            drinks will be available throughout the evening. We encourage you to
             celebrate responsibly and arrange a safe ride.
           </p>
         </div>
 
         <div class="faq-full-item">
-          <p class="faq-full-q">Can I request a special meal?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            If you have specific allergies or dietary needs, please note them on
-            your RSVP or get in touch with us directly. We will do our best to
-            accommodate you.
-          </p>
-        </div>
-
-        <div class="faq-full-item">
           <p class="faq-full-q">What cuisine will be served?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            A mix of Goan, Indian, and Continental cuisine is planned across both
-            days — with a special emphasis on local seafood and traditional Goan
-            favourites for the Roce dinner.
+          <p class="faq-full-a" data-tier="full">
+            Primarily Goan and Indian cuisine, on both days.
           </p>
-        </div>
-
-      </div><!-- /faq-full-grid -->
-    </div><!-- /faq-category -->
-
-    <!-- Category 3 -->
-    <div class="faq-category fu fu-body">
-      <p class="faq-category-title">Accommodation &amp; Travel</p>
-      <div class="faq-full-grid">
-
-        <div class="faq-full-item">
-          <p class="faq-full-q">Is accommodation available at the venue?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            Montego Bay Beach Village does have on-site accommodation. We recommend
-            booking directly with the resort and mentioning the wedding group. A
-            limited number of rooms are being held.
-          </p>
-        </div>
-
-        <div class="faq-full-item">
-          <p class="faq-full-q">How do I get to Morjim from the airport?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            Goa International Airport (Dabolim) is approximately 45 minutes away
-            by taxi. The new Manohar International Airport (Mopa) is about 20 minutes.
-            Pre-booked taxis and Ola/Uber are all readily available.
-          </p>
-        </div>
-
-        <div class="faq-full-item">
-          <p class="faq-full-q">What are the nearest hotels?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            Please see the "Where to Stay" section above for our curated list of
-            nearby hotels and properties. We will update with block-booking details
-            as they are confirmed.
-          </p>
-        </div>
-
-        <div class="faq-full-item">
-          <p class="faq-full-q">Is parking available at the venue?</p>
-          <p class="faq-full-a">
-            <!-- PLACEHOLDER -->
-            Yes, Montego Bay Beach Village has on-site parking available for guests.
-            If you are staying nearby, a short taxi or auto-rickshaw ride is the
-            most convenient option.
+          <p class="faq-full-a" data-tier="reception">
+            Primarily Goan and Indian cuisine.
           </p>
         </div>
 
@@ -792,12 +818,13 @@
      ══════════════════════════════════════════════════════════════════════════ -->
 <footer class="w-footer">
   <p class="w-footer-names fu fu-title">Gloria &amp; Shannon</p>
-  <p class="w-footer-date fu fu-body">18–19 December 2026 &nbsp;·&nbsp; Morjim, Goa</p>
+  <p class="w-footer-date fu fu-body" data-tier="full">18–19 December 2026 &nbsp;·&nbsp; Morjim, Goa</p>
+  <p class="w-footer-date fu fu-body" data-tier="reception">19 December 2026 &nbsp;·&nbsp; Morjim, Goa</p>
   <hr class="w-footer-rule" aria-hidden="true">
   <p class="w-footer-credit fu fu-body">Made with love ♥</p>
 </footer>
 
 
-<script src="./js/wedding.js?v=plum1"></script>
+<script src="./js/wedding.js?v=plum2"></script>
 </body>
 </html>

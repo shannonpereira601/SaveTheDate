@@ -2,36 +2,62 @@
  * Gloria & Shannon Wedding RSVP — Google Apps Script
  * =====================================================
  *
- * SETUP STEPS (do this once in the browser):
+ * All RSVPs go to ONE sheet tab called "RSVPs", one row per guest.
+ * The "Guest Type" column records which password the guest unlocked the site with:
+ *   Close (gloshan)     → family / close friends, invited to Roce + Reception
+ *   Reception (morjim)  → all other guests, invited to the Reception only
  *
- *  1. Go to sheets.new and create a spreadsheet. Name it "Wedding RSVP".
- *  2. The first sheet is "Sheet1" — rename it to "Reception".
- *  3. Click the + at the bottom to add a second sheet. Name it "RoceReception".
- *  4. In the spreadsheet menu: Extensions → Apps Script.
- *  5. Delete any existing code and paste this entire file.
- *  6. Change SECRET_TOKEN below to any long random string you like
- *     (example: "Goa2026GloriaShannon!"). Use the SAME value in js/rsvp.js.
- *  7. Run setupHeaders() once:
+ * SETUP / UPDATE STEPS (in the browser):
+ *
+ *  1. Open the "Wedding RSVP" spreadsheet → Extensions → Apps Script.
+ *  2. Delete the existing code and paste this entire file. Save (Ctrl+S).
+ *  3. Run setupHeaders() once:
  *       - In the function dropdown (top toolbar), choose "setupHeaders"
  *       - Click Run (▶). Approve the permissions Google asks for.
- *       - You will see header rows appear in both sheet tabs.
- *  8. Deploy as a Web App:
- *       - Click Deploy → New deployment
- *       - Type: Web app
- *       - Execute as: Me
- *       - Who has access: Anyone
- *       - Click Deploy → copy the Web app URL that appears.
- *  9. Paste that URL into js/rsvp.js as the SCRIPT_URL constant.
- * 10. IMPORTANT: Never share the Google Sheet itself publicly.
+ *       - A tab named "RSVPs" with a header row appears in the spreadsheet.
+ *         The old "Reception" / "RoceReception" tabs are no longer used and
+ *         can be deleted.
+ *  4. Publish the new code WITHOUT changing the URL:
+ *       - Deploy → Manage deployments
+ *       - Click the pencil (Edit) on the existing Web app deployment
+ *       - Version: "New version" → Deploy
+ *     (Do NOT use "New deployment" — that creates a different URL, and
+ *      js/rsvp.js would then need the new SCRIPT_URL.)
+ *  5. IMPORTANT: Never share the Google Sheet itself publicly.
  *     The web app is write-only — guests can submit but never read rows.
  *
  * TESTING:
- *  - After deploying, fill out the RSVP form on your site and submit.
- *  - Open the Sheet — you should see one row per guest in the party.
+ *  - Fill out the RSVP form on the site and submit.
+ *  - The form now shows an error if Google rejects the submission.
  *  - If rows do not appear, open Apps Script → Executions to read the error log.
  */
 
-var SECRET_TOKEN = "REPLACE_WITH_YOUR_TOKEN"; // ← change this (same value in js/rsvp.js)
+var SECRET_TOKEN = "galoria-is-the-best-kadu"; // must match TOKEN in js/rsvp.js
+var SHEET_NAME   = "RSVPs";
+
+var HEADERS = [
+  "Timestamp",
+  "Party ID",
+  "Submitted By",
+  "Party Size",
+  "Guest Name",
+  "Attending",
+  "Guest Type",
+  "Events",
+  "Phone / WhatsApp",
+  "Message"
+];
+
+var GUEST_TYPES = {
+  full      : "Close (gloshan)",
+  reception : "Reception (morjim)"
+};
+
+var FULL_TIER_EVENTS = ["Both", "Roce", "Reception"];
+
+// "@" = plain text, so "+91 98765 43210" or a message starting with "=" is stored as typed
+// instead of being parsed as a formula. Party Size stays numeric so it can be summed.
+var COLUMN_FORMATS = HEADERS.map(function (h) { return h === "Party Size" ? "0" : "@"; });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // doPost — called every time someone submits the RSVP form
@@ -51,37 +77,54 @@ function doPost(e) {
       return respond({ status: "error", message: "Unauthorized" });
     }
 
-    var ss      = SpreadsheetApp.getActiveSpreadsheet();
-    var tabName = data.tab === "RoceReception" ? "RoceReception" : "Reception";
-    var sheet   = ss.getSheetByName(tabName);
-
-    if (!sheet) {
-      return respond({ status: "error", message: "Sheet tab '" + tabName + "' not found. Run setupHeaders() first." });
-    }
-
     var timestamp   = new Date().toISOString();
     var partyId     = Utilities.getUuid();
     var names       = Array.isArray(data.names) ? data.names : [String(data.names || "")];
     var submittedBy = names[0] || "";
     var partySize   = parseInt(data.partySize, 10) || names.length;
-    var attending   = data.attending || "No";
-    var events      = tabName === "RoceReception" ? (data.events || "") : "";
-    var phone       = data.phone    || "";
-    var message     = data.message  || "";
+    var attending   = data.attending === "Yes" ? "Yes" : "No";
+    var tier        = data.tier === "full" || data.tier === "reception" ? data.tier : "";
+    var guestType   = GUEST_TYPES[tier] || "Unknown";
+    var phone       = data.phone   || "";
+    var message     = data.message || "";
 
-    // Write one row per guest so headcounts and seating are trivial
-    for (var i = 0; i < names.length; i++) {
-      sheet.appendRow([
+    // Reception-only guests can only attend the Reception, and declines attend nothing.
+    var events = "";
+    if (attending === "Yes") {
+      if (tier === "reception") {
+        events = "Reception";
+      } else if (FULL_TIER_EVENTS.indexOf(data.events) !== -1) {
+        events = data.events;
+      }
+    }
+
+    var rows = names.map(function (name, i) {
+      return [
         timestamp,
         partyId,
         submittedBy,
         partySize,
-        names[i],
+        name,
         attending,
+        guestType,
         events,
         phone,
         i === 0 ? message : ""  // message only on the first row (avoid duplication)
-      ]);
+      ];
+    });
+
+    if (rows.length) {
+      // Lock so two parties submitting at once can't interleave their rows.
+      var lock = LockService.getScriptLock();
+      lock.waitLock(10000);
+      try {
+        var sheet = getSheet();
+        var range = sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, HEADERS.length);
+        range.setNumberFormats(rows.map(function () { return COLUMN_FORMATS; }));
+        range.setValues(rows);
+      } finally {
+        lock.releaseLock();
+      }
     }
 
     return respond({ status: "ok" });
@@ -91,42 +134,29 @@ function doPost(e) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// setupHeaders — run manually once to add headers to both sheet tabs
+// setupHeaders — run manually once to create the RSVPs tab and its header row
 // ─────────────────────────────────────────────────────────────────────────────
 function setupHeaders() {
-  var ss      = SpreadsheetApp.getActiveSpreadsheet();
-  var headers = [
-    "Timestamp",
-    "Party ID",
-    "Submitted By",
-    "Party Size",
-    "Guest Name",
-    "Attending",
-    "Events",
-    "Phone / WhatsApp",
-    "Message"
-  ];
-
-  ["Reception", "RoceReception"].forEach(function (name) {
-    var sheet = ss.getSheetByName(name);
-    if (!sheet) {
-      sheet = ss.insertSheet(name);
-    }
-    if (sheet.getLastRow() === 0) {
-      var range = sheet.getRange(1, 1, 1, headers.length);
-      range.setValues([headers]);
-      range.setFontWeight("bold");
-      range.setBackground("#e8f5e9");
-      sheet.setFrozenRows(1);
-    }
-  });
-
-  Logger.log("Headers set up on both sheets.");
+  getSheet();
+  Logger.log("RSVPs tab is ready.");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
+function getSheet() {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  if (sheet.getLastRow() === 0) {
+    var range = sheet.getRange(1, 1, 1, HEADERS.length);
+    range.setValues([HEADERS]);
+    range.setFontWeight("bold");
+    range.setBackground("#e8f5e9");
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
 function respond(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))

@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <meta name="description" content="RSVP for Gloria & Shannon's Roce Ceremony on 18th December 2026 and Wedding Reception on 19th December 2026 at Montego Bay Beach Village, Morjim, Goa.">
+  <meta name="description" content="RSVP for Gloria & Shannon's Wedding Reception on 19th December 2026 at Montego Bay Beach Village, Morjim, Goa.">
   <meta name="author" content="Gloria & Shannon">
-  <title>RSVP | Roce &amp; Wedding Reception | 18–19 Dec 2026 | Gloria &amp; Shannon</title>
+  <title>RSVP | Wedding Reception | 19 Dec 2026 | Gloria &amp; Shannon</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,8 +16,9 @@
   <link rel="stylesheet" href="./css/gate.css?v=plum2">
   <script>
     try {
-      if (sessionStorage.getItem("gs-unlocked") === "1") {
-        document.documentElement.classList.add("is-unlocked");
+      var _tier = sessionStorage.getItem("gs-tier");
+      if (_tier === "full" || _tier === "reception") {
+        document.documentElement.classList.add("is-unlocked", "tier-" + _tier);
       } else {
         document.documentElement.classList.add("is-gated");
       }
@@ -38,7 +39,7 @@
       <button class="site-gate-btn" type="submit">Enter</button>
     </form>
   </div>
-  <script src="./js/gate.js?v=1"></script>
+  <script src="./js/gate.js?v=2"></script>
 
   <header class="rsvp-mast">
     <div class="rsvp-corner rsvp-corner--tl" aria-hidden="true">
@@ -87,11 +88,11 @@
       <p class="rsvp-lede">Kindly reply by <strong>30th November 2026</strong></p>
 
       <div class="rsvp-dates">
-        <p>
+        <p data-tier="full">
           <span class="rsvp-date-name">Roce Ceremony</span>
           <span class="rsvp-date-when">18 December</span>
         </p>
-        <span class="rsvp-date-rule" aria-hidden="true"></span>
+        <span class="rsvp-date-rule" data-tier="full" aria-hidden="true"></span>
         <p>
           <span class="rsvp-date-name">Wedding Reception</span>
           <span class="rsvp-date-when">19 December</span>
@@ -101,7 +102,7 @@
 
       <section aria-label="RSVP form">
         <div id="rsvp-form-wrap">
-          <form id="rsvp-form" data-tab="RoceReception" novalidate>
+          <form id="rsvp-form" novalidate>
             <div class="rsvp-honeypot" aria-hidden="true">
               <input type="text" name="website" tabindex="-1" autocomplete="off">
             </div>
@@ -149,7 +150,7 @@
 
               <div id="names-container"></div>
 
-              <div class="rsvp-field">
+              <div class="rsvp-field" data-tier="full">
                 <label class="rsvp-label" for="events">Which events will your group attend?</label>
                 <select class="rsvp-select" id="events" name="events">
                   <option value="Both">Roce Ceremony &amp; Reception — both days</option>
@@ -193,6 +194,6 @@
     </div>
   </main>
 
-  <script src="./js/rsvp.js?v=20260312d"></script>
+  <script src="./js/rsvp.js?v=20261009b"></script>
 </body>
 </html>

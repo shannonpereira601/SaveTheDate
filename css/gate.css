@@ -1,5 +1,15 @@
 /* Password gate — wedding.html and rsvp.html (deep plum/cream). Roce pages override to green. */
 
+/* ── Two-tier content visibility ─────────────────────────────────────────────
+   data-tier="full"      → shown only to family/close-friends (full password)
+   data-tier="reception" → shown only to general guests (reception password)
+   Default: hide full-tier blocks so a page-load failure never leaks Roce info.
+   ────────────────────────────────────────────────────────────────────────── */
+html:not(.tier-full)      [data-tier="full"]      { display: none !important; }
+html.tier-full            [data-tier="reception"]  { display: none !important; }
+/* If somehow no tier class at all, also hide reception-only alternates */
+html:not(.tier-reception):not(.tier-full) [data-tier="reception"] { display: none !important; }
+
 html.is-gated {
   overflow: hidden;
 }

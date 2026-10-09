@@ -15,6 +15,7 @@
   /* ── CONFIG ──────────────────────────────────────────────────────────────── */
   var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzb77-H3zog6fOWu3X3uPYuujnyG8t7anW5x0zXQM3R8eurdQgjnKneg0DkAB8ukvJk/exec";
   var TOKEN      = "galoria-is-the-best-kadu";
+  var SUBMIT_TIMEOUT_MS = 30000;
 
   /* ── Element refs ────────────────────────────────────────────────────────── */
   var form           = document.getElementById("rsvp-form");
@@ -124,13 +125,17 @@
       }
     }
 
-    // Events (Roce page only — the <select name="events"> is only on rsvp.html)
-    var eventsEl = form.querySelector('[name="events"]');
+    // The tier records which password the guest used: "full" (gloshan) or
+    // "reception" (morjim). Only full-tier guests who accept see the events dropdown.
+    var root     = document.documentElement;
+    var tier     = root.classList.contains("tier-full") ? "full"
+                 : root.classList.contains("tier-reception") ? "reception" : "";
+    var eventsEl = (tier === "full" && attending === "yes") ? form.querySelector('[name="events"]') : null;
     var events   = eventsEl ? eventsEl.value : "";
 
     var payload = {
       token    : TOKEN,
-      tab      : form.getAttribute("data-tab") || "Reception",
+      tier     : tier,
       attending: attending === "yes" ? "Yes" : "No",
       partySize: partySize,
       names    : names,
@@ -141,24 +146,43 @@
 
     setLoading(true);
 
-    // mode: "no-cors" sidesteps the CORS preflight that Google Apps Script
-    // redirects would otherwise block. The response is opaque (we can't read
-    // the status code), so we show success once the request goes through and
-    // catch genuine network failures in the catch block.
+    // Apps Script can be slow on a cold start, so allow a generous wait before giving up.
+    var controller = window.AbortController ? new AbortController() : null;
+    var timer = window.setTimeout(function () {
+      if (controller) { controller.abort(); }
+    }, SUBMIT_TIMEOUT_MS);
+
+    // A plain-string body is sent as text/plain, which avoids a CORS preflight
+    // (Apps Script can't answer OPTIONS) while still letting us read the JSON reply.
     fetch(SCRIPT_URL, {
       method : "POST",
-      mode   : "no-cors",
-      body   : JSON.stringify(payload)
+      body   : JSON.stringify(payload),
+      signal : controller ? controller.signal : undefined
     })
-    .then(function () {
+    .then(function (res) { return res.json(); })
+    .then(function (result) {
+      window.clearTimeout(timer);
       setLoading(false);
-      showSuccess(attending);
+      if (result && result.status === "ok") {
+        showSuccess(attending);
+      } else {
+        showSubmitFailure(result && result.message);
+      }
     })
-    .catch(function () {
+    .catch(function (err) {
+      window.clearTimeout(timer);
       setLoading(false);
-      showError("Could not send your RSVP. Please check your connection and try again.");
+      showSubmitFailure(err && err.name === "AbortError" ? "timed out" : String(err));
     });
   });
+
+  function showSubmitFailure(reason) {
+    if (window.console) { console.error("RSVP submission failed:", reason || "unknown reason"); }
+    showError(
+      "Sorry, your RSVP didn\u2019t go through. Please reach out to Shannon, Gloria " +
+      "or any of their family members \u2014 they\u2019ll make a note of your RSVP for you."
+    );
+  }
 
   /* ── Helpers ─────────────────────────────────────────────────────────────── */
   function getAttending() {

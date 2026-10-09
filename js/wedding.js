@@ -7,8 +7,13 @@
   "use strict";
 
   /* ── Countdown ──────────────────────────────────────────────────────────── */
-  // Target: 18 Dec 2026 00:00:00 IST (UTC+5:30 → 17 Dec 2026 18:30:00 UTC)
-  var TARGET = Date.UTC(2026, 11, 17, 18, 30, 0); // months are 0-indexed
+  // Full-access guests count down to the Roce (18 Dec); reception-only guests
+  // count down to the Reception (19 Dec).
+  // 18 Dec 2026 00:00:00 IST → 17 Dec 2026 18:30:00 UTC
+  // 19 Dec 2026 00:00:00 IST → 18 Dec 2026 18:30:00 UTC
+  var TARGET = document.documentElement.classList.contains("tier-reception")
+    ? Date.UTC(2026, 11, 18, 18, 30, 0)   // 19 Dec IST
+    : Date.UTC(2026, 11, 17, 18, 30, 0);  // 18 Dec IST (default / family)
 
   function pad(n) {
     return n < 10 ? "0" + n : String(n);
@@ -480,4 +485,108 @@
   }
 
   setupEnvelopeOpen();
+
+  /* ── Invitation letter: words gather when the guest asks to read ───────── */
+  function setupInviteLetter() {
+    var root = document.getElementById("invite-letter");
+    var btn = document.getElementById("letter-read");
+    var sheet = document.getElementById("invite-letter-body");
+    if (!root || !btn || !sheet) { return; }
+
+    var wrapped = false;
+
+    function wrapWords(el) {
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          if (!node.nodeValue || !/\S/.test(node.nodeValue)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      var texts = [];
+      while (walker.nextNode()) { texts.push(walker.currentNode); }
+
+      for (var t = 0; t < texts.length; t++) {
+        var textNode = texts[t];
+        var parts = textNode.nodeValue.split(/(\s+)/);
+        var frag = document.createDocumentFragment();
+        for (var p = 0; p < parts.length; p++) {
+          var part = parts[p];
+          if (!part) { continue; }
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(" "));
+          } else {
+            var span = document.createElement("span");
+            span.className = "letter-word";
+            span.textContent = part;
+            frag.appendChild(span);
+          }
+        }
+        textNode.parentNode.replaceChild(frag, textNode);
+      }
+    }
+
+    function settleFocus() {
+      sheet.tabIndex = -1;
+      btn.hidden = true;
+      sheet.focus({ preventScroll: true });
+    }
+
+    btn.addEventListener("click", function () {
+      if (root.classList.contains("is-open")) { return; }
+
+      if (!wrapped) {
+        wrapWords(sheet);
+        wrapped = true;
+      }
+
+      var motion = document.documentElement.classList.contains("js-motion") && !prefersReduced();
+      var words = sheet.querySelectorAll(".letter-word");
+      if (motion && words.length && typeof words[0].animate === "function") {
+        root.classList.add("is-gathering");
+      }
+
+      btn.hidden = true;
+      btn.setAttribute("aria-expanded", "true");
+      root.classList.add("is-open");
+
+      if (!motion || !words.length || typeof words[0].animate !== "function") {
+        root.classList.remove("is-gathering");
+        settleFocus();
+        return;
+      }
+
+      var count = words.length;
+      var cascade = Math.min(1500, Math.max(680, count * 5.2));
+      for (var i = 0; i < count; i++) {
+        var n = count === 1 ? 0 : i / (count - 1);
+        var x = Math.sin(i * 2.17) * 26;
+        var y = Math.cos(i * 1.31) * 18 - 6;
+        var r = Math.sin(i * 0.77) * 7;
+        words[i].animate([
+          {
+            opacity: 0,
+            transform: "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0) rotate(" + r.toFixed(1) + "deg)",
+            filter: "blur(5px)"
+          },
+          {
+            opacity: 1,
+            transform: "none",
+            filter: "blur(0px)"
+          }
+        ], {
+          duration: 760,
+          delay: n * cascade,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          fill: "backwards"
+        });
+      }
+
+      root.classList.remove("is-gathering");
+      settleFocus();
+    });
+  }
+
+  setupInviteLetter();
 })();
