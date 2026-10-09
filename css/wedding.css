@@ -471,15 +471,22 @@ body {
   object-fit: cover;
   object-position: center 28%;
   filter: grayscale(1) contrast(1.55) brightness(1.08);
-  animation: photoboothReelIn 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Held above the frame until the gate opens, so the reel doesn't play
+     behind the password screen. */
+  transform: translateY(-108%);
   pointer-events: none;
   user-select: none;
 }
 
-.photobooth-shot:nth-child(1) img { animation-delay: 0.18s; object-position: center center; }
-.photobooth-shot:nth-child(2) img { animation-delay: 0.98s; object-position: center 42%; }
-.photobooth-shot:nth-child(3) img { animation-delay: 1.78s; object-position: center center; }
-.photobooth-shot:nth-child(4) img { animation-delay: 2.58s; object-position: center 30%; }
+html.is-unlocked .photobooth-shot img {
+  animation: photoboothReelIn 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--reel-delay, 0s);
+}
+
+.photobooth-shot:nth-child(1) img { --reel-delay: 0.18s; object-position: center center; }
+.photobooth-shot:nth-child(2) img { --reel-delay: 0.98s; object-position: center 42%; }
+.photobooth-shot:nth-child(3) img { --reel-delay: 1.78s; object-position: center center; }
+.photobooth-shot:nth-child(4) img { --reel-delay: 2.58s; object-position: center 30%; }
 
 @keyframes photoboothReelIn {
   from { transform: translateY(-108%); }
@@ -2181,7 +2188,8 @@ html:not(.js-motion) .envelope-scene::before,
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   .hero-scroll { display: none; }
   html { scroll-behavior: auto; }
-  .photobooth-shot img {
+  .photobooth-shot img,
+  html.is-unlocked .photobooth-shot img {
     animation: none;
     transform: none;
   }

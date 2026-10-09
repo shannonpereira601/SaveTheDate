@@ -185,6 +185,13 @@ body.rsvp-page ::selection {
   text-align: center;
 }
 
+/* Reception guests only see 19 December. The two-column grid would park
+   that single date in the left cell, including above the thank-you. */
+html.tier-reception .rsvp-dates {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
 .rsvp-date-rule {
   width: 1px;
   height: 64px;
