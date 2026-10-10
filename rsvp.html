@@ -12,15 +12,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Tangerine:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/rsvp.css?v=20261009b">
-  <link rel="stylesheet" href="./css/gate.css?v=plum3">
+  <link rel="stylesheet" href="./css/rsvp.css?v=20261010a">
+  <link rel="stylesheet" href="./css/gate.css?v=plum4">
   <script>
     try {
+      if (sessionStorage.getItem("gs-rules") !== "2") {
+        sessionStorage.removeItem("gs-tier");
+        sessionStorage.removeItem("gs-lead");
+      }
       var _tier = sessionStorage.getItem("gs-tier");
+      var _lead = sessionStorage.getItem("gs-lead");
       if (_tier === "full" || _tier === "reception") {
         document.documentElement.classList.add("is-unlocked", "tier-" + _tier);
       } else {
         document.documentElement.classList.add("is-gated");
+      }
+      if (_lead === "gloria" || _lead === "shannon") {
+        document.documentElement.classList.add("lead-" + _lead);
+      }
+      if (_lead === "shannon") {
+        document.title = document.title.replace("Gloria & Shannon", "Shannon & Gloria");
       }
     } catch (e) {
       document.documentElement.classList.add("is-gated");
@@ -39,7 +50,7 @@
       <button class="site-gate-btn" type="submit">Enter</button>
     </form>
   </div>
-  <script src="./js/gate.js?v=3"></script>
+  <script src="./js/gate.js?v=5"></script>
 
   <header class="rsvp-mast">
     <div class="rsvp-corner rsvp-corner--tl" aria-hidden="true">
@@ -74,7 +85,7 @@
     <div class="rsvp-mast-inner">
       <a class="rsvp-back" href="./wedding.html">← The invitation</a>
       <h1 class="rsvp-title">RSVP</h1>
-      <p class="rsvp-names">Gloria &amp; Shannon</p>
+      <p class="rsvp-names names-swap"><span class="names-default">Gloria &amp; Shannon</span><span class="names-shannon">Shannon &amp; Gloria</span></p>
       <p class="rsvp-meta">
         <span>18 &amp; 19 December 2026</span>
         <span class="rsvp-meta-rule" aria-hidden="true"></span>
@@ -190,10 +201,10 @@
         </div>
       </section>
 
-      <p class="rsvp-close">With love, Gloria &amp; Shannon</p>
+      <p class="rsvp-close names-swap"><span class="names-default">With love, Gloria &amp; Shannon</span><span class="names-shannon">With love, Shannon &amp; Gloria</span></p>
     </div>
   </main>
 
-  <script src="./js/rsvp.js?v=20261009b"></script>
+  <script src="./js/rsvp.js?v=20261010a"></script>
 </body>
 </html>

@@ -124,29 +124,31 @@
     rose: "#B56E9A"
   };
 
+  /* Slices run smallest to largest. rose is lightest, deep is darkest. */
   var PIES = {
     gloria: {
       slices: [
         { pct: 0.08, tone: "rose", legend: 0 },
-        { pct: 0.24, tone: "dust", legend: 1 },
-        { pct: 0.12, tone: "mid",  legend: 2 },
+        { pct: 0.12, tone: "dust", legend: 1 },
+        { pct: 0.24, tone: "mid",  legend: 2 },
         { pct: 0.56, tone: "deep", legend: 3 }
       ]
     },
     shannon: {
       slices: [
         { pct: 0.07, tone: "rose", legend: 0 },
-        { pct: 0.18, tone: "dust", legend: 1 },
-        { pct: 0.08, tone: "mid",  legend: 2 },
-        { pct: 0.67, tone: "deep", legend: 3 }
+        { pct: 0.08, tone: "dust", legend: 1 },
+        { pct: 0.24, tone: "mid",  legend: 2 },
+        { pct: 0.61, tone: "deep", legend: 3 }
       ]
     }
   };
 
+  var FULL_H = 158; // height of the 100% bar
   var BARS = [
     { x: 70,  w: 64, h: 158, pct: 100, tone: "deep", labelX: 102 },
     { x: 154, w: 64, h: 128, pct: 81,  tone: "mid",  labelX: 186 },
-    { x: 238, w: 64, h: 102, pct: 65,  tone: "dust", labelX: 270 }
+    { x: 238, w: 64, h: FULL_H * 0.65, pct: 65, tone: "dust", labelX: 270, shadePct: 36 }
   ];
 
   var CX = 100;
@@ -315,6 +317,8 @@
     var axes = svg.querySelector(".bar-axes");
     var labels = svg.querySelectorAll(".bar-label");
     var pcts = svg.querySelectorAll(".bar-pct");
+    var shadeNote = svg.querySelector(".bar-shade-note");
+    var totalPct = svg.querySelector(".bar-pct--total");
     var duration = 340;
     var stagger = 140;
 
@@ -337,6 +341,7 @@
         var bar = BARS[i];
         var t = progress[i] || 0;
         var hgt = bar.h * t;
+        var shadeH = bar.shadePct ? (FULL_H * bar.shadePct / 100) * t : 0;
         if (hgt > 1.5) {
           var node = document.createElementNS(NS, "rect");
           node.setAttribute("x", String(bar.x));
@@ -347,14 +352,33 @@
           node.setAttribute("fill", MAROON[bar.tone]);
           bars.appendChild(node);
         }
-        var yTop = BASE_Y - hgt;
+        if (shadeH > 1.5) {
+          var shade = document.createElementNS(NS, "rect");
+          shade.setAttribute("x", String(bar.x));
+          shade.setAttribute("y", String(BASE_Y - hgt - shadeH));
+          shade.setAttribute("width", String(bar.w));
+          shade.setAttribute("height", String(shadeH));
+          shade.setAttribute("class", "bar-rect bar-rect--shade");
+          shade.setAttribute("fill", "url(#gift-shade)");
+          bars.appendChild(shade);
+        }
+        var yTop = BASE_Y - hgt - shadeH;
         if (labels[i]) {
           labels[i].setAttribute("y", Math.max(18, yTop - 8).toFixed(2));
           labels[i].setAttribute("opacity", t > 0.28 ? String(Math.min(1, (t - 0.28) / 0.45)) : "0");
         }
         if (pcts[i]) {
-          pcts[i].setAttribute("y", (yTop + 18).toFixed(2));
+          pcts[i].setAttribute("y", (BASE_Y - hgt + 18).toFixed(2));
           pcts[i].setAttribute("opacity", t > 0.55 ? String(Math.min(1, (t - 0.55) / 0.3)) : "0");
+        }
+        if (shadeNote && bar.shadePct) {
+          shadeNote.setAttribute("x", String(bar.x + bar.w + 10));
+          shadeNote.setAttribute("y", (BASE_Y - hgt - shadeH / 2).toFixed(2));
+          shadeNote.setAttribute("opacity", t > 0.72 ? String(Math.min(1, (t - 0.72) / 0.28)) : "0");
+        }
+        if (totalPct && bar.shadePct) {
+          totalPct.setAttribute("y", (yTop + 18).toFixed(2));
+          totalPct.setAttribute("opacity", t > 0.72 ? String(Math.min(1, (t - 0.72) / 0.28)) : "0");
         }
       }
     }

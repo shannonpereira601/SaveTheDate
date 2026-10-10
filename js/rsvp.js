@@ -178,8 +178,11 @@
 
   function showSubmitFailure(reason) {
     if (window.console) { console.error("RSVP submission failed:", reason || "unknown reason"); }
+    var lead = "";
+    try { lead = sessionStorage.getItem("gs-lead") || ""; } catch (e) { /* keep the written order */ }
+    var pair = lead === "gloria" ? "Gloria, Shannon" : "Shannon, Gloria";
     showError(
-      "Sorry, your RSVP didn\u2019t go through. Please reach out to Shannon, Gloria " +
+      "Sorry, your RSVP didn\u2019t go through. Please reach out to " + pair + " " +
       "or any of their family members \u2014 they\u2019ll make a note of your RSVP for you."
     );
   }

@@ -576,7 +576,7 @@ html.is-unlocked .photobooth-shot img {
 }
 
 .welcome-couple {
-  margin: 2px 0 20px;
+  margin: 2px 0 14px;
   font-family: var(--ff-display);
   font-weight: 500;
   font-style: normal;
@@ -584,6 +584,33 @@ html.is-unlocked .photobooth-shot img {
   line-height: 1.3;
   letter-spacing: 0.01em;
   color: var(--maroon);
+}
+
+.welcome-verse {
+  margin: 0 0 22px;
+  max-width: 24em;
+}
+
+.welcome-verse-line {
+  display: block;
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+  line-height: 1.45;
+  color: var(--maroon-mid);
+}
+
+.welcome-verse-cite {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--ff-label);
+  font-style: normal;
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--maroon-light);
 }
 
 .welcome-couple-amp {
@@ -1014,6 +1041,15 @@ html.js .invite-letter.is-gathering .letter-word {
   stroke-width: 1.6px;
   paint-order: stroke fill;
   stroke-linejoin: round;
+  pointer-events: none;
+}
+.bar-shade-note {
+  font-family: var(--ff-label);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.01em;
+  fill: var(--maroon-mid);
   pointer-events: none;
 }
 .bar-pct {

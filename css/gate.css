@@ -23,6 +23,18 @@ html.is-unlocked .site-gate {
   display: none !important;
 }
 
+/* Whose name comes first. Default markup is the morjim / unset order.
+   A side password reveals the matching alternate and hides the default
+   only when that alternate exists, so a line that is already right stays. */
+.names-gloria,
+.names-shannon { display: none; }
+
+html.lead-gloria .names-swap:has(> .names-gloria) > .names-default { display: none; }
+html.lead-gloria .names-swap > .names-gloria { display: inline; }
+
+html.lead-shannon .names-swap:has(> .names-shannon) > .names-default { display: none; }
+html.lead-shannon .names-swap > .names-shannon { display: inline; }
+
 .site-gate {
   --gate-bg: #F4F2EB;
   --gate-card: #FBF9F3;
