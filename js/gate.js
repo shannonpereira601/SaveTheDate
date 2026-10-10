@@ -7,6 +7,10 @@
  * Unlocking once persists for the browser session (sessionStorage), so moving
  * between wedding.html and rsvp.html does not re-prompt.
  *
+ * The printed invite links to rsvp.html?invite=reception. That opens the
+ * reception tier — the same access as the morjim password — without a prompt.
+ * A normal visit still asks for a password, and family passwords are unchanged.
+ *
  * Some full-tier passwords also choose whose name is written first wherever
  * Gloria and Shannon are named together (headings, labels, the tab title).
  * The letter, memory lane, and other story copy are left alone.
@@ -172,7 +176,22 @@
   }
 
   /* ── Bootstrap ───────────────────────────────────────────────────────────── */
+  function inviteTier() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get("invite") === "reception") return "reception";
+    } catch (e) { /* old browsers keep the password prompt */ }
+    return "";
+  }
+
   var tier = storedTier();
+  // The card link unlocks reception only. A family password already saved
+  // in this tab stays as it is.
+  if (inviteTier() === "reception" && tier !== "full") {
+    tier = "reception";
+    persistTier(tier);
+    persistLead("");
+  }
   if (tier === "full" || tier === "reception") {
     var savedLead = storedLead();
     applyTier(tier);

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gloria &amp; Shannon · Wedding Reception · 19 December 2026</title>
+  <style>
+    @font-face {
+      font-family: "Allura";
+      font-style: normal;
+      font-weight: 400;
+      src: url("fonts/allura.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Jost";
+      font-style: normal;
+      font-weight: 100 900;
+      src: url("fonts/jost.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      font-style: normal;
+      font-weight: 400 900;
+      src: url("fonts/playfair.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      font-style: italic;
+      font-weight: 400 900;
+      src: url("fonts/playfair-italic.woff2") format("woff2");
+    }
+
+    @page {
+      size: 390px 844px;
+      margin: 0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 390px;
+      height: 844px;
+      overflow: hidden;
+      background: #F4F2EB;
+      color: #3D1534;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      width: 390px;
+      height: 844px;
+      display: flex;
+      flex-direction: column;
+      background: #F4F2EB;
+    }
+
+    .hero {
+      position: relative;
+      flex: 0 0 auto;
+      background: #3D1534;
+      color: #F4F2EB;
+      text-align: center;
+      padding: 22px 22px 18px;
+    }
+
+    .corner {
+      position: absolute;
+      width: 54px;
+      height: 54px;
+      pointer-events: none;
+    }
+    .corner--tl { top: 8px; left: 8px; }
+    .corner--tr { top: 8px; right: 8px; transform: scaleX(-1); }
+
+    .kicker {
+      font-family: "Jost", sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: #E0C48A;
+      margin-bottom: 12px;
+    }
+
+    .photo {
+      width: 100%;
+      height: 168px;
+      object-fit: cover;
+      object-position: center 22%;
+      border-radius: 2px;
+      border: 1px solid rgba(201, 169, 110, 0.55);
+      display: block;
+    }
+
+    .names {
+      font-family: "Allura", cursive;
+      font-weight: 400;
+      font-size: 42px;
+      line-height: 1;
+      color: #F4F2EB;
+      margin-top: 10px;
+      white-space: nowrap;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 6px;
+      font-family: "Jost", sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(244, 242, 235, 0.86);
+    }
+    .meta-rule {
+      width: 28px;
+      height: 1px;
+      background: #C9A96E;
+      flex: none;
+    }
+
+    .body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      padding: 14px 22px 12px;
+      min-height: 0;
+    }
+
+    .invite {
+      text-align: center;
+    }
+
+    .couple {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+    }
+    .couple em {
+      font-style: italic;
+      font-weight: 400;
+      color: #5F2A48;
+      padding: 0 0.15em;
+    }
+
+    .kin {
+      margin-top: 6px;
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #5F2A48;
+    }
+    .kin-label {
+      display: block;
+      margin-top: 7px;
+      font-family: "Jost", sans-serif;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 9.5px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: #7D4E6A;
+    }
+    .kin-label:first-child { margin-top: 0; }
+
+    .day-label {
+      font-family: "Jost", sans-serif;
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      text-align: center;
+      color: #7D4E6A;
+    }
+
+    .venues {
+      margin-top: 8px;
+      display: grid;
+      gap: 6px;
+    }
+    .venue {
+      display: grid;
+      grid-template-columns: 62px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 2px 0 2px 10px;
+      border-left: 2px solid #C9A96E;
+    }
+    .venue-time {
+      font-family: "Jost", sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: #3D1534;
+    }
+    .venue-name {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+    .venue-place {
+      display: block;
+      margin-top: 1px;
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 11.5px;
+      color: #5F2A48;
+    }
+    .map {
+      font-family: "Jost", sans-serif;
+      font-weight: 500;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #C9A96E;
+      border-bottom: 1px solid #C9A96E;
+      padding-bottom: 1px;
+      margin-right: 2px;
+    }
+
+    .schedule {
+      margin-top: 4px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 8px;
+      align-items: baseline;
+      padding: 4px 0 4px 12px;
+      border-bottom: 1px solid rgba(61, 21, 52, 0.12);
+    }
+    .row:last-child { border-bottom: none; }
+    .row time {
+      font-family: "Jost", sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: #3D1534;
+    }
+    .row span {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .notes {
+      text-align: center;
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #5F2A48;
+    }
+    .notes strong {
+      font-style: normal;
+      font-weight: 500;
+      color: #3D1534;
+    }
+
+    .foot {
+      flex: 0 0 auto;
+      background: #3D1534;
+      color: #F4F2EB;
+      text-align: center;
+      padding: 12px 22px 14px;
+    }
+    .signoff {
+      font-family: "Allura", cursive;
+      font-size: 28px;
+      line-height: 1;
+      color: #F4F2EB;
+    }
+    .signoff-sub {
+      margin-top: 2px;
+      font-family: "Jost", sans-serif;
+      font-weight: 400;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #E0C48A;
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header class="hero">
+      <svg class="corner corner--tl" viewBox="0 0 54 54" fill="none" aria-hidden="true">
+        <path d="M2 2 Q28 2 28 28 M2 2 Q2 28 28 28" stroke="#C9A96E" stroke-width="0.8"/>
+        <path d="M8 2 Q28 2 28 22 M2 8 Q2 28 22 28" stroke="#C9A96E" stroke-width="0.5" opacity="0.55"/>
+        <circle cx="28" cy="28" r="1.4" fill="#C9A96E" opacity="0.7"/>
+      </svg>
+      <svg class="corner corner--tr" viewBox="0 0 54 54" fill="none" aria-hidden="true">
+        <path d="M2 2 Q28 2 28 28 M2 2 Q2 28 28 28" stroke="#C9A96E" stroke-width="0.8"/>
+        <path d="M8 2 Q28 2 28 22 M2 8 Q2 28 22 28" stroke="#C9A96E" stroke-width="0.5" opacity="0.55"/>
+        <circle cx="28" cy="28" r="1.4" fill="#C9A96E" opacity="0.7"/>
+      </svg>
+
+      <p class="kicker">You are invited</p>
+      <img class="photo" src="couple.jpg" alt="Gloria and Shannon">
+      <h1 class="names">Gloria &amp; Shannon</h1>
+      <p class="meta">
+        <span class="meta-rule" aria-hidden="true"></span>
+        <span>19 December 2026</span>
+        <span class="meta-rule" aria-hidden="true"></span>
+      </p>
+    </header>
+
+    <div class="body">
+      <section class="invite">
+        <p class="couple">Shannon Earl Pereira <em>&amp;</em> Gloria Noronha</p>
+        <p class="kin">
+          <span class="kin-label">Together with our parents</span>
+          Eric &amp; Severine Pereira<br>
+          Ambrose &amp; Rita Noronha
+          <span class="kin-label">And our siblings</span>
+          Elisha Pereira · Clifton Noronha
+        </p>
+      </section>
+
+      <section>
+        <p class="day-label">Saturday in Goa</p>
+        <div class="venues">
+          <div class="venue">
+            <div class="venue-time">4:00 PM</div>
+            <div>
+              <div class="venue-name">Nuptial Mass</div>
+              <span class="venue-place">Our Lady of the Sea Church, Oxel</span>
+            </div>
+            <a class="map" href="https://www.google.com/maps/dir/?api=1&amp;destination=Our+Lady+of+the+Sea+Church,+Oxel,+Siolim,+Goa+403517&amp;travelmode=driving">Map</a>
+          </div>
+          <div class="venue">
+            <div class="venue-time">Evening</div>
+            <div>
+              <div class="venue-name">Wedding Reception</div>
+              <span class="venue-place">Montego Bay Beach Village, Morjim</span>
+            </div>
+            <a class="map" href="https://www.google.com/maps/dir/?api=1&amp;destination=Montego+Bay+Beach+Village,+Vithaldas+Waddo,+Morjim,+Pernem,+Goa+403512&amp;travelmode=driving">Map</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="schedule" aria-label="Evening">
+        <div class="row"><time>6:30 PM</time><span>Guests arrive</span></div>
+        <div class="row"><time>7:00 PM</time><span>Couple's entrance</span></div>
+        <div class="row"><time>8:30 PM</time><span>Dancing</span></div>
+        <div class="row"><time>9:00 PM</time><span>Dinner</span></div>
+      </section>
+
+      <p class="notes">
+        Formals. Please avoid all-white, out of courtesy to the bride.<br>
+        A shuttle runs from the resort to the church and back.<br>
+        <strong>Kindly RSVP by 30 November 2026.</strong>
+      </p>
+    </div>
+
+    <footer class="foot">
+      <p class="signoff">With love</p>
+      <p class="signoff-sub">Morjim, Goa</p>
+    </footer>
+  </article>
+</body>
+</html>

@@ -16,9 +16,17 @@
   <link rel="stylesheet" href="./css/gate.css?v=plum4">
   <script>
     try {
+      // The printed invite links here with ?invite=reception so those guests
+      // skip the password and land on the morjim (reception-only) tier.
+      var _fromCard = new URLSearchParams(location.search).get("invite") === "reception";
       if (sessionStorage.getItem("gs-rules") !== "2") {
         sessionStorage.removeItem("gs-tier");
         sessionStorage.removeItem("gs-lead");
+      }
+      if (_fromCard && sessionStorage.getItem("gs-tier") !== "full") {
+        sessionStorage.setItem("gs-tier", "reception");
+        sessionStorage.removeItem("gs-lead");
+        sessionStorage.setItem("gs-rules", "2");
       }
       var _tier = sessionStorage.getItem("gs-tier");
       var _lead = sessionStorage.getItem("gs-lead");
@@ -50,7 +58,7 @@
       <button class="site-gate-btn" type="submit">Enter</button>
     </form>
   </div>
-  <script src="./js/gate.js?v=5"></script>
+  <script src="./js/gate.js?v=6"></script>
 
   <header class="rsvp-mast">
     <div class="rsvp-corner rsvp-corner--tl" aria-hidden="true">
