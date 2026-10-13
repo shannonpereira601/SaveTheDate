@@ -1480,7 +1480,7 @@ html:not(.js-motion) .envelope-scene::before,
 }
 
 .story-title {
-  color: var(--maroon);
+  color: var(--cream);
   text-align: center;
   margin-bottom: 12px;
 }
@@ -1493,7 +1493,7 @@ html:not(.js-motion) .envelope-scene::before,
   font-size: 0.9rem;
   font-style: italic;
   line-height: 1.5;
-  color: var(--maroon-mid);
+  color: rgba(244, 242, 235, 0.78);
 }
 
 .timeline {
@@ -1510,7 +1510,7 @@ html:not(.js-motion) .envelope-scene::before,
   left: 50%;
   transform: translateX(-50%);
   width: 1px;
-  border-left: 2px dotted rgba(58,21,16,0.25);
+  border-left: 2px dotted rgba(224, 196, 138, 0.55);
 }
 
 .timeline-item {
@@ -1583,7 +1583,7 @@ html:not(.js-motion) .envelope-scene::before,
   position: absolute;
   top: 50%;
   height: 1px;
-  background: rgba(58, 21, 16, 0.5);
+  background: rgba(224, 196, 138, 0.7);
   pointer-events: none;
   transform: translateY(-50%);
 }
@@ -1606,7 +1606,7 @@ html:not(.js-motion) .envelope-scene::before,
   color: var(--maroon);
   background: var(--cream);
   padding: 5px 8px;
-  border: 1px solid rgba(58,21,16,0.2);
+  border: 1px solid rgba(224, 196, 138, 0.85);
   border-radius: 2px;
   white-space: nowrap;
   text-align: center;
@@ -1671,7 +1671,7 @@ html:not(.js-motion) .envelope-scene::before,
   font-size: 0.78rem;
   line-height: 1.45;
   letter-spacing: 0;
-  color: var(--maroon-mid);
+  color: rgba(244, 242, 235, 0.86);
   margin: 0;
   padding: 0 2px;
   font-style: italic;
