@@ -412,35 +412,60 @@
     window.requestAnimationFrame(tick);
   }
 
-  var figures = document.getElementById("figures");
-  if (figures) {
-    var started = false;
-    function playFigures() {
-      if (started) { return; }
-      started = true;
-      animatePies(figures);
-      animateBars(figures);
+  var figuresStarted = false;
+  function playFigures() {
+    if (figuresStarted) { return; }
+    var figures = document.getElementById("figures");
+    if (!figures) { return; }
+    figuresStarted = true;
+    animatePies(figures);
+    animateBars(figures);
+  }
+
+  function setupFiguresReport() {
+    var section = document.getElementById("figures");
+    var openBtn = document.getElementById("figures-open");
+    var sheet = document.getElementById("figures-sheet");
+    if (!section || !openBtn || !sheet) { return; }
+
+    var closes = section.querySelectorAll(".figures-close");
+
+    function openReport() {
+      section.classList.add("is-open");
+      openBtn.setAttribute("aria-expanded", "true");
+      window.requestAnimationFrame(function () {
+        playFigures();
+      });
+      sheet.tabIndex = -1;
+      sheet.focus({ preventScroll: true });
     }
 
-    if ("IntersectionObserver" in window) {
-      var io = new IntersectionObserver(function (entries) {
-        for (var i = 0; i < entries.length; i++) {
-          if (entries[i].isIntersecting) {
-            playFigures();
-            io.disconnect();
-            break;
-          }
-        }
-      }, { threshold: 0.32, rootMargin: "0px 0px -8% 0px" });
-      io.observe(figures);
-    } else {
-      playFigures();
+    function closeReport() {
+      if (!section.classList.contains("is-open")) { return; }
+      section.classList.remove("is-open");
+      openBtn.setAttribute("aria-expanded", "false");
+      openBtn.focus();
     }
+
+    openBtn.addEventListener("click", openReport);
+    for (var c = 0; c < closes.length; c++) {
+      closes[c].addEventListener("click", closeReport);
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape" || !section.classList.contains("is-open")) { return; }
+      if (!section.contains(document.activeElement)) { return; }
+      closeReport();
+    });
 
     if (document.documentElement.classList.contains("is-print")) {
+      section.classList.add("is-open");
+      openBtn.setAttribute("aria-expanded", "true");
       playFigures();
     }
   }
+
+  setupFiguresReport();
 
   /* ── Section fade-up on scroll ──────────────────────────────────────────── */
   function setupFadeUp() {
@@ -521,12 +546,16 @@
     var sheet = document.getElementById("invite-letter-body");
     if (!root || !btn || !sheet) { return; }
 
+    var closes = root.querySelectorAll(".letter-close");
     var wrapped = false;
 
     function wrapWords(el) {
       var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
         acceptNode: function (node) {
           if (!node.nodeValue || !/\S/.test(node.nodeValue)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          if (node.parentElement && node.parentElement.closest("button")) {
             return NodeFilter.FILTER_REJECT;
           }
           return NodeFilter.FILTER_ACCEPT;
@@ -560,6 +589,24 @@
       btn.hidden = true;
       sheet.focus({ preventScroll: true });
     }
+
+    function closeLetter() {
+      if (!root.classList.contains("is-open")) { return; }
+      root.classList.remove("is-open", "is-gathering");
+      btn.hidden = false;
+      btn.setAttribute("aria-expanded", "false");
+      btn.focus();
+    }
+
+    for (var c = 0; c < closes.length; c++) {
+      closes[c].addEventListener("click", closeLetter);
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape" || !root.classList.contains("is-open")) { return; }
+      if (!root.contains(document.activeElement)) { return; }
+      closeLetter();
+    });
 
     btn.addEventListener("click", function () {
       if (root.classList.contains("is-open")) { return; }

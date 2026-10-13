@@ -624,15 +624,15 @@ html.is-unlocked .photobooth-shot img {
 .welcome-kin {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin: 0 0 32px;
+  gap: 3px;
+  margin: 0 0 22px;
   max-width: 36em;
 }
 
 .welcome-with {
   font-family: var(--ff-label);
-  font-size: 0.66rem;
-  letter-spacing: 0.26em;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--maroon-light);
 }
@@ -644,8 +644,8 @@ html.is-unlocked .photobooth-shot img {
 .welcome-parents {
   font-family: var(--ff-serif);
   font-style: italic;
-  font-size: 1.02rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.4;
   color: var(--maroon-mid);
 }
 
@@ -708,6 +708,51 @@ html.is-unlocked .photobooth-shot img {
 .letter-read[hidden],
 .invite-letter.is-open .letter-read {
   display: none;
+}
+
+.letter-close,
+.figures-close {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  padding: 11px 20px;
+  background: transparent;
+  color: var(--maroon);
+  border: 1px solid rgba(201, 169, 110, 0.95);
+  border-radius: 2px;
+  font-family: var(--ff-label);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+}
+
+.letter-close:hover,
+.figures-close:hover {
+  background: var(--maroon);
+  color: var(--cream);
+  border-color: var(--maroon);
+}
+
+.letter-close:focus-visible,
+.figures-close:focus-visible,
+.figures-open:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+html.js .letter-close,
+html:not(.js) .letter-close {
+  display: none;
+}
+
+html.js .invite-letter.is-open .letter-close {
+  display: inline-flex;
 }
 
 .invite-letter.is-open .invite-kicker {
@@ -779,6 +824,75 @@ html.js .invite-letter.is-gathering .letter-word {
   padding: var(--section-pad-v) 0;
   background: var(--cream);
   color: var(--maroon);
+}
+
+html.js .s-figures:not(.is-open) {
+  padding: clamp(40px, 6vw, 72px) 0;
+}
+
+.figures-gate {
+  max-width: 34rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.figures-gate .figures-names {
+  margin-bottom: 22px;
+}
+
+.figures-open {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: min(28rem, 100%);
+  padding: 14px 22px;
+  background: transparent;
+  color: var(--maroon);
+  border: 1px solid rgba(201, 169, 110, 0.95);
+  border-radius: 2px;
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: clamp(1rem, 2.2vw, 1.15rem);
+  line-height: 1.35;
+  text-align: center;
+  text-wrap: balance;
+  cursor: pointer;
+  transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+}
+
+.figures-open:hover {
+  background: var(--maroon);
+  color: var(--cream);
+  border-color: var(--maroon);
+}
+
+html.js .figures-sheet {
+  display: none;
+}
+
+html.js .s-figures.is-open .figures-sheet {
+  display: block;
+}
+
+html.js .s-figures.is-open .figures-gate {
+  display: none;
+}
+
+html:not(.js) .figures-gate,
+html:not(.js) .figures-close {
+  display: none;
+}
+
+.figures-sheet:focus {
+  outline: none;
+}
+
+.figures-close-row {
+  display: flex;
+  justify-content: center;
+  padding: 4px 16px 28px;
 }
 
 .figures-sheet {
@@ -1372,13 +1486,13 @@ html:not(.js-motion) .envelope-scene::before,
 }
 
 .story-body {
-  max-width: 28rem;
-  margin: 0 auto 32px;
+  max-width: 26rem;
+  margin: 0 auto 20px;
   text-align: center;
   font-family: var(--ff-serif);
-  font-size: clamp(0.95rem, 2vw, 1.05rem);
+  font-size: 0.9rem;
   font-style: italic;
-  line-height: 1.7;
+  line-height: 1.5;
   color: var(--maroon-mid);
 }
 
@@ -1551,11 +1665,11 @@ html:not(.js-motion) .envelope-scene::before,
   line-height: 1.15;
 }
 .timeline-caption {
-  max-width: 16rem;
+  max-width: 15rem;
   text-align: center;
   font-family: var(--ff-serif);
-  font-size: 0.84rem;
-  line-height: 1.55;
+  font-size: 0.78rem;
+  line-height: 1.45;
   letter-spacing: 0;
   color: var(--maroon-mid);
   margin: 0;
@@ -1730,6 +1844,16 @@ html:not(.js-motion) .envelope-scene::before,
   font-size: clamp(2.35rem, 4.8vw, 3.4rem);
   color: var(--cream);
   text-align: center;
+  margin-bottom: 8px;
+}
+
+.venue-name {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+  color: var(--cream);
+  text-align: center;
+  line-height: 1.35;
   margin-bottom: 10px;
 }
 
@@ -2064,6 +2188,10 @@ html:not(.js-motion) .envelope-scene::before,
 }
 
 @media (max-width: 720px) {
+  /* Phones: one photo each for Montego Bay and the church */
+  .venue-photos .venue-shot:nth-child(n + 2) { display: none; }
+  .venue-photos { max-width: min(420px, 100%); }
+
   /* Nav */
   .w-nav-links { display: none; }
   #w-menu-btn { display: flex; }
@@ -2212,10 +2340,13 @@ html:not(.js-motion) .envelope-scene::before,
 /* Phones: keep labels at 13px+ and reading text at 16px+ so older guests can read without zooming */
 @media (max-width: 720px) {
   .hero-meta { font-size: 0.85rem; font-weight: 400; }
-  .welcome-with { font-size: 0.8rem; }
-  .welcome-parents { font-size: 1.1rem; }
+  .welcome-with { font-size: 0.68rem; }
+  .welcome-parents { font-size: 0.95rem; }
   .welcome-body p { font-size: 1.06rem; }
-  .letter-read { font-size: 0.85rem; }
+  .letter-read,
+  .letter-close,
+  .figures-close { font-size: 0.78rem; }
+  .figures-open { font-size: 1.05rem; }
 
   .figures-kicker { font-size: 0.8rem; }
   .pie-callouts li { font-size: 0.95rem; }
@@ -2224,7 +2355,8 @@ html:not(.js-motion) .envelope-scene::before,
   .countdown-cta { font-size: 0.9rem; }
 
   .timeline-year { font-size: 0.82rem; }
-  .timeline-caption { font-size: 1rem; }
+  .story-body { font-size: 0.9rem; }
+  .timeline-caption { font-size: 0.88rem; line-height: 1.45; }
 
   .venue-address { font-size: 1rem; color: rgba(244,242,235,0.82); }
   .venue-photo-credit { font-size: 0.7rem; }
