@@ -2113,6 +2113,16 @@ html:not(.js-motion) .envelope-scene::before,
   line-height: 1.8;
   color: var(--maroon-mid);
 }
+.faq-full-a ul {
+  margin: 8px 0 0;
+  padding-left: 1.15em;
+  list-style: disc;
+}
+.faq-full-a li + li { margin-top: 4px; }
+.faq-full-a strong {
+  font-weight: 700;
+  color: var(--maroon);
+}
 
 /* ── FOOTER ────────────────────────────────────────────────────────────────── */
 .w-footer {
