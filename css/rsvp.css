@@ -253,6 +253,18 @@ html.tier-reception .rsvp-dates {
   color: var(--maroon-light);
 }
 
+.rsvp-note {
+  margin: -2px 0 10px;
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-transform: none;
+  color: var(--maroon-light);
+}
+
 .rsvp-input,
 .rsvp-select,
 .rsvp-textarea {
