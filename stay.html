@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Suggested hotels and Airbnbs near Montego Bay Beach Village, Morjim, for 17–20 December 2026.">
+  <meta name="author" content="Gloria & Shannon">
+  <title>Where to stay | Morjim, Goa</title>
+  <link rel="shortcut icon" href="favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="./css/stay.css?v=3">
+</head>
+<body class="stay-page">
+
+  <header class="stay-mast">
+    <div class="stay-mast-inner">
+      <a class="stay-back" href="./wedding.html">← Invitation</a>
+      <h1 class="stay-title">Where to stay</h1>
+      <p class="stay-lede">These are tentative suggestions near the venue to help you plan. Prices are per night for 17–20 December and can change, so please check when you book.</p>
+    </div>
+  </header>
+
+  <div class="stay-controls" id="stay-controls">
+    <div class="stay-controls-inner">
+      <div class="control-top">
+        <div class="seg" role="group" aria-label="View">
+          <button type="button" data-view="list" aria-pressed="true">List</button>
+          <button type="button" data-view="map" aria-pressed="false">Map</button>
+        </div>
+        <p class="result-count" id="result-count" aria-live="polite"></p>
+        <label class="sort-label" for="stay-sort">
+          <span class="visually-hidden">Sort by</span>
+          <select id="stay-sort">
+            <option value="recommended">Recommended</option>
+            <option value="closest">Closest</option>
+            <option value="price">Lowest price</option>
+            <option value="rating">Top rated</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="chip-scroll">
+        <div class="chip-row" role="group" aria-label="Type of stay">
+          <button type="button" class="chip" data-filter="type" data-value="hotel" aria-pressed="false">Hotels</button>
+          <button type="button" class="chip" data-filter="type" data-value="airbnb" aria-pressed="false">Airbnbs</button>
+        </div>
+        <span class="chip-divider" aria-hidden="true"></span>
+        <div class="chip-row" role="group" aria-label="Price">
+          <button type="button" class="chip" data-filter="tier" data-value="budget" aria-pressed="false">Budget</button>
+          <button type="button" class="chip" data-filter="tier" data-value="mid" aria-pressed="false">Mid</button>
+          <button type="button" class="chip" data-filter="tier" data-value="premium" aria-pressed="false">Premium</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="stay-main">
+    <div class="stay-wrap">
+      <div id="stay-results"></div>
+
+      <div class="map-wrap" id="map-wrap" hidden>
+        <div class="map-frame">
+          <div id="stay-map" role="region" aria-label="Map of suggested stays near Montego Bay Beach Village"></div>
+          <ul class="map-legend" aria-label="Map key">
+            <li><span class="legend-dot legend-dot--venue" aria-hidden="true"></span> Venue</li>
+            <li><span class="legend-dot legend-dot--hotel" aria-hidden="true"></span> Hotel</li>
+            <li><span class="legend-dot legend-dot--airbnb" aria-hidden="true"></span> Airbnb</li>
+          </ul>
+        </div>
+        <p class="map-credit">Tap a pin for price and booking. Pins marked approximate show the area, not the exact door.</p>
+      </div>
+
+      <details class="prices-note">
+        <summary>How prices work</summary>
+        <div class="prices-note-body">
+          <p>A hotel price is per room for 2 adults. A range runs from the cheapest room to the most expensive room listed.</p>
+          <p>An Airbnb price is for the whole place. The listing says how many people it sleeps.</p>
+          <p>Prices include taxes and fees and were checked on 29 October 2026. Distances are from Montego Bay Beach Village. Every place has 100 or more reviews.</p>
+          <p>Ratings with a star are out of 5. Hotel stars are Google. Airbnb stars are Airbnb’s own. Orange Villa is a Booking.com score, shown out of 10.</p>
+          <p>Aloha by the Sea is booked by phone. Ask for Ashay and mention Shannon’s name.</p>
+        </div>
+      </details>
+
+      <section class="good-to-know" aria-labelledby="good-title">
+        <h2 id="good-title">Good to know</h2>
+        <ul>
+          <li>Sharing with friends? A 2–3 bedroom Airbnb split four ways often works out cheaper per person than a hotel room.</li>
+          <li>More than a 15-minute walk away? Plan a cab or scooter, especially for getting back late after the reception.</li>
+          <li>Staying in Siolim? You cross the Siolim bridge, which gets busy in December, so leave a little extra time.</li>
+          <li>Airbnbs are single homes. Once someone books one, it is gone.</li>
+          <li>Different dates? The links open with 17–20 December already selected. Change them if you are staying other nights.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="stay-footer">
+    <p>Montego Bay Beach Village · Morjim, Goa</p>
+  </footer>
+
+  <noscript>
+    <p class="noscript">This page needs JavaScript to show the stays, filters, and map.</p>
+  </noscript>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+  <script src="./js/stays.js?v=3" defer></script>
+</body>
+</html>

@@ -2119,6 +2119,12 @@ html:not(.js-motion) .envelope-scene::before,
   list-style: disc;
 }
 .faq-full-a li + li { margin-top: 4px; }
+.faq-full-a a {
+  color: var(--maroon);
+  font-weight: 700;
+  text-decoration-color: var(--gold);
+  text-underline-offset: 3px;
+}
 .faq-full-a strong {
   font-weight: 700;
   color: var(--maroon);
