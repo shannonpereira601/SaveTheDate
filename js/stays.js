@@ -1,6 +1,8 @@
 /* Stays for stay.html.
    Prices are per night, taxes included, for 17–20 Dec 2026, checked 29 Oct 2026.
-   lat/lng come from public listings. approx: the pin is the area, not the door.
+   Hotel lat/lng are the published place pin.
+   Airbnb lat/lng are the public pin on the listing. Airbnb hides the exact door until booking.
+   approx: that public pin, not the door.
    Travel times are the ones we checked, not a new route calculation. */
 
 var STAYS = [
@@ -264,9 +266,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/49289724?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.622638,
-    lng: 73.73245,
-    mapQuery: "Cute Riverside Cottage, Morjim, Goa"
+    lat: 15.61901,
+    lng: 73.73822,
+    approx: true,
+    mapQuery: "15.61901,73.73822"
   },
   {
     id: "mangrove",
@@ -285,9 +288,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/1232723002021213382?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.618823,
-    lng: 73.758093,
-    mapQuery: "South Mangrove Studio, Siolim, Goa"
+    lat: 15.619,
+    lng: 73.7582,
+    approx: true,
+    mapQuery: "15.619,73.7582"
   },
   {
     id: "riviera",
@@ -306,9 +310,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/10683847?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.619505,
-    lng: 73.773451,
-    mapQuery: "Riviera Sapphire, Bamon Vaddo, Siolim, Goa"
+    lat: 15.6187,
+    lng: 73.7708,
+    approx: true,
+    mapQuery: "15.6187,73.7708"
   },
   {
     id: "ashwem-3bhk",
@@ -327,10 +332,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/21617506?check_in=2026-12-17&check_out=2026-12-20&adults=4",
-    lat: 15.648,
-    lng: 73.7185,
+    lat: 15.64394,
+    lng: 73.71904,
     approx: true,
-    mapQuery: "Ashwem Beach, Goa"
+    mapQuery: "15.64394,73.71904"
   },
   {
     id: "ashwem-2br",
@@ -349,10 +354,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/5166941?check_in=2026-12-17&check_out=2026-12-20&adults=4",
-    lat: 15.6545,
-    lng: 73.7215,
+    lat: 15.64944,
+    lng: 73.71565,
     approx: true,
-    mapQuery: "Ashwem Beach, Goa"
+    mapQuery: "15.64944,73.71565"
   },
   {
     id: "chic-siolim",
@@ -371,10 +376,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/975910766033105279?check_in=2026-12-17&check_out=2026-12-20&adults=4",
-    lat: 15.624,
-    lng: 73.769,
+    lat: 15.6195,
+    lng: 73.7666,
     approx: true,
-    mapQuery: "Siolim, Goa"
+    mapQuery: "15.6195,73.7666"
   },
   {
     id: "riverfront",
@@ -393,10 +398,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/1019322401545227380?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.621,
-    lng: 73.7585,
+    lat: 15.618146,
+    lng: 73.757806,
     approx: true,
-    mapQuery: "Siolim, Goa"
+    mapQuery: "15.618146,73.757806"
   },
   {
     id: "river-villa",
@@ -415,9 +420,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/23735064?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.626453,
-    lng: 73.743915,
-    mapQuery: "Morjim River Villa, Morjim, Goa"
+    lat: 15.6217,
+    lng: 73.7384,
+    approx: true,
+    mapQuery: "15.6217,73.7384"
   },
   {
     id: "charming",
@@ -436,10 +442,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/1252815083628656139?check_in=2026-12-17&check_out=2026-12-20&adults=4",
-    lat: 15.6335,
-    lng: 73.741,
+    lat: 15.6391,
+    lng: 73.7202,
     approx: true,
-    mapQuery: "Morjim, Goa"
+    mapQuery: "15.6391,73.7202"
   },
   {
     id: "radha",
@@ -458,9 +464,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/1220170819303634493?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.620172,
-    lng: 73.768611,
-    mapQuery: "Radha House, Siolim, Goa"
+    lat: 15.6202,
+    lng: 73.7684,
+    approx: true,
+    mapQuery: "15.6202,73.7684"
   },
   {
     id: "amber",
@@ -479,9 +486,10 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/921031497596682581?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.622633,
-    lng: 73.76772,
-    mapQuery: "Amber Glasshouse, Siolim, Goa"
+    lat: 15.61671,
+    lng: 73.76279,
+    approx: true,
+    mapQuery: "15.61671,73.76279"
   }
 ];
 
