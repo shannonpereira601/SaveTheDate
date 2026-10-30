@@ -43,8 +43,8 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Google",
     bookUrl: "https://www.booking.com/hotel/in/whoopers-boutique-morjim.html?checkin=2026-12-17&checkout=2026-12-20&group_adults=2&selected_currency=INR",
-    lat: 15.639194,
-    lng: 73.723884,
+    lat: 15.639277,
+    lng: 73.723827,
     mapQuery: "Whoopers Boutique Hotel, Morjim, Goa"
   },
   {
@@ -83,9 +83,8 @@ var STAYS = [
     ratingScale: 10,
     ratingSource: "Booking.com",
     bookUrl: "https://www.booking.com/hotel/in/aparthotel-orange-village-morjim.html?checkin=2026-12-17&checkout=2026-12-20&group_adults=2&selected_currency=INR",
-    lat: 15.632,
-    lng: 73.7365,
-    approx: true,
+    lat: 15.625851,
+    lng: 73.736006,
     mapQuery: "Orange Villa, Morjim Beach, Morjim, Goa"
   },
   {
@@ -144,8 +143,8 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Google",
     bookUrl: "https://www.booking.com/hotel/in/the-artist-cottages.html?checkin=2026-12-17&checkout=2026-12-20&group_adults=2&selected_currency=INR",
-    lat: 15.6344229,
-    lng: 73.7234887,
+    lat: 15.634523,
+    lng: 73.723598,
     mapQuery: "The Artist Cottages, Gawde Wada, Morjim, Goa"
   },
   {
@@ -184,8 +183,8 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Google",
     bookUrl: "https://www.booking.com/hotel/in/justa-morjim-beach-resort-goa.html?checkin=2026-12-17&checkout=2026-12-20&group_adults=2&selected_currency=INR",
-    lat: 15.629179,
-    lng: 73.72713,
+    lat: 15.629814,
+    lng: 73.727125,
     mapQuery: "jüSTa Morjim Beach Resort, Vithaldaswada, Morjim, Goa"
   },
   {
@@ -204,8 +203,8 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Google",
     bookUrl: "https://www.booking.com/hotel/in/the-acacia-resort-morjim-goa.html?checkin=2026-12-17&checkout=2026-12-20&group_adults=2&selected_currency=INR",
-    lat: 15.63864,
-    lng: 73.724151,
+    lat: 15.638649,
+    lng: 73.724115,
     mapQuery: "The Acacia Resort and Spa, Morjim, Goa"
   },
   {
@@ -244,8 +243,8 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Google",
     bookUrl: "https://www.booking.com/hotel/in/marbela-beach-resort.html?checkin=2026-12-17&checkout=2026-12-20&group_adults=2&selected_currency=INR",
-    lat: 15.640162,
-    lng: 73.722258,
+    lat: 15.638082,
+    lng: 73.720674,
     mapQuery: "Marbela Beach Resort, Morjim, Goa"
   },
   {
@@ -265,10 +264,9 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/49289724?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.619,
-    lng: 73.745,
-    approx: true,
-    mapQuery: "Morjim riverside, Morjim, Goa"
+    lat: 15.622638,
+    lng: 73.73245,
+    mapQuery: "Cute Riverside Cottage, Morjim, Goa"
   },
   {
     id: "mangrove",
@@ -287,10 +285,9 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/1232723002021213382?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.6165,
-    lng: 73.758,
-    approx: true,
-    mapQuery: "Siolim, Goa"
+    lat: 15.618823,
+    lng: 73.758093,
+    mapQuery: "South Mangrove Studio, Siolim, Goa"
   },
   {
     id: "riviera",
@@ -309,8 +306,8 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/10683847?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.619638,
-    lng: 73.772015,
+    lat: 15.619505,
+    lng: 73.773451,
     mapQuery: "Riviera Sapphire, Bamon Vaddo, Siolim, Goa"
   },
   {
@@ -352,8 +349,8 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/5166941?check_in=2026-12-17&check_out=2026-12-20&adults=4",
-    lat: 15.6555,
-    lng: 73.7158,
+    lat: 15.6545,
+    lng: 73.7215,
     approx: true,
     mapQuery: "Ashwem Beach, Goa"
   },
@@ -418,10 +415,9 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/23735064?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.6145,
-    lng: 73.7395,
-    approx: true,
-    mapQuery: "Morjim, Goa"
+    lat: 15.626453,
+    lng: 73.743915,
+    mapQuery: "Morjim River Villa, Morjim, Goa"
   },
   {
     id: "charming",
@@ -462,10 +458,9 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/1220170819303634493?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.632,
-    lng: 73.771,
-    approx: true,
-    mapQuery: "Siolim, Goa"
+    lat: 15.620172,
+    lng: 73.768611,
+    mapQuery: "Radha House, Siolim, Goa"
   },
   {
     id: "amber",
@@ -484,10 +479,9 @@ var STAYS = [
     ratingScale: 5,
     ratingSource: "Airbnb",
     bookUrl: "https://www.airbnb.co.in/rooms/921031497596682581?check_in=2026-12-17&check_out=2026-12-20&adults=2",
-    lat: 15.6305,
-    lng: 73.763,
-    approx: true,
-    mapQuery: "Siolim, Goa"
+    lat: 15.622633,
+    lng: 73.76772,
+    mapQuery: "Amber Glasshouse, Siolim, Goa"
   }
 ];
 
