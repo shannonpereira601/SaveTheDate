@@ -23,9 +23,8 @@ var STAYS = [
     phoneText: "+91 98929 81762",
     bookLabel: "Call",
     bookNote: "Family friend · Mention Shannon’s name",
-    lat: 15.6258,
-    lng: 73.7262,
-    approx: true,
+    lat: 15.6301322,
+    lng: 73.729923,
     mapQuery: "Aloha by the Sea, Vithaldas Wada, Morjim Beach Road, Morjim, Goa"
   },
   {

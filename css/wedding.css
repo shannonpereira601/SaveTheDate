@@ -1985,38 +1985,19 @@ html:not(.js-motion) .envelope-scene::before,
   border: 1.5px solid rgba(244,242,235,0.2);
   padding: clamp(28px, 5vw, 52px);
   position: relative;
-  /* Lace-like corner decorations via box-shadow and pseudo */
 }
-.itinerary-card::before,
-.itinerary-card::after {
-  content: '';
+/* Squares sit in the four corners of the frame, sharing its edges. */
+.itinerary-corner {
   position: absolute;
-  width: 28px; height: 28px;
-  border: 1.5px solid rgba(244,242,235,0.2);
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid rgba(244,242,235,0.35);
+  pointer-events: none;
 }
-.itinerary-card::before {
-  top: -10px; left: -10px;
-}
-.itinerary-card::after {
-  bottom: -10px; right: -10px;
-}
-/* Extra corner via a wrapper */
-.itinerary-card-inner::before,
-.itinerary-card-inner::after {
-  content: '';
-  position: absolute;
-  width: 28px; height: 28px;
-  border: 1.5px solid rgba(244,242,235,0.2);
-}
-.itinerary-card-inner {
-  position: relative;
-}
-.itinerary-card-inner::before {
-  top: -36px; right: -36px;
-}
-.itinerary-card-inner::after {
-  bottom: -36px; left: -36px;
-}
+.itinerary-corner--tl { top: -1px; left: -1px; }
+.itinerary-corner--tr { top: -1px; right: -1px; }
+.itinerary-corner--bl { bottom: -1px; left: -1px; }
+.itinerary-corner--br { bottom: -1px; right: -1px; }
 
 .itinerary-day-title {
   font-family: var(--ff-label);
