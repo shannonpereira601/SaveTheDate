@@ -265,23 +265,20 @@ a:focus-visible {
   top: 0;
   z-index: 3;
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
   margin: 0 -12px 6px;
   padding: 8px 12px;
   background: var(--cream);
 }
 
-.team-filters::-webkit-scrollbar {
-  display: none;
-}
-
 .team-filter {
-  flex: none;
+  flex: 1 1 auto;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  white-space: nowrap;
   min-height: 34px;
   padding: 0 12px;
   border: 1px solid var(--cream-dark);
@@ -331,6 +328,18 @@ a:focus-visible {
 .team-filter:disabled {
   opacity: 0.45;
   cursor: default;
+}
+
+@media (max-width: 400px) {
+  .team-filters {
+    gap: 5px;
+  }
+
+  .team-filter {
+    gap: 4px;
+    padding: 0 8px;
+    font-size: 0.74rem;
+  }
 }
 
 /* ---------- Tasks ---------- */
