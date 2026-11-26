@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/team.css?v=4">
+  <link rel="stylesheet" href="./css/team.css?v=5">
 </head>
 <body>
   <header class="team-top">
@@ -36,6 +36,11 @@
       critical: '<path d="M12 2.8 21.2 12 12 21.2 2.8 12Z" fill="currentColor" stroke="none"/><path d="M12 7.6v5.3" style="stroke:var(--crit-ink,#fff)" stroke-width="2.2"/><circle cx="12" cy="16.3" r="1.3" style="fill:var(--crit-ink,#fff)" stroke="none"/>',
       phone: '<path d="M5 3.5h3.2l1.6 4.3-2.1 1.3a11 11 0 0 0 5.2 5.2l1.3-2.1 4.3 1.6V17a2.5 2.5 0 0 1-2.7 2.5C9.7 19 5 14.3 4.5 6.2A2.5 2.5 0 0 1 5 3.5Z"/>',
       chevron: '<path d="m7 10 5 5 5-5"/>',
+      todo: '<circle cx="12" cy="12" r="8.5"/>',
+      progress: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor" stroke="none"/>',
+      done: '<circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none"/><path d="m7.8 12.4 2.8 2.8 5.6-5.8" style="stroke:#fff" stroke-width="2.2"/>',
+      note: '<path d="M5 5.5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-7.5L7 20v-3.5H5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z"/>',
+      plus: '<path d="M12 5v14M5 12h14"/>',
     };
 
     const app = document.getElementById('app');
@@ -154,7 +159,7 @@
 
     function extras(row, columns, known) {
       const skip = new Set(known.map((key) => key.toLowerCase()));
-      skip.add('as');
+      for (const key of ['as', 'status', 'statusby', 'statusat', 'notes']) skip.add(key);
       const fields = (columns || Object.keys(row)).filter((key) => {
         return key && !skip.has(key.toLowerCase()) && row[key];
       });
@@ -257,141 +262,177 @@
       }
     }
 
-    function progressControls(task, flash, redraw, draft) {
-      const wrap = el('div', 'team-progress');
-      const control = el('div', 'team-status-control');
-      control.setAttribute('role', 'group');
-      control.setAttribute('aria-label', 'Status');
-      const buttons = [];
-      const msg = el('p', 'team-save-msg' + (flash && !flash.ok ? ' is-error' : ''));
-      msg.setAttribute('aria-live', 'polite');
-      if (flash) msg.textContent = flash.text;
-
-      function press(label) {
-        for (const button of buttons) {
-          button.setAttribute('aria-pressed', button.dataset.status === label ? 'true' : 'false');
-        }
-      }
-
-      function lock(on) {
-        wrap.setAttribute('aria-busy', on ? 'true' : 'false');
-        for (const button of buttons) button.disabled = on;
-        area.disabled = on;
-        save.disabled = on;
-      }
-
-      async function saveStatus(label) {
-        if (label === taskStatus(task) && task.statusAt) return;
-        if (inflight.has(task.ID)) return;
-        inflight.add(task.ID);
-        press(label);
-        msg.classList.remove('is-error');
-        msg.textContent = 'Saving…';
-        lock(true);
-        try {
-          const payload = await postUpdate({ taskId: task.ID, status: label });
-          applyProgress(task, payload);
-          redraw({ id: task.ID, text: 'Saved ✓', ok: true });
-        } catch (error) {
-          press(taskStatus(task));
-          lock(false);
-          msg.classList.add('is-error');
-          msg.textContent = error.message;
-        } finally {
-          inflight.delete(task.ID);
-        }
-      }
-
-      for (const label of STATUSES) {
-        const button = el('button', 'team-status-btn', label);
-        button.type = 'button';
-        button.dataset.status = label;
-        button.setAttribute('aria-pressed', label === taskStatus(task) ? 'true' : 'false');
-        button.addEventListener('click', () => saveStatus(label));
-        buttons.push(button);
-        control.append(button);
-      }
-
-      const meta = el('p', 'team-status-meta');
-      if (task.statusAt) {
-        const when = formatUpdated(task.statusAt);
-        meta.textContent = 'Last updated by ' + (task.statusBy || 'someone') + (when ? ', ' + when + ' IST' : '');
-      }
-
-      const thread = el('ul', 'team-thread');
-      fillThread(thread, task.notes);
-
-      const box = el('div', 'team-note-form');
-      const label = el('label', 'team-note-label');
-      label.append(el('span', '', 'Add a note (optional)'));
-      const area = el('textarea', 'team-note-input');
-      area.maxLength = 500;
-      area.rows = 2;
-      area.placeholder = 'Called Malcolm, waiting for reply';
-      area.autocomplete = 'off';
-      if (draft) area.value = draft;
-      const counter = el('span', 'team-note-count', area.value.length + ' / 500');
-      area.addEventListener('input', () => {
-        counter.textContent = area.value.length + ' / 500';
-      });
-      label.append(area);
-      const save = el('button', 'team-save', 'Save note');
-      save.type = 'button';
-      const row = el('div', 'team-note-row');
-      row.append(counter, save);
-      box.append(label, row);
-
-      save.addEventListener('click', async () => {
-        const text = area.value.trim();
-        if (!text) {
-          msg.classList.add('is-error');
-          msg.textContent = 'Write a note first.';
-          area.focus();
-          return;
-        }
-        if (inflight.has(task.ID)) return;
-        inflight.add(task.ID);
-        msg.classList.remove('is-error');
-        msg.textContent = 'Saving…';
-        lock(true);
-        try {
-          const payload = await postUpdate({ taskId: task.ID, note: text });
-          applyProgress(task, payload);
-          area.value = '';
-          redraw({ id: task.ID, text: 'Saved ✓', ok: true });
-        } catch (error) {
-          lock(false);
-          msg.classList.add('is-error');
-          msg.textContent = error.message;
-        } finally {
-          inflight.delete(task.ID);
-        }
-      });
-
-      wrap.append(control, meta, thread, box, msg);
-      return wrap;
+    function statusIcon(status) {
+      const name = status === 'Done' ? 'done' : status === 'In progress' ? 'progress' : 'todo';
+      return icon(name, 'team-st is-' + name);
     }
 
-    function taskCard(task, data, flash, redraw, draft) {
-      const days = daysUntil(task.Due);
-      const critical = isCritical(task);
+    // The part that opens under a task: status, details, notes.
+    function taskPanel(task, state, redraw) {
+      const panel = el('div', 'team-task-panel');
+      const msg = el('p', 'team-save-msg' + (state.flash && !state.flash.ok ? ' is-error' : ''));
+      msg.setAttribute('aria-live', 'polite');
+      if (state.flash) msg.textContent = state.flash.text;
+
+      function lock(on) {
+        panel.setAttribute('aria-busy', on ? 'true' : 'false');
+        panel.querySelectorAll('button, textarea').forEach((node) => { node.disabled = on; });
+      }
+
+      function fail(text) {
+        msg.classList.add('is-error');
+        msg.textContent = text;
+      }
+
+      async function send(fields, onSaved) {
+        if (inflight.has(task.ID)) return false;
+        inflight.add(task.ID);
+        msg.classList.remove('is-error');
+        msg.textContent = 'Saving…';
+        lock(true);
+        try {
+          const payload = await postUpdate({ taskId: task.ID, ...fields });
+          applyProgress(task, payload);
+          if (onSaved) onSaved();
+          redraw({ id: task.ID, text: 'Saved ✓', ok: true });
+          return true;
+        } catch (error) {
+          lock(false);
+          fail(error.message);
+          return false;
+        } finally {
+          inflight.delete(task.ID);
+        }
+      }
+
+      if (task.ID) {
+        const seg = el('div', 'team-seg');
+        seg.setAttribute('role', 'group');
+        seg.setAttribute('aria-label', 'Status');
+        const buttons = [];
+        const press = (label) => buttons.forEach((b) => {
+          b.setAttribute('aria-pressed', b.dataset.status === label ? 'true' : 'false');
+        });
+        for (const label of STATUSES) {
+          const button = el('button');
+          button.type = 'button';
+          button.dataset.status = label;
+          button.append(statusIcon(label), el('span', '', label));
+          button.setAttribute('aria-pressed', label === taskStatus(task) ? 'true' : 'false');
+          button.addEventListener('click', async () => {
+            if (label === taskStatus(task) && task.statusAt) return;
+            press(label);
+            if (!(await send({ status: label }))) press(taskStatus(task));
+          });
+          buttons.push(button);
+          seg.append(button);
+        }
+        panel.append(seg);
+        if (task.statusAt) {
+          const when = formatUpdated(task.statusAt);
+          panel.append(el('p', 'team-status-meta', 'Updated by ' + (task.statusBy || 'someone') + (when ? ' · ' + when : '')));
+        }
+      }
+
       const plan = task['Detailed notes'];
       const phone = task['Contact to call'];
-      const more = extras(task, data.columns?.tasks, TASK_KNOWN);
-      const hasBody = plan || phone || more;
-      const status = taskStatus(task);
+      const more = extras(task, state.columns, TASK_KNOWN);
+      if (plan || phone || more) {
+        const details = el('div', 'team-task-details');
+        if (plan) details.append(withPhoneLinks(el('p', 'team-body'), plan));
+        if (phone) details.append(contact(phone));
+        if (more) details.append(more);
+        panel.append(details);
+      }
 
-      const card = el('article', 'team-card team-task');
+      if (task.ID) {
+        const block = el('div', 'team-notes-block');
+        const thread = el('ul', 'team-thread');
+        fillThread(thread, task.notes);
+
+        const add = el('button', 'team-add-note');
+        add.type = 'button';
+        add.append(icon('plus'), el('span', '', 'Add a note'));
+
+        const form = el('div', 'team-note-form');
+        const area = el('textarea', 'team-note-input');
+        area.maxLength = 500;
+        area.rows = 3;
+        area.placeholder = 'e.g. Called the florist, waiting to hear back';
+        area.setAttribute('aria-label', 'Note');
+        area.value = state.draft || '';
+        const counter = el('span', 'team-note-count');
+        const count = () => {
+          counter.textContent = area.value.length > 400 ? area.value.length + ' / 500' : '';
+        };
+        count();
+        area.addEventListener('input', count);
+        const cancel = el('button', 'team-cancel', 'Cancel');
+        cancel.type = 'button';
+        const save = el('button', 'team-save', 'Save');
+        save.type = 'button';
+        const row = el('div', 'team-note-row');
+        row.append(counter, cancel, save);
+        form.append(area, row);
+
+        const composing = !!(state.composing || state.draft);
+        form.hidden = !composing;
+        add.hidden = composing;
+
+        add.addEventListener('click', () => {
+          form.hidden = false;
+          add.hidden = true;
+          msg.textContent = '';
+          area.focus();
+        });
+        cancel.addEventListener('click', () => {
+          area.value = '';
+          count();
+          form.hidden = true;
+          add.hidden = false;
+          msg.textContent = '';
+          add.focus();
+        });
+        save.addEventListener('click', () => {
+          const text = area.value.trim();
+          if (!text) {
+            fail('Write a note first.');
+            area.focus();
+            return;
+          }
+          send({ note: text }, () => {
+            area.value = '';
+            form.hidden = true;
+          });
+        });
+
+        block.append(thread, add, form);
+        panel.append(block);
+      }
+
+      panel.append(msg);
+      return panel;
+    }
+
+    let panelSeq = 0;
+
+    function taskCard(task, data, state, redraw) {
+      const days = daysUntil(task.Due);
+      const critical = isCritical(task);
+      const status = taskStatus(task);
+      const notes = Array.isArray(task.notes) ? task.notes : [];
+      const hasPanel = !!(task.ID || task['Detailed notes'] || task['Contact to call'] || extras(task, data.columns?.tasks, TASK_KNOWN));
+
+      const card = el('article', 'team-task');
       if (task.ID) card.dataset.id = task.ID;
       if (critical) card.classList.add('is-critical');
       if (status === 'Done') card.classList.add('is-done');
-      else if (days != null && days >= 0 && days <= 7) card.classList.add('is-soon');
-      if (status === 'In progress') card.classList.add('is-progress');
-      if (status !== 'Done' && days != null && days < 0) card.classList.add('is-past');
 
-      const head = el('div', 'team-task-head');
-      const titleRow = el('div', 'team-card-head');
-      const title = el('h3', 'team-title');
+      const toggle = el(hasPanel ? 'button' : 'div', 'team-task-toggle');
+      toggle.append(statusIcon(status));
+
+      const main = el('span', 'team-task-main');
+      const title = el('span', 'team-title');
       if (critical) {
         const flag = icon('critical', 'team-crit-icon');
         flag.setAttribute('aria-hidden', 'false');
@@ -399,33 +440,56 @@
         flag.setAttribute('aria-label', 'Critical');
         title.append(flag);
       }
-      title.append(task.Task || 'Task');
-      titleRow.append(title);
-      head.append(titleRow);
+      title.append(el('span', '', task.Task || 'Task'));
+      main.append(title);
 
-      const meta = el('p', 'team-task-meta');
+      const meta = el('span', 'team-task-meta');
+      if (status === 'In progress') meta.append(el('span', 'team-state-tag', 'In progress'));
       if (task.Due) {
-        const due = el('span', 'team-due', formatDue(task.Due));
         const rel = relativeDue(days);
-        if (rel) due.append(el('b', '', ' · ' + rel));
+        const due = el('span', 'team-due', rel ? rel.replace(/^in /, 'In ') : formatDue(task.Due));
+        due.title = formatDue(task.Due);
+        if (status !== 'Done' && days != null) {
+          if (days < 0) {
+            due.classList.add('is-late');
+            due.textContent = 'Overdue · ' + formatDue(task.Due);
+          } else if (days <= 2) {
+            due.classList.add('is-soon');
+          }
+        }
         meta.append(due);
       }
       if (task.Role) meta.append(el('span', 'team-role', task.Role));
       if (task.as === 'backup') meta.append(el('span', 'team-badge', 'Backup'));
-      if (meta.childNodes.length) head.append(meta);
-      card.append(head);
-      if (task.ID) card.append(progressControls(task, flash, redraw, draft));
+      if (meta.childNodes.length) main.append(meta);
 
-      if (hasBody) {
-        const fold = el('details', 'team-fold');
-        const summary = el('summary', 'team-more');
-        summary.append('Details', icon('chevron', 'team-chevron'));
-        const body = el('div', 'team-task-body');
-        if (plan) body.append(withPhoneLinks(el('p', 'team-body'), plan));
-        if (phone) body.append(contact(phone));
-        if (more) body.append(more);
-        fold.append(summary, body);
-        card.append(fold);
+      const side = el('span', 'team-task-side');
+      if (notes.length) {
+        const pill = el('span', 'team-note-pill');
+        pill.append(icon('note'), el('span', '', String(notes.length)));
+        pill.title = notes.length + (notes.length === 1 ? ' note' : ' notes');
+        side.append(pill);
+      }
+      if (hasPanel) side.append(icon('chevron', 'team-chevron'));
+      toggle.append(main, side);
+
+      const heading = el('h3', 'team-task-h');
+      heading.append(toggle);
+      card.append(heading);
+
+      if (hasPanel) {
+        const panel = taskPanel(task, { ...state, columns: data.columns?.tasks }, redraw);
+        panel.id = 'task-panel-' + (++panelSeq);
+        toggle.type = 'button';
+        toggle.setAttribute('aria-controls', panel.id);
+        const setOpen = (open) => {
+          panel.hidden = !open;
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          card.classList.toggle('is-open', open);
+        };
+        setOpen(!!state.open);
+        toggle.addEventListener('click', () => setOpen(panel.hidden));
+        card.append(panel);
       }
       return card;
     }
@@ -494,13 +558,15 @@
         const flash = draw.flash || null;
         draw.flash = null;
         const opened = new Set(
-          [...list.querySelectorAll('.team-fold[open]')]
-            .map((node) => node.closest('[data-id]')?.dataset.id)
-            .filter(Boolean),
+          [...list.querySelectorAll('.team-task.is-open[data-id]')].map((node) => node.dataset.id),
         );
         const drafts = new Map();
+        const composing = new Set();
         for (const card of list.querySelectorAll('[data-id]')) {
-          const value = card.querySelector('textarea')?.value || '';
+          const form = card.querySelector('.team-note-form');
+          if (!form || form.hidden) continue;
+          composing.add(card.dataset.id);
+          const value = form.querySelector('textarea')?.value || '';
           if (value) drafts.set(card.dataset.id, value);
         }
         const y = window.scrollY;
@@ -519,16 +585,23 @@
           draw(filter);
         };
         const addCard = (group, item) => {
-          const card = taskCard(
-            item.task,
-            data,
-            flash && flash.id === item.task.ID ? flash : null,
-            redraw,
-            drafts.get(item.task.ID) || '',
-          );
-          const fold = card.querySelector('.team-fold');
-          if (fold && opened.has(item.task.ID)) fold.open = true;
+          const id = item.task.ID;
+          const card = taskCard(item.task, data, {
+            open: opened.has(id),
+            flash: flash && flash.id === id ? flash : null,
+            draft: drafts.get(id) || '',
+            composing: composing.has(id),
+          }, redraw);
           group.append(card);
+        };
+        const addGroup = (className, label, items) => {
+          const group = el('div', 'team-group' + className);
+          const head = el('h2', 'team-group-head', label);
+          head.append(el('span', '', String(items.length)));
+          const box = el('div', 'team-group-list');
+          for (const t of items) addCard(box, t);
+          group.append(head, box);
+          list.append(group);
         };
         if (!shown.length) {
           list.append(el('p', 'team-empty', emptyText[filter] || 'No tasks.'));
@@ -536,23 +609,10 @@
           const openItems = shown.filter((t) => taskStatus(t.task) !== 'Done');
           for (const [id, label] of GROUPS) {
             const items = openItems.filter((t) => taskGroup(t.days) === id).sort(byDue);
-            if (!items.length) continue;
-            const group = el('div', 'team-group' + (id === 'past' ? ' is-past' : ''));
-            const head = el('h2', 'team-group-head', label);
-            head.append(el('span', '', String(items.length)));
-            group.append(head);
-            for (const t of items) addCard(group, t);
-            list.append(group);
+            if (items.length) addGroup(id === 'past' ? ' is-past' : '', label, items);
           }
           const doneItems = shown.filter((t) => taskStatus(t.task) === 'Done').sort(byDue);
-          if (doneItems.length) {
-            const group = el('div', 'team-group is-done-group');
-            const head = el('h2', 'team-group-head', 'Done');
-            head.append(el('span', '', String(doneItems.length)));
-            group.append(head);
-            for (const t of doneItems) addCard(group, t);
-            list.append(group);
-          }
+          if (doneItems.length) addGroup(' is-done-group', 'Done', doneItems);
         }
         publishCritical(counts.critical);
         window.scrollTo(0, y);

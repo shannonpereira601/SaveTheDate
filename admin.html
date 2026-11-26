@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/team.css?v=4">
+  <link rel="stylesheet" href="./css/team.css?v=5">
 </head>
 <body class="admin">
   <header class="team-top">
@@ -27,6 +27,7 @@
       </div>
     </div>
   </header>
+
   <main id="gate" class="admin-gate">
     <p class="team-kicker">Private</p>
     <h1>Team summary</h1>
@@ -39,46 +40,65 @@
       <p id="gate-msg" class="admin-msg" aria-live="polite"></p>
     </form>
   </main>
+
   <main id="dash" class="admin-main" hidden>
+    <div id="stats" class="admin-stats"></div>
+
     <section class="admin-section">
-      <h2>Progress by person</h2>
-      <ul id="people" class="admin-people"></ul>
+      <div class="admin-section-head">
+        <h2>By person</h2>
+        <p class="admin-legend"><span class="is-done">Done</span><span class="is-progress">In progress</span></p>
+      </div>
+      <ul id="people" class="admin-card admin-people"></ul>
     </section>
+
     <section class="admin-section">
-      <h2>Latest notes</h2>
+      <div class="admin-section-head">
+        <h2>Latest notes</h2>
+      </div>
       <div id="latest"></div>
     </section>
-    <section class="admin-section">
-      <h2>All tasks</h2>
-      <div class="admin-filters">
-        <label class="admin-field">Person
-          <select id="filter-person"></select>
-        </label>
-        <label class="admin-field">Status
-          <select id="filter-status">
-            <option value="">All</option>
-            <option>Not started</option>
-            <option>In progress</option>
-            <option>Done</option>
-          </select>
-        </label>
-        <div class="admin-checks">
-          <label><input id="filter-critical" type="checkbox"> Critical = Yes</label>
-          <label><input id="filter-overdue" type="checkbox"> Overdue</label>
-        </div>
+
+    <section id="tasks-section" class="admin-section">
+      <div class="admin-section-head">
+        <h2 id="tasks-title">Tasks</h2>
+        <button type="button" id="download" class="admin-link">Download CSV</button>
       </div>
-      <div id="tasks"></div>
+      <div class="admin-filters" role="group" aria-label="Filter tasks">
+        <select id="filter-person" class="admin-select" aria-label="Person"></select>
+        <select id="filter-status" class="admin-select" aria-label="Status">
+          <option value="">Any status</option>
+          <option>Not started</option>
+          <option>In progress</option>
+          <option>Done</option>
+        </select>
+        <span class="admin-filter-sep" aria-hidden="true"></span>
+        <button type="button" id="filter-critical" class="team-filter is-critical" aria-pressed="false"></button>
+        <button type="button" id="filter-overdue" class="team-filter" aria-pressed="false">Overdue</button>
+      </div>
+      <div id="tasks" class="admin-tasks"></div>
     </section>
-    <section id="removed-section" class="admin-section" hidden>
-      <h2>Removed tasks</h2>
-      <div id="removed"></div>
-    </section>
-    <button type="button" id="download" class="admin-download">Download CSV</button>
+
+    <details id="removed-section" class="admin-section admin-removed" hidden>
+      <summary></summary>
+      <div id="removed" class="admin-tasks"></div>
+    </details>
   </main>
+
   <script>
     const WORKER_URL = 'https://team-api.shannonpereira601.workers.dev';
     const KEY = 'weddingAdminPassword';
     const STATUSES = ['Not started', 'In progress', 'Done'];
+    const FEED_LIMIT = 5;
+
+    const ICONS = {
+      critical: '<path d="M12 2.8 21.2 12 12 21.2 2.8 12Z" fill="currentColor" stroke="none"/><path d="M12 7.6v5.3" style="stroke:var(--crit-ink,#fff)" stroke-width="2.2"/><circle cx="12" cy="16.3" r="1.3" style="fill:var(--crit-ink,#fff)" stroke="none"/>',
+      chevron: '<path d="m7 10 5 5 5-5"/>',
+      todo: '<circle cx="12" cy="12" r="8.5"/>',
+      progress: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor" stroke="none"/>',
+      done: '<circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none"/><path d="m7.8 12.4 2.8 2.8 5.6-5.8" style="stroke:#fff" stroke-width="2.2"/>',
+      note: '<path d="M5 5.5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-7.5L7 20v-3.5H5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z"/>',
+    };
 
     const gate = document.getElementById('gate');
     const dash = document.getElementById('dash');
@@ -87,8 +107,11 @@
     const passwordInput = document.getElementById('password');
     const gateMsg = document.getElementById('gate-msg');
     const updated = document.getElementById('updated');
+    const statsEl = document.getElementById('stats');
     const peopleEl = document.getElementById('people');
     const latestEl = document.getElementById('latest');
+    const tasksSection = document.getElementById('tasks-section');
+    const tasksTitle = document.getElementById('tasks-title');
     const tasksEl = document.getElementById('tasks');
     const removedSection = document.getElementById('removed-section');
     const removedEl = document.getElementById('removed');
@@ -98,12 +121,21 @@
     const overdueFilter = document.getElementById('filter-overdue');
 
     let data = null;
+    let feedOpen = false;
+    let panelSeq = 0;
 
     function el(tag, className, text) {
       const node = document.createElement(tag);
       if (className) node.className = className;
       if (text != null) node.textContent = text;
       return node;
+    }
+
+    function icon(name, className) {
+      const span = el('span', 'team-icon' + (className ? ' ' + className : ''));
+      span.setAttribute('aria-hidden', 'true');
+      span.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ICONS[name] + '</svg>';
+      return span;
     }
 
     function todayIST() {
@@ -165,20 +197,15 @@
       return String(value || '').split(',').map((s) => s.trim()).filter(Boolean);
     }
 
-    function pill(status) {
-      const kind = status === 'Done' ? ' is-done' : status === 'In progress' ? ' is-progress' : '';
-      return el('span', 'admin-pill' + kind, status);
+    function statusIcon(status) {
+      const name = status === 'Done' ? 'done' : status === 'In progress' ? 'progress' : 'todo';
+      return icon(name, 'team-st is-' + name);
     }
 
-    function noteList(notes) {
-      const list = el('div', 'admin-notes');
-      const rows = Array.isArray(notes) ? notes : [];
-      if (!rows.length) {
-        list.append(el('p', 'team-empty', 'No notes yet.'));
-        return list;
-      }
-      for (const note of rows) {
-        const item = el('div', 'team-thread-item');
+    function noteThread(notes) {
+      const list = el('ul', 'team-thread');
+      for (const note of notes) {
+        const item = el('li', 'team-thread-item');
         const when = formatUpdated(note.at);
         item.append(el('p', 'team-thread-meta', (note.by || 'Someone') + (when ? ' · ' + when : '')));
         item.append(el('p', 'team-thread-text', note.text || ''));
@@ -195,19 +222,99 @@
       document.title = 'Team summary';
     }
 
+    /* ---------- Overview ---------- */
+
+    function fillStats() {
+      const tasks = data.tasks || [];
+      const done = tasks.filter((t) => taskStatus(t) === 'Done').length;
+      const progress = tasks.filter((t) => taskStatus(t) === 'In progress').length;
+      const critical = tasks.filter((t) => isCritical(t) && taskStatus(t) !== 'Done').length;
+      const overdue = tasks.filter(isOverdue).length;
+      const pct = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
+
+      statsEl.replaceChildren();
+
+      const doneTile = el('div', 'admin-stat');
+      const doneValue = el('span', 'admin-stat-value', String(done));
+      doneValue.append(el('small', '', ' / ' + tasks.length));
+      const bar = el('span', 'admin-stat-bar');
+      const fill = el('span');
+      fill.style.width = pct + '%';
+      bar.append(fill);
+      doneTile.append(doneValue, el('span', 'admin-stat-label', 'Done · ' + pct + '%'), bar);
+      statsEl.append(doneTile);
+
+      const tile = (value, label, hot, onClick, on) => {
+        const node = el(onClick ? 'button' : 'div', 'admin-stat' + (hot ? ' is-hot' : '') + (on ? ' is-on' : ''));
+        if (onClick) {
+          node.type = 'button';
+          node.setAttribute('aria-pressed', on ? 'true' : 'false');
+          node.addEventListener('click', onClick);
+        }
+        node.append(el('span', 'admin-stat-value', String(value)), el('span', 'admin-stat-label', label));
+        statsEl.append(node);
+      };
+
+      tile(progress, 'In progress', false, () => {
+        statusFilter.value = statusFilter.value === 'In progress' ? '' : 'In progress';
+        applyFilters(true);
+      }, statusFilter.value === 'In progress');
+      tile(critical, 'Critical open', critical > 0, () => {
+        setToggle(criticalFilter, !isOn(criticalFilter));
+        applyFilters(true);
+      }, isOn(criticalFilter));
+      tile(overdue, 'Overdue', overdue > 0, () => {
+        setToggle(overdueFilter, !isOn(overdueFilter));
+        applyFilters(true);
+      }, isOn(overdueFilter));
+    }
+
     function fillPeople() {
       peopleEl.replaceChildren();
       const rows = data.people || [];
       if (!rows.length) {
-        peopleEl.append(el('li', 'admin-person', 'No one has a link yet.'));
+        peopleEl.append(el('li', 'team-empty', 'No one has a link yet.'));
         return;
       }
       for (const person of rows) {
-        const li = el('li', 'admin-person' + (person.criticalOpen > 0 ? ' is-hot' : ''));
-        li.append(el('span', 'admin-person-name', person.name || ''));
-        li.append(el('span', '', (person.done || 0) + '/' + (person.total || 0) + ' done'));
-        li.append(el('span', '', (person.inProgress || 0) + ' in progress'));
-        li.append(el('span', 'admin-crit' + (person.criticalOpen > 0 ? ' is-hot' : ''), (person.criticalOpen || 0) + ' critical open'));
+        const total = person.total || 0;
+        const done = person.done || 0;
+        const progress = person.inProgress || 0;
+        const crit = person.criticalOpen || 0;
+        const li = el('li', 'admin-person');
+        const button = el('button');
+        button.type = 'button';
+        const selected = personFilter.value && personFilter.value.toLowerCase() === String(person.name || '').toLowerCase();
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+
+        button.append(el('span', 'admin-person-name', person.name || ''));
+        const nums = el('span', 'admin-person-nums');
+        if (crit > 0) {
+          const tag = el('span', 'admin-crit-tag');
+          tag.append(icon('critical'), el('span', '', String(crit)));
+          tag.title = crit + ' critical open';
+          nums.append(tag);
+        }
+        nums.append(el('span', '', done + '/' + total + ' done'));
+        button.append(nums);
+
+        const bar = el('span', 'admin-bar');
+        bar.setAttribute('role', 'img');
+        bar.setAttribute('aria-label', done + ' done, ' + progress + ' in progress, of ' + total);
+        if (total) {
+          const d = el('span', 'is-done');
+          d.style.width = (done / total) * 100 + '%';
+          const p = el('span', 'is-progress');
+          p.style.width = (progress / total) * 100 + '%';
+          bar.append(d, p);
+        }
+        button.append(bar);
+
+        button.addEventListener('click', () => {
+          personFilter.value = selected ? '' : person.name;
+          applyFilters(true);
+        });
+        li.append(button);
         peopleEl.append(li);
       }
     }
@@ -219,17 +326,44 @@
         latestEl.append(el('p', 'team-empty', 'No notes yet.'));
         return;
       }
-      for (const note of notes) {
-        const card = el('article', 'admin-note');
+      const card = el('div', 'admin-card');
+      const list = el('ul', 'admin-feed');
+      const shown = feedOpen ? notes : notes.slice(0, FEED_LIMIT);
+      for (const note of shown) {
+        const item = el('li', 'admin-feed-item');
         const when = formatUpdated(note.at);
-        card.append(el('p', 'admin-note-kicker', (note.by || 'Someone') + (when ? ' · ' + when + ' IST' : '')));
+        const meta = el('p', 'admin-feed-meta');
+        meta.append(el('b', '', note.by || 'Someone'));
+        if (when) meta.append(' · ' + when);
+        item.append(meta);
         const title = note.task
           ? (note.taskId ? note.taskId + ' · ' + note.task : note.task)
           : (note.taskId || 'Task');
-        card.append(el('p', 'admin-note-task', title));
-        card.append(el('p', 'admin-note-text', note.text || ''));
-        latestEl.append(card);
+        item.append(el('p', 'admin-feed-task', title));
+        item.append(el('p', 'admin-feed-text', note.text || ''));
+        list.append(item);
       }
+      card.append(list);
+      if (notes.length > FEED_LIMIT) {
+        const more = el('button', 'admin-more', feedOpen ? 'Show fewer' : 'Show all ' + notes.length);
+        more.type = 'button';
+        more.addEventListener('click', () => {
+          feedOpen = !feedOpen;
+          fillLatest();
+        });
+        card.append(more);
+      }
+      latestEl.append(card);
+    }
+
+    /* ---------- Tasks ---------- */
+
+    function isOn(button) {
+      return button.getAttribute('aria-pressed') === 'true';
+    }
+
+    function setToggle(button, on) {
+      button.setAttribute('aria-pressed', on ? 'true' : 'false');
     }
 
     function personOptions() {
@@ -247,7 +381,7 @@
         for (const name of splitNames(task.Person)) add(name);
       }
       const current = personFilter.value;
-      personFilter.replaceChildren(el('option', '', 'All'));
+      personFilter.replaceChildren(el('option', '', 'Everyone'));
       personFilter.firstChild.value = '';
       for (const name of names) {
         const option = el('option', '', name);
@@ -263,74 +397,150 @@
         if (!splitNames(task.Person).some((name) => name.toLowerCase() === want)) return false;
       }
       if (statusFilter.value && taskStatus(task) !== statusFilter.value) return false;
-      if (criticalFilter.checked && !isCritical(task)) return false;
-      if (overdueFilter.checked && !isOverdue(task)) return false;
+      if (isOn(criticalFilter) && !isCritical(task)) return false;
+      if (isOn(overdueFilter) && !isOverdue(task)) return false;
       return true;
+    }
+
+    function foldRow(className, head, panel) {
+      const card = el('article', 'team-task' + className);
+      const toggle = el('button', 'team-task-toggle');
+      toggle.type = 'button';
+      toggle.append(...head);
+      const h = el('h3', 'team-task-h');
+      h.append(toggle);
+      panel.className = 'team-task-panel';
+      panel.id = 'admin-panel-' + (++panelSeq);
+      panel.hidden = true;
+      toggle.setAttribute('aria-controls', panel.id);
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.addEventListener('click', () => {
+        const open = panel.hidden;
+        panel.hidden = !open;
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        card.classList.toggle('is-open', open);
+      });
+      card.append(h, panel);
+      return card;
+    }
+
+    function sideBits(notes) {
+      const side = el('span', 'team-task-side');
+      if (notes.length) {
+        const pill = el('span', 'team-note-pill');
+        pill.append(icon('note'), el('span', '', String(notes.length)));
+        pill.title = notes.length + (notes.length === 1 ? ' note' : ' notes');
+        side.append(pill);
+      }
+      side.append(icon('chevron', 'team-chevron'));
+      return side;
+    }
+
+    function panelBody(panel, row, notes) {
+      if (row.statusAt) {
+        const when = formatUpdated(row.statusAt);
+        const line = el('p', 'admin-panel-line', 'Status set by ');
+        line.append(el('b', '', row.statusBy || 'someone'));
+        if (when) line.append(' · ' + when);
+        panel.append(line);
+      }
+      if (notes.length) panel.append(noteThread(notes));
+      else panel.append(el('p', 'admin-panel-empty', 'No notes yet.'));
     }
 
     function taskRow(task) {
       const status = taskStatus(task);
-      const when = task.statusAt ? formatUpdated(task.statusAt) : '';
-      const who = task.statusBy || '';
-      const updatedText = who && when ? who + ', ' + when : who || when || '—';
       const notes = Array.isArray(task.notes) ? task.notes : [];
-      const dueText = task.Due ? formatDue(task.Due) : '—';
       const critical = isCritical(task);
-      const fold = el('details', 'admin-task');
-      const summary = el('summary', 'admin-summary');
+      const overdue = isOverdue(task);
 
-      const mobile = el('span', 'admin-mobile');
-      mobile.append(el('strong', '', task.Task || 'Task'));
-      const meta = el('span');
-      meta.textContent = [task.ID, task.Person, critical ? 'Critical' : '', dueText, status, notes.length + (notes.length === 1 ? ' note' : ' notes')].filter(Boolean).join(' · ');
-      if (isOverdue(task)) meta.classList.add('admin-overdue');
-      mobile.append(meta);
+      const main = el('span', 'team-task-main');
+      const title = el('span', 'team-title');
+      if (critical) {
+        const flag = icon('critical', 'team-crit-icon');
+        flag.setAttribute('aria-hidden', 'false');
+        flag.setAttribute('role', 'img');
+        flag.setAttribute('aria-label', 'Critical');
+        title.append(flag);
+      }
+      title.append(el('span', '', task.Task || 'Task'));
+      main.append(title);
 
-      const idCell = el('span', 'admin-cell', task.ID || '');
-      const personCell = el('span', 'admin-cell', task.Person || '');
-      const taskCell = el('span', 'admin-cell admin-task-name', task.Task || '');
-      const critCell = el('span', 'admin-cell' + (critical ? ' admin-hot' : ''), critical ? 'Yes' : '');
-      const dueCell = el('span', 'admin-cell' + (isOverdue(task) ? ' admin-overdue' : ''), dueText);
-      const statusCell = el('span', 'admin-cell');
-      statusCell.append(pill(status));
-      const updatedCell = el('span', 'admin-cell', updatedText);
-      const countCell = el('span', 'admin-cell admin-count', String(notes.length));
-      summary.append(mobile, idCell, personCell, taskCell, critCell, dueCell, statusCell, updatedCell, countCell);
-      fold.append(summary, noteList(notes));
-      return fold;
+      const meta = el('span', 'team-task-meta');
+      if (task.Person) meta.append(el('span', 'admin-person-tag', task.Person));
+      if (task.Due) {
+        const due = el('span', 'team-due', overdue ? 'Overdue · ' + formatDue(task.Due) : formatDue(task.Due));
+        if (overdue) due.classList.add('is-late');
+        meta.append(due);
+      }
+      if (status === 'In progress') meta.append(el('span', 'team-state-tag', 'In progress'));
+      if (task.ID) meta.append(el('span', '', task.ID));
+      main.append(meta);
+
+      const panel = el('div');
+      if (task.Role) panel.append(el('p', 'admin-panel-line', 'Role: ' + task.Role));
+      panelBody(panel, task, notes);
+
+      const className = (critical ? ' is-critical' : '') + (status === 'Done' ? ' is-done' : '');
+      return foldRow(className, [statusIcon(status), main, sideBits(notes)], panel);
+    }
+
+    function byUrgency(a, b) {
+      const rank = (t) => (taskStatus(t) === 'Done' ? 2 : 0) - (isCritical(t) && taskStatus(t) !== 'Done' ? 1 : 0);
+      const due = (t) => parseDue(t.Due) ?? Infinity;
+      return rank(a) - rank(b) || due(a) - due(b);
     }
 
     function fillTasks() {
-      const shown = (data.tasks || []).filter(matches);
+      const all = data.tasks || [];
+      const shown = all.filter(matches).sort(byUrgency);
+      tasksTitle.replaceChildren('Tasks ');
+      tasksTitle.append(el('span', '', shown.length === all.length ? String(all.length) : shown.length + ' of ' + all.length));
       tasksEl.replaceChildren();
       if (!shown.length) {
         tasksEl.append(el('p', 'team-empty', 'No tasks match.'));
         return;
       }
-      const head = el('div', 'admin-table-head');
-      for (const label of ['ID', 'Person', 'Task', 'Critical', 'Due', 'Status', 'Last updated', 'Notes']) {
-        head.append(el('span', '', label));
-      }
-      tasksEl.append(head);
-      for (const task of shown) tasksEl.append(taskRow(task));
+      const card = el('div', 'team-group-list');
+      for (const task of shown) card.append(taskRow(task));
+      tasksEl.append(card);
     }
 
     function fillRemoved() {
       const rows = data.removed || [];
       removedSection.hidden = rows.length === 0;
+      const summary = removedSection.querySelector('summary');
+      summary.replaceChildren('Removed from the list · ' + rows.length, icon('chevron'));
       removedEl.replaceChildren();
+      if (!rows.length) return;
+      const card = el('div', 'team-group-list');
       for (const row of rows) {
         const notes = Array.isArray(row.notes) ? row.notes : [];
-        const fold = el('details', 'admin-task is-removed');
-        const summary = el('summary', 'admin-summary');
-        const when = row.statusAt ? formatUpdated(row.statusAt) : '';
-        const line = el('span', 'admin-mobile');
-        line.append(el('strong', '', row.taskId || 'Task'));
-        line.append(el('span', '', [taskStatus(row), row.statusBy || '', when, notes.length + ' notes'].filter(Boolean).join(' · ')));
-        summary.append(line);
-        fold.append(summary, noteList(notes));
-        removedEl.append(fold);
+        const status = taskStatus(row);
+        const main = el('span', 'team-task-main');
+        main.append(el('span', 'team-title', row.taskId || 'Task'));
+        main.append(el('span', 'team-task-meta', status));
+        const panel = el('div');
+        panelBody(panel, row, notes);
+        card.append(foldRow(status === 'Done' ? ' is-done' : '', [statusIcon(status), main, sideBits(notes)], panel));
       }
+      removedEl.append(card);
+    }
+
+    function syncFilterLooks() {
+      personFilter.classList.toggle('is-set', !!personFilter.value);
+      statusFilter.classList.toggle('is-set', !!statusFilter.value);
+      const crit = (data?.tasks || []).filter((t) => isCritical(t)).length;
+      criticalFilter.replaceChildren(icon('critical'), 'Critical');
+      criticalFilter.append(el('span', 'team-filter-count', String(crit)));
+    }
+
+    function applyFilters(scroll) {
+      syncFilterLooks();
+      fillStats();
+      fillPeople();
+      fillTasks();
+      if (scroll) tasksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function render(payload) {
@@ -338,15 +548,19 @@
       const when = formatUpdated(payload.updated);
       updated.textContent = when ? 'List updated ' + when + ' IST' : '';
       document.title = 'Team summary';
+      personOptions();
+      syncFilterLooks();
+      fillStats();
       fillPeople();
       fillLatest();
-      personOptions();
       fillTasks();
       fillRemoved();
       gate.hidden = true;
       dash.hidden = false;
       tools.hidden = false;
     }
+
+    /* ---------- CSV ---------- */
 
     function csvCell(value) {
       let text = String(value ?? '');
@@ -396,7 +610,7 @@
           'No',
         ]);
       }
-      const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = el('a');
       link.href = url;
@@ -406,6 +620,8 @@
       link.remove();
       URL.revokeObjectURL(url);
     }
+
+    /* ---------- Auth ---------- */
 
     async function fetchAdmin(password) {
       let response;
@@ -462,12 +678,19 @@
     });
 
     document.getElementById('download').addEventListener('click', downloadCsv);
-    personFilter.addEventListener('change', fillTasks);
-    statusFilter.addEventListener('change', fillTasks);
-    criticalFilter.addEventListener('change', fillTasks);
-    overdueFilter.addEventListener('change', fillTasks);
+    personFilter.addEventListener('change', () => applyFilters(false));
+    statusFilter.addEventListener('change', () => applyFilters(false));
+    criticalFilter.addEventListener('click', () => {
+      setToggle(criticalFilter, !isOn(criticalFilter));
+      applyFilters(false);
+    });
+    overdueFilter.addEventListener('click', () => {
+      setToggle(overdueFilter, !isOn(overdueFilter));
+      applyFilters(false);
+    });
 
-    const saved = sessionStorage.getItem(KEY);
+    let saved = null;
+    try { saved = sessionStorage.getItem(KEY); } catch (e) { /* ignore */ }
     if (saved) unlock(saved, true);
     else passwordInput.focus();
   </script>
