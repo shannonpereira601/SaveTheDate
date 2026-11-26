@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Private wedding team summary.">
+  <meta name="theme-color" content="#3d1534">
+  <title>Team summary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/team.css?v=4">
+</head>
+<body class="admin">
+  <header class="team-top">
+    <div class="admin-top">
+      <div>
+        <p class="team-kicker">Gloria &amp; Shannon <span aria-hidden="true">·</span> 19 Dec 2026</p>
+        <h1 class="team-hello">Team summary</h1>
+        <p id="updated" class="team-countdown"></p>
+      </div>
+      <div id="tools" class="admin-actions" hidden>
+        <button type="button" id="refresh">Refresh</button>
+        <button type="button" id="signout">Sign out</button>
+      </div>
+    </div>
+  </header>
+  <main id="gate" class="admin-gate">
+    <p class="team-kicker">Private</p>
+    <h1>Team summary</h1>
+    <p>Statuses and notes from everyone. The password stays in this tab only.</p>
+    <form id="lock" method="post" action="admin.html">
+      <label class="admin-field">Password
+        <input id="password" type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <button class="admin-submit" type="submit">Open</button>
+      <p id="gate-msg" class="admin-msg" aria-live="polite"></p>
+    </form>
+  </main>
+  <main id="dash" class="admin-main" hidden>
+    <section class="admin-section">
+      <h2>Progress by person</h2>
+      <ul id="people" class="admin-people"></ul>
+    </section>
+    <section class="admin-section">
+      <h2>Latest notes</h2>
+      <div id="latest"></div>
+    </section>
+    <section class="admin-section">
+      <h2>All tasks</h2>
+      <div class="admin-filters">
+        <label class="admin-field">Person
+          <select id="filter-person"></select>
+        </label>
+        <label class="admin-field">Status
+          <select id="filter-status">
+            <option value="">All</option>
+            <option>Not started</option>
+            <option>In progress</option>
+            <option>Done</option>
+          </select>
+        </label>
+        <div class="admin-checks">
+          <label><input id="filter-critical" type="checkbox"> Critical = Yes</label>
+          <label><input id="filter-overdue" type="checkbox"> Overdue</label>
+        </div>
+      </div>
+      <div id="tasks"></div>
+    </section>
+    <section id="removed-section" class="admin-section" hidden>
+      <h2>Removed tasks</h2>
+      <div id="removed"></div>
+    </section>
+    <button type="button" id="download" class="admin-download">Download CSV</button>
+  </main>
+  <script>
+    const WORKER_URL = 'https://team-api.shannonpereira601.workers.dev';
+    const KEY = 'weddingAdminPassword';
+    const STATUSES = ['Not started', 'In progress', 'Done'];
+
+    const gate = document.getElementById('gate');
+    const dash = document.getElementById('dash');
+    const tools = document.getElementById('tools');
+    const form = document.getElementById('lock');
+    const passwordInput = document.getElementById('password');
+    const gateMsg = document.getElementById('gate-msg');
+    const updated = document.getElementById('updated');
+    const peopleEl = document.getElementById('people');
+    const latestEl = document.getElementById('latest');
+    const tasksEl = document.getElementById('tasks');
+    const removedSection = document.getElementById('removed-section');
+    const removedEl = document.getElementById('removed');
+    const personFilter = document.getElementById('filter-person');
+    const statusFilter = document.getElementById('filter-status');
+    const criticalFilter = document.getElementById('filter-critical');
+    const overdueFilter = document.getElementById('filter-overdue');
+
+    let data = null;
+
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text != null) node.textContent = text;
+      return node;
+    }
+
+    function todayIST() {
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).formatToParts(new Date());
+      const get = (type) => Number(parts.find((p) => p.type === type).value);
+      return Date.UTC(get('year'), get('month') - 1, get('day'));
+    }
+
+    const TODAY = todayIST();
+
+    function parseDue(iso) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return null;
+      const [y, m, d] = iso.split('-').map(Number);
+      return Date.UTC(y, m - 1, d);
+    }
+
+    function formatDue(iso) {
+      const due = parseDue(iso);
+      if (due == null) return iso || '';
+      return new Date(due).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'UTC',
+      });
+    }
+
+    function formatUpdated(iso) {
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return '';
+      return date.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        day: 'numeric',
+        month: 'short',
+        hour: 'numeric',
+        minute: '2-digit',
+      });
+    }
+
+    function isCritical(row) {
+      const key = Object.keys(row).find((k) => /^critical\??$/i.test(String(k).trim()));
+      return key ? String(row[key]).trim().toLowerCase() === 'yes' : false;
+    }
+
+    function taskStatus(task) {
+      return STATUSES.includes(task.status) ? task.status : 'Not started';
+    }
+
+    function isOverdue(task) {
+      const due = parseDue(task.Due);
+      return due != null && due < TODAY && taskStatus(task) !== 'Done';
+    }
+
+    function splitNames(value) {
+      return String(value || '').split(',').map((s) => s.trim()).filter(Boolean);
+    }
+
+    function pill(status) {
+      const kind = status === 'Done' ? ' is-done' : status === 'In progress' ? ' is-progress' : '';
+      return el('span', 'admin-pill' + kind, status);
+    }
+
+    function noteList(notes) {
+      const list = el('div', 'admin-notes');
+      const rows = Array.isArray(notes) ? notes : [];
+      if (!rows.length) {
+        list.append(el('p', 'team-empty', 'No notes yet.'));
+        return list;
+      }
+      for (const note of rows) {
+        const item = el('div', 'team-thread-item');
+        const when = formatUpdated(note.at);
+        item.append(el('p', 'team-thread-meta', (note.by || 'Someone') + (when ? ' · ' + when : '')));
+        item.append(el('p', 'team-thread-text', note.text || ''));
+        list.append(item);
+      }
+      return list;
+    }
+
+    function showGate(message) {
+      dash.hidden = true;
+      tools.hidden = true;
+      gate.hidden = false;
+      gateMsg.textContent = message || '';
+      document.title = 'Team summary';
+    }
+
+    function fillPeople() {
+      peopleEl.replaceChildren();
+      const rows = data.people || [];
+      if (!rows.length) {
+        peopleEl.append(el('li', 'admin-person', 'No one has a link yet.'));
+        return;
+      }
+      for (const person of rows) {
+        const li = el('li', 'admin-person' + (person.criticalOpen > 0 ? ' is-hot' : ''));
+        li.append(el('span', 'admin-person-name', person.name || ''));
+        li.append(el('span', '', (person.done || 0) + '/' + (person.total || 0) + ' done'));
+        li.append(el('span', '', (person.inProgress || 0) + ' in progress'));
+        li.append(el('span', 'admin-crit' + (person.criticalOpen > 0 ? ' is-hot' : ''), (person.criticalOpen || 0) + ' critical open'));
+        peopleEl.append(li);
+      }
+    }
+
+    function fillLatest() {
+      latestEl.replaceChildren();
+      const notes = data.latestNotes || [];
+      if (!notes.length) {
+        latestEl.append(el('p', 'team-empty', 'No notes yet.'));
+        return;
+      }
+      for (const note of notes) {
+        const card = el('article', 'admin-note');
+        const when = formatUpdated(note.at);
+        card.append(el('p', 'admin-note-kicker', (note.by || 'Someone') + (when ? ' · ' + when + ' IST' : '')));
+        const title = note.task
+          ? (note.taskId ? note.taskId + ' · ' + note.task : note.task)
+          : (note.taskId || 'Task');
+        card.append(el('p', 'admin-note-task', title));
+        card.append(el('p', 'admin-note-text', note.text || ''));
+        latestEl.append(card);
+      }
+    }
+
+    function personOptions() {
+      const names = [];
+      const seen = new Set();
+      const add = (name) => {
+        const trimmed = String(name || '').trim();
+        const key = trimmed.toLowerCase();
+        if (!trimmed || seen.has(key)) return;
+        seen.add(key);
+        names.push(trimmed);
+      };
+      for (const person of data.people || []) add(person.name);
+      for (const task of data.tasks || []) {
+        for (const name of splitNames(task.Person)) add(name);
+      }
+      const current = personFilter.value;
+      personFilter.replaceChildren(el('option', '', 'All'));
+      personFilter.firstChild.value = '';
+      for (const name of names) {
+        const option = el('option', '', name);
+        option.value = name;
+        personFilter.append(option);
+      }
+      personFilter.value = [...personFilter.options].some((o) => o.value === current) ? current : '';
+    }
+
+    function matches(task) {
+      if (personFilter.value) {
+        const want = personFilter.value.toLowerCase();
+        if (!splitNames(task.Person).some((name) => name.toLowerCase() === want)) return false;
+      }
+      if (statusFilter.value && taskStatus(task) !== statusFilter.value) return false;
+      if (criticalFilter.checked && !isCritical(task)) return false;
+      if (overdueFilter.checked && !isOverdue(task)) return false;
+      return true;
+    }
+
+    function taskRow(task) {
+      const status = taskStatus(task);
+      const when = task.statusAt ? formatUpdated(task.statusAt) : '';
+      const who = task.statusBy || '';
+      const updatedText = who && when ? who + ', ' + when : who || when || '—';
+      const notes = Array.isArray(task.notes) ? task.notes : [];
+      const dueText = task.Due ? formatDue(task.Due) : '—';
+      const critical = isCritical(task);
+      const fold = el('details', 'admin-task');
+      const summary = el('summary', 'admin-summary');
+
+      const mobile = el('span', 'admin-mobile');
+      mobile.append(el('strong', '', task.Task || 'Task'));
+      const meta = el('span');
+      meta.textContent = [task.ID, task.Person, critical ? 'Critical' : '', dueText, status, notes.length + (notes.length === 1 ? ' note' : ' notes')].filter(Boolean).join(' · ');
+      if (isOverdue(task)) meta.classList.add('admin-overdue');
+      mobile.append(meta);
+
+      const idCell = el('span', 'admin-cell', task.ID || '');
+      const personCell = el('span', 'admin-cell', task.Person || '');
+      const taskCell = el('span', 'admin-cell admin-task-name', task.Task || '');
+      const critCell = el('span', 'admin-cell' + (critical ? ' admin-hot' : ''), critical ? 'Yes' : '');
+      const dueCell = el('span', 'admin-cell' + (isOverdue(task) ? ' admin-overdue' : ''), dueText);
+      const statusCell = el('span', 'admin-cell');
+      statusCell.append(pill(status));
+      const updatedCell = el('span', 'admin-cell', updatedText);
+      const countCell = el('span', 'admin-cell admin-count', String(notes.length));
+      summary.append(mobile, idCell, personCell, taskCell, critCell, dueCell, statusCell, updatedCell, countCell);
+      fold.append(summary, noteList(notes));
+      return fold;
+    }
+
+    function fillTasks() {
+      const shown = (data.tasks || []).filter(matches);
+      tasksEl.replaceChildren();
+      if (!shown.length) {
+        tasksEl.append(el('p', 'team-empty', 'No tasks match.'));
+        return;
+      }
+      const head = el('div', 'admin-table-head');
+      for (const label of ['ID', 'Person', 'Task', 'Critical', 'Due', 'Status', 'Last updated', 'Notes']) {
+        head.append(el('span', '', label));
+      }
+      tasksEl.append(head);
+      for (const task of shown) tasksEl.append(taskRow(task));
+    }
+
+    function fillRemoved() {
+      const rows = data.removed || [];
+      removedSection.hidden = rows.length === 0;
+      removedEl.replaceChildren();
+      for (const row of rows) {
+        const notes = Array.isArray(row.notes) ? row.notes : [];
+        const fold = el('details', 'admin-task is-removed');
+        const summary = el('summary', 'admin-summary');
+        const when = row.statusAt ? formatUpdated(row.statusAt) : '';
+        const line = el('span', 'admin-mobile');
+        line.append(el('strong', '', row.taskId || 'Task'));
+        line.append(el('span', '', [taskStatus(row), row.statusBy || '', when, notes.length + ' notes'].filter(Boolean).join(' · ')));
+        summary.append(line);
+        fold.append(summary, noteList(notes));
+        removedEl.append(fold);
+      }
+    }
+
+    function render(payload) {
+      data = payload;
+      const when = formatUpdated(payload.updated);
+      updated.textContent = when ? 'List updated ' + when + ' IST' : '';
+      document.title = 'Team summary';
+      fillPeople();
+      fillLatest();
+      personOptions();
+      fillTasks();
+      fillRemoved();
+      gate.hidden = true;
+      dash.hidden = false;
+      tools.hidden = false;
+    }
+
+    function csvCell(value) {
+      let text = String(value ?? '');
+      if (/^[=+\-@\t]/.test(text)) text = "'" + text;
+      if (/[",\r\n]/.test(text)) return '"' + text.replace(/"/g, '""') + '"';
+      return text;
+    }
+
+    function joinNotes(notes) {
+      return (Array.isArray(notes) ? notes : [])
+        .map((note) => '[' + (note.at || '') + ' ' + (note.by || '') + '] ' + (note.text || ''))
+        .join(' | ');
+    }
+
+    function downloadCsv() {
+      if (!data) return;
+      const headers = ['ID', 'Person', 'Role', 'Task', 'Critical', 'Due', 'Status', 'Updated by', 'Updated at', 'Notes', 'On the list'];
+      const lines = [headers.map(csvCell).join(',')];
+      const add = (cells) => lines.push(cells.map(csvCell).join(','));
+      for (const task of data.tasks || []) {
+        add([
+          task.ID || '',
+          task.Person || '',
+          task.Role || '',
+          task.Task || '',
+          isCritical(task) ? 'Yes' : '',
+          task.Due || '',
+          taskStatus(task),
+          task.statusBy || '',
+          task.statusAt || '',
+          joinNotes(task.notes),
+          'Yes',
+        ]);
+      }
+      for (const row of data.removed || []) {
+        add([
+          row.taskId || '',
+          '',
+          '',
+          '(removed from the list)',
+          '',
+          '',
+          taskStatus(row),
+          row.statusBy || '',
+          row.statusAt || '',
+          joinNotes(row.notes),
+          'No',
+        ]);
+      }
+      const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = el('a');
+      link.href = url;
+      link.download = 'wedding-team-status.csv';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function fetchAdmin(password) {
+      let response;
+      try {
+        response = await fetch(WORKER_URL + '/api/admin', {
+          headers: { authorization: 'Bearer ' + password },
+        });
+      } catch (e) {
+        throw new Error("Couldn't load right now. Please try again in a minute.");
+      }
+      let payload = {};
+      try { payload = await response.json(); } catch (e) { /* ignore */ }
+      if (!response.ok) {
+        const error = new Error(payload.error || "Couldn't load right now. Please try again in a minute.");
+        error.status = response.status;
+        throw error;
+      }
+      return payload;
+    }
+
+    async function unlock(password, fromStore) {
+      gateMsg.textContent = 'Checking…';
+      try {
+        const payload = await fetchAdmin(password);
+        sessionStorage.setItem(KEY, password);
+        passwordInput.value = '';
+        render(payload);
+        gateMsg.textContent = '';
+      } catch (error) {
+        sessionStorage.removeItem(KEY);
+        if (!fromStore) passwordInput.value = '';
+        showGate(error.message);
+        if (!fromStore) passwordInput.focus();
+      }
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      unlock(passwordInput.value, false);
+    });
+
+    document.getElementById('refresh').addEventListener('click', () => {
+      const saved = sessionStorage.getItem(KEY);
+      if (!saved) showGate('Enter the password again.');
+      else unlock(saved, true);
+    });
+
+    document.getElementById('signout').addEventListener('click', () => {
+      sessionStorage.removeItem(KEY);
+      passwordInput.value = '';
+      data = null;
+      showGate();
+      passwordInput.focus();
+    });
+
+    document.getElementById('download').addEventListener('click', downloadCsv);
+    personFilter.addEventListener('change', fillTasks);
+    statusFilter.addEventListener('change', fillTasks);
+    criticalFilter.addEventListener('change', fillTasks);
+    overdueFilter.addEventListener('change', fillTasks);
+
+    const saved = sessionStorage.getItem(KEY);
+    if (saved) unlock(saved, true);
+    else passwordInput.focus();
+  </script>
+</body>
+</html>

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/team.css?v=3">
+  <link rel="stylesheet" href="./css/team.css?v=4">
 </head>
 <body>
   <header class="team-top">
@@ -213,20 +213,183 @@
       ['none', 'No date'],
     ];
 
-    function taskCard(task, data) {
+    const STATUSES = ['Not started', 'In progress', 'Done'];
+    const inflight = new Set();
+
+    function taskStatus(task) {
+      return STATUSES.includes(task.status) ? task.status : 'Not started';
+    }
+
+    function applyProgress(task, payload) {
+      task.status = taskStatus(payload);
+      task.statusBy = payload.statusBy || null;
+      task.statusAt = payload.statusAt || null;
+      task.notes = Array.isArray(payload.notes) ? payload.notes : [];
+    }
+
+    async function postUpdate(fields) {
+      let response;
+      try {
+        response = await fetch(WORKER_URL + '/api/status', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ k: code, ...fields }),
+        });
+      } catch (e) {
+        throw new Error("Couldn't save. Please try again.");
+      }
+      let payload = {};
+      try { payload = await response.json(); } catch (e) { /* ignore */ }
+      if (!response.ok) throw new Error(payload.error || "Couldn't save. Please try again.");
+      return payload;
+    }
+
+    function fillThread(list, notes) {
+      list.replaceChildren();
+      const rows = Array.isArray(notes) ? notes : [];
+      list.hidden = rows.length === 0;
+      for (const note of rows) {
+        const item = el('li', 'team-thread-item');
+        const when = formatUpdated(note.at);
+        item.append(el('p', 'team-thread-meta', (note.by || 'Someone') + (when ? ' · ' + when : '')));
+        item.append(el('p', 'team-thread-text', note.text || ''));
+        list.append(item);
+      }
+    }
+
+    function progressControls(task, flash, redraw, draft) {
+      const wrap = el('div', 'team-progress');
+      const control = el('div', 'team-status-control');
+      control.setAttribute('role', 'group');
+      control.setAttribute('aria-label', 'Status');
+      const buttons = [];
+      const msg = el('p', 'team-save-msg' + (flash && !flash.ok ? ' is-error' : ''));
+      msg.setAttribute('aria-live', 'polite');
+      if (flash) msg.textContent = flash.text;
+
+      function press(label) {
+        for (const button of buttons) {
+          button.setAttribute('aria-pressed', button.dataset.status === label ? 'true' : 'false');
+        }
+      }
+
+      function lock(on) {
+        wrap.setAttribute('aria-busy', on ? 'true' : 'false');
+        for (const button of buttons) button.disabled = on;
+        area.disabled = on;
+        save.disabled = on;
+      }
+
+      async function saveStatus(label) {
+        if (label === taskStatus(task) && task.statusAt) return;
+        if (inflight.has(task.ID)) return;
+        inflight.add(task.ID);
+        press(label);
+        msg.classList.remove('is-error');
+        msg.textContent = 'Saving…';
+        lock(true);
+        try {
+          const payload = await postUpdate({ taskId: task.ID, status: label });
+          applyProgress(task, payload);
+          redraw({ id: task.ID, text: 'Saved ✓', ok: true });
+        } catch (error) {
+          press(taskStatus(task));
+          lock(false);
+          msg.classList.add('is-error');
+          msg.textContent = error.message;
+        } finally {
+          inflight.delete(task.ID);
+        }
+      }
+
+      for (const label of STATUSES) {
+        const button = el('button', 'team-status-btn', label);
+        button.type = 'button';
+        button.dataset.status = label;
+        button.setAttribute('aria-pressed', label === taskStatus(task) ? 'true' : 'false');
+        button.addEventListener('click', () => saveStatus(label));
+        buttons.push(button);
+        control.append(button);
+      }
+
+      const meta = el('p', 'team-status-meta');
+      if (task.statusAt) {
+        const when = formatUpdated(task.statusAt);
+        meta.textContent = 'Last updated by ' + (task.statusBy || 'someone') + (when ? ', ' + when + ' IST' : '');
+      }
+
+      const thread = el('ul', 'team-thread');
+      fillThread(thread, task.notes);
+
+      const box = el('div', 'team-note-form');
+      const label = el('label', 'team-note-label');
+      label.append(el('span', '', 'Add a note (optional)'));
+      const area = el('textarea', 'team-note-input');
+      area.maxLength = 500;
+      area.rows = 2;
+      area.placeholder = 'Called Malcolm, waiting for reply';
+      area.autocomplete = 'off';
+      if (draft) area.value = draft;
+      const counter = el('span', 'team-note-count', area.value.length + ' / 500');
+      area.addEventListener('input', () => {
+        counter.textContent = area.value.length + ' / 500';
+      });
+      label.append(area);
+      const save = el('button', 'team-save', 'Save note');
+      save.type = 'button';
+      const row = el('div', 'team-note-row');
+      row.append(counter, save);
+      box.append(label, row);
+
+      save.addEventListener('click', async () => {
+        const text = area.value.trim();
+        if (!text) {
+          msg.classList.add('is-error');
+          msg.textContent = 'Write a note first.';
+          area.focus();
+          return;
+        }
+        if (inflight.has(task.ID)) return;
+        inflight.add(task.ID);
+        msg.classList.remove('is-error');
+        msg.textContent = 'Saving…';
+        lock(true);
+        try {
+          const payload = await postUpdate({ taskId: task.ID, note: text });
+          applyProgress(task, payload);
+          area.value = '';
+          redraw({ id: task.ID, text: 'Saved ✓', ok: true });
+        } catch (error) {
+          lock(false);
+          msg.classList.add('is-error');
+          msg.textContent = error.message;
+        } finally {
+          inflight.delete(task.ID);
+        }
+      });
+
+      wrap.append(control, meta, thread, box, msg);
+      return wrap;
+    }
+
+    function taskCard(task, data, flash, redraw, draft) {
       const days = daysUntil(task.Due);
       const critical = isCritical(task);
-      const notes = task['Detailed notes'];
+      const plan = task['Detailed notes'];
       const phone = task['Contact to call'];
       const more = extras(task, data.columns?.tasks, TASK_KNOWN);
-      const hasBody = notes || phone || more;
+      const hasBody = plan || phone || more;
+      const status = taskStatus(task);
 
-      const card = el(hasBody ? 'details' : 'article', 'team-card team-task');
+      const card = el('article', 'team-card team-task');
+      if (task.ID) card.dataset.id = task.ID;
       if (critical) card.classList.add('is-critical');
-      if (days != null && days >= 0 && days <= 7) card.classList.add('is-soon');
-      if (days != null && days < 0) card.classList.add('is-past');
+      if (status === 'Done') card.classList.add('is-done');
+      else if (days != null && days >= 0 && days <= 7) card.classList.add('is-soon');
+      if (status === 'In progress') card.classList.add('is-progress');
+      if (status !== 'Done' && days != null && days < 0) card.classList.add('is-past');
 
-      const summary = el(hasBody ? 'summary' : 'div', 'team-task-head');
+      const head = el('div', 'team-task-head');
       const titleRow = el('div', 'team-card-head');
       const title = el('h3', 'team-title');
       if (critical) {
@@ -238,8 +401,7 @@
       }
       title.append(task.Task || 'Task');
       titleRow.append(title);
-      if (hasBody) titleRow.append(icon('chevron', 'team-chevron'));
-      summary.append(titleRow);
+      head.append(titleRow);
 
       const meta = el('p', 'team-task-meta');
       if (task.Due) {
@@ -250,15 +412,20 @@
       }
       if (task.Role) meta.append(el('span', 'team-role', task.Role));
       if (task.as === 'backup') meta.append(el('span', 'team-badge', 'Backup'));
-      if (meta.childNodes.length) summary.append(meta);
-      card.append(summary);
+      if (meta.childNodes.length) head.append(meta);
+      card.append(head);
+      if (task.ID) card.append(progressControls(task, flash, redraw, draft));
 
       if (hasBody) {
+        const fold = el('details', 'team-fold');
+        const summary = el('summary', 'team-more');
+        summary.append('Details', icon('chevron', 'team-chevron'));
         const body = el('div', 'team-task-body');
-        if (notes) body.append(withPhoneLinks(el('p', 'team-body'), notes));
+        if (plan) body.append(withPhoneLinks(el('p', 'team-body'), plan));
         if (phone) body.append(contact(phone));
         if (more) body.append(more);
-        card.append(body);
+        fold.append(summary, body);
+        card.append(fold);
       }
       return card;
     }
@@ -277,12 +444,14 @@
         return section;
       }
 
-      const counts = {
-        all: tasks.length,
-        critical: tasks.filter((t) => t.critical).length,
-        week: tasks.filter((t) => taskGroup(t.days) === 'week').length,
-        backup: tasks.filter((t) => t.task.as === 'backup').length,
-      };
+      const counts = { all: 0, critical: 0, week: 0, backup: 0 };
+      function recount() {
+        counts.all = tasks.length;
+        counts.critical = tasks.filter((t) => t.critical && taskStatus(t.task) !== 'Done').length;
+        counts.week = tasks.filter((t) => taskGroup(t.days) === 'week' && taskStatus(t.task) !== 'Done').length;
+        counts.backup = tasks.filter((t) => t.task.as === 'backup').length;
+      }
+      recount();
       const filters = [
         ['all', 'All', null],
         ['critical', 'Critical', 'critical'],
@@ -297,37 +466,98 @@
 
       const matches = {
         all: () => true,
-        critical: (t) => t.critical,
-        week: (t) => taskGroup(t.days) === 'week',
+        critical: (t) => t.critical && taskStatus(t.task) !== 'Done',
+        week: (t) => taskGroup(t.days) === 'week' && taskStatus(t.task) !== 'Done',
         backup: (t) => t.task.as === 'backup',
       };
       const emptyText = {
-        critical: 'No critical tasks for you.',
+        critical: 'No critical tasks still open.',
         week: 'Nothing due in the next 7 days.',
         backup: 'No backup tasks.',
       };
+      const byDue = (a, b) => (a.days ?? 1e9) - (b.days ?? 1e9) || b.critical - a.critical || a.index - b.index;
+
+      function publishCritical(n) {
+        document.querySelector('.team-nav [data-tab="tasks"] .team-icon')?.classList.toggle('has-critical', n > 0);
+        const button = document.querySelector('.team-alert');
+        if (!button) return;
+        const label = button.querySelector('.team-alert-label');
+        if (label) {
+          label.textContent = (n === 1 ? '1 critical task' : n + ' critical tasks') + ' — tap to view';
+        }
+        button.dataset.count = String(n);
+        const onTasks = document.querySelector('.team-nav button[aria-current="page"]')?.dataset.tab === 'tasks';
+        button.hidden = n <= 0 || onTasks;
+      }
 
       function draw(filter) {
+        const flash = draw.flash || null;
+        draw.flash = null;
+        const opened = new Set(
+          [...list.querySelectorAll('.team-fold[open]')]
+            .map((node) => node.closest('[data-id]')?.dataset.id)
+            .filter(Boolean),
+        );
+        const drafts = new Map();
+        for (const card of list.querySelectorAll('[data-id]')) {
+          const value = card.querySelector('textarea')?.value || '';
+          if (value) drafts.set(card.dataset.id, value);
+        }
+        const y = window.scrollY;
+        recount();
         bar.querySelectorAll('button').forEach((b) => {
-          b.setAttribute('aria-pressed', b.dataset.filter === filter ? 'true' : 'false');
+          const on = b.dataset.filter === filter;
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          const count = b.querySelector('.team-filter-count');
+          if (count) count.textContent = String(counts[b.dataset.filter]);
+          if (b.dataset.filter === 'critical') b.disabled = counts.critical === 0 && !on;
         });
         const shown = tasks.filter(matches[filter]);
         list.replaceChildren();
+        const redraw = (next) => {
+          draw.flash = next;
+          draw(filter);
+        };
+        const addCard = (group, item) => {
+          const card = taskCard(
+            item.task,
+            data,
+            flash && flash.id === item.task.ID ? flash : null,
+            redraw,
+            drafts.get(item.task.ID) || '',
+          );
+          const fold = card.querySelector('.team-fold');
+          if (fold && opened.has(item.task.ID)) fold.open = true;
+          group.append(card);
+        };
         if (!shown.length) {
           list.append(el('p', 'team-empty', emptyText[filter] || 'No tasks.'));
-          return;
+        } else {
+          const openItems = shown.filter((t) => taskStatus(t.task) !== 'Done');
+          for (const [id, label] of GROUPS) {
+            const items = openItems.filter((t) => taskGroup(t.days) === id).sort(byDue);
+            if (!items.length) continue;
+            const group = el('div', 'team-group' + (id === 'past' ? ' is-past' : ''));
+            const head = el('h2', 'team-group-head', label);
+            head.append(el('span', '', String(items.length)));
+            group.append(head);
+            for (const t of items) addCard(group, t);
+            list.append(group);
+          }
+          const doneItems = shown.filter((t) => taskStatus(t.task) === 'Done').sort(byDue);
+          if (doneItems.length) {
+            const group = el('div', 'team-group is-done-group');
+            const head = el('h2', 'team-group-head', 'Done');
+            head.append(el('span', '', String(doneItems.length)));
+            group.append(head);
+            for (const t of doneItems) addCard(group, t);
+            list.append(group);
+          }
         }
-        for (const [id, label] of GROUPS) {
-          const items = shown
-            .filter((t) => taskGroup(t.days) === id)
-            .sort((a, b) => (a.days ?? 1e9) - (b.days ?? 1e9) || b.critical - a.critical || a.index - b.index);
-          if (!items.length) continue;
-          const group = el('div', 'team-group' + (id === 'past' ? ' is-past' : ''));
-          const head = el('h2', 'team-group-head', label);
-          head.append(el('span', '', String(items.length)));
-          group.append(head);
-          for (const t of items) group.append(taskCard(t.task, data));
-          list.append(group);
+        publishCritical(counts.critical);
+        window.scrollTo(0, y);
+        if (flash?.id) {
+          list.querySelector('[data-id="' + CSS.escape(flash.id) + '"]')?.scrollIntoView({ block: 'nearest' });
         }
       }
 
@@ -421,14 +651,19 @@
       const flows = renderFlows(data);
       const panels = { roles, tasks, flows };
 
-      const critical = (data.tasks || []).filter(isCritical);
+      const anyCritical = (data.tasks || []).some(isCritical);
+      const critical = (data.tasks || []).filter(
+        (t) => isCritical(t) && (t.status || 'Not started') !== 'Done',
+      );
       let alert = null;
-      if (critical.length) {
+      if (anyCritical) {
         alert = el('button', 'team-alert');
         alert.type = 'button';
+        alert.dataset.count = String(critical.length);
+        if (!critical.length) alert.hidden = true;
         alert.append(icon('critical'));
         const label = critical.length === 1 ? '1 critical task' : critical.length + ' critical tasks';
-        alert.append(el('span', '', label + ' — tap to view'));
+        alert.append(el('span', 'team-alert-label', label + ' — tap to view'));
         alert.addEventListener('click', () => {
           show('tasks');
           tasks.showFilter?.('critical');
@@ -463,7 +698,10 @@
 
       function show(name, keepScroll) {
         for (const [id, panel] of Object.entries(panels)) panel.hidden = id !== name;
-        if (alert) alert.hidden = name === 'tasks';
+        if (alert) {
+          const n = Number(alert.dataset.count || '0');
+          alert.hidden = name === 'tasks' || n <= 0;
+        }
         nav.querySelectorAll('button').forEach((b) => {
           if (b.dataset.tab === name) b.setAttribute('aria-current', 'page');
           else b.removeAttribute('aria-current');
