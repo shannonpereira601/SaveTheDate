@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Private wedding team page for Gloria and Shannon.">
+  <title>Wedding team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/team.css?v=1">
+</head>
+<body>
+  <header class="team-top">
+    <p class="team-kicker">Gloria &amp; Shannon</p>
+    <p class="team-when">19 December 2026 · Morjim, Goa</p>
+  </header>
+  <main id="app" class="team-main">
+    <p class="team-status">Loading your page…</p>
+  </main>
+  <script>
+    const WORKER_URL = 'https://team-api.shannonpereira601.workers.dev';
+
+    const ROLE_KNOWN = ['Role', 'Day', 'Responsibilities', 'Contact to call'];
+    const TASK_KNOWN = ['Task', 'Due', 'Detailed notes', 'Contact to call', 'Role'];
+    const FLOW_KNOWN = ['Flow', 'Time', 'What happens', 'Lead', 'Notes'];
+
+    const app = document.getElementById('app');
+    const params = new URLSearchParams(location.search);
+    const code = (params.get('k') || '').trim();
+
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text != null) node.textContent = text;
+      return node;
+    }
+
+    function showMessage(text) {
+      app.replaceChildren(el('p', 'team-status', text));
+      document.title = 'Wedding team';
+    }
+
+    function formatDue(iso) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return iso || '';
+      const [y, m, d] = iso.split('-').map(Number);
+      const date = new Date(Date.UTC(y, m - 1, d));
+      return date.toLocaleDateString('en-GB', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'UTC',
+      });
+    }
+
+    function dueSoon(iso) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return false;
+      const [y, m, d] = iso.split('-').map(Number);
+      const due = Date.UTC(y, m - 1, d);
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).formatToParts(new Date());
+      const get = (type) => Number(parts.find((p) => p.type === type).value);
+      const today = Date.UTC(get('year'), get('month') - 1, get('day'));
+      const days = (due - today) / 86400000;
+      return days >= 0 && days <= 7;
+    }
+
+    function formatUpdated(iso) {
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return '';
+      return date.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      });
+    }
+
+    function extras(row, columns, known) {
+      const skip = new Set([...known, 'as']);
+      const fields = (columns || Object.keys(row)).filter((key) => !skip.has(key) && row[key]);
+      if (!fields.length) return null;
+      const list = el('dl', 'team-extra');
+      for (const key of fields) {
+        list.append(el('dt', '', key), el('dd', '', row[key]));
+      }
+      return list;
+    }
+
+    function render(data) {
+      document.title = data.name + ' · Wedding team';
+      const root = el('div', 'team-page');
+
+      const hello = el('section', 'team-hello');
+      hello.append(el('h1', '', 'Hi ' + data.name + ' 👋'));
+      hello.append(el('p', '', "Your roles and tasks for Gloria & Shannon's wedding. This page updates automatically."));
+      root.append(hello);
+
+      const roles = el('section', 'team-section');
+      roles.append(el('h2', '', 'My roles'));
+      if (!data.roles?.length) {
+        roles.append(el('p', 'team-empty', 'No roles assigned yet.'));
+      } else {
+        for (const role of data.roles) {
+          const card = el('article', 'team-card' + (role.as === 'backup' ? ' is-backup' : ''));
+          if (role.as === 'backup') card.append(el('p', 'team-badge', 'Backup for'));
+          card.append(el('h3', '', role.Role || 'Role'));
+          if (role.Day) card.append(el('p', 'team-day', role.Day));
+          if (role.Responsibilities) card.append(el('p', 'team-body', role.Responsibilities));
+          if (role['Contact to call']) card.append(el('p', 'team-contact', 'Contact: ' + role['Contact to call']));
+          const more = extras(role, data.columns?.roles, ROLE_KNOWN);
+          if (more) card.append(more);
+          roles.append(card);
+        }
+      }
+      root.append(roles);
+
+      const tasks = el('section', 'team-section');
+      tasks.append(el('h2', '', 'My tasks'));
+      if (!data.tasks?.length) {
+        tasks.append(el('p', 'team-empty', 'No tasks assigned yet.'));
+      } else {
+        const list = el('div', 'team-tasks');
+        for (const task of data.tasks) {
+          const card = el('article', 'team-card team-task' + (dueSoon(task.Due) ? ' is-soon' : ''));
+          const title = el('div', 'team-task-title');
+          title.append(el('h3', '', task.Task || 'Task'));
+          if (task.as === 'backup') title.append(el('p', 'team-badge', 'Backup'));
+          card.append(title);
+          if (task.Due) card.append(el('p', 'team-due', formatDue(task.Due)));
+          if (task['Detailed notes']) card.append(el('p', 'team-body', task['Detailed notes']));
+          if (task['Contact to call']) card.append(el('p', 'team-contact', 'Contact: ' + task['Contact to call']));
+          if (task.Role) card.append(el('p', 'team-role', task.Role));
+          const more = extras(task, data.columns?.tasks, TASK_KNOWN);
+          if (more) card.append(more);
+          list.append(card);
+        }
+        tasks.append(list);
+      }
+      root.append(tasks);
+
+      const flowNames = Object.keys(data.flows || {});
+      const flows = el('section', 'team-section');
+      flows.append(el('h2', '', 'Day flows'));
+      if (!flowNames.length) {
+        flows.append(el('p', 'team-empty', 'No day flows for your roles yet.'));
+      } else {
+        flowNames.forEach((name, index) => {
+          const details = document.createElement('details');
+          details.className = 'team-flow';
+          if (index === 0) details.open = true;
+          details.append(el('summary', '', name));
+          const rows = data.flows[name] || [];
+          if (!rows.length) {
+            details.append(el('p', 'team-empty', 'No lines in this flow yet.'));
+          } else {
+            for (const row of rows) {
+              const line = el('article', 'team-flow-row');
+              const lead = row.Lead || '';
+              const mine = data.name && lead.toLowerCase().includes(data.name.toLowerCase());
+              if (mine) line.classList.add('is-mine');
+              if (row.Time) line.append(el('p', 'team-time', row.Time));
+              line.append(el('p', 'team-what' + (mine ? ' is-mine' : ''), row['What happens'] || ''));
+              if (lead) line.append(el('p', 'team-lead' + (mine ? ' is-mine' : ''), lead));
+              if (row.Notes) line.append(el('p', 'team-notes', row.Notes));
+              const more = extras(row, data.columns?.flows, FLOW_KNOWN);
+              if (more) line.append(more);
+              details.append(line);
+            }
+          }
+          flows.append(details);
+        });
+      }
+      root.append(flows);
+
+      const when = formatUpdated(data.updated);
+      if (when) root.append(el('p', 'team-updated', 'Last updated ' + when + ' IST'));
+      app.replaceChildren(root);
+    }
+
+    async function load() {
+      if (!code) {
+        showMessage("This link isn't recognised. Please check with Shannon or Gloria.");
+        return;
+      }
+      try {
+        const response = await fetch(WORKER_URL + '/api/team?k=' + encodeURIComponent(code));
+        if (response.status === 404) {
+          showMessage("This link isn't recognised. Please check with Shannon or Gloria.");
+          return;
+        }
+        if (!response.ok) {
+          showMessage("Couldn't load right now. Please try again in a minute.");
+          return;
+        }
+        render(await response.json());
+      } catch (error) {
+        showMessage("Couldn't load right now. Please try again in a minute.");
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+/* Team pages. Same plum and cream as the wedding site. Not linked from other pages. */
+
+:root {
+  --maroon: #3d1534;
+  --maroon-mid: #5f2a48;
+  --cream: #f4f2eb;
+  --cream-dark: #e8e5dc;
+  --gold: #c9a96e;
+  --ff-serif: "Playfair Display", Georgia, serif;
+  --ff-label: "Jost", "Helvetica Neue", sans-serif;
+  --ff-display: "Bodoni Moda", "Playfair Display", Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--maroon);
+  font-family: var(--ff-serif);
+  line-height: 1.5;
+}
+
+.team-top {
+  background: var(--maroon);
+  color: var(--cream);
+  padding: 28px 20px 22px;
+  text-align: center;
+}
+
+.team-kicker {
+  margin: 0;
+  font-family: var(--ff-display);
+  font-size: clamp(1.8rem, 6vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.team-when {
+  margin: 8px 0 0;
+  font-family: var(--ff-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.team-main {
+  width: min(720px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 48px;
+}
+
+.team-status,
+.team-empty {
+  font-style: italic;
+  color: var(--maroon-mid);
+}
+
+.team-hello h1 {
+  margin: 0 0 8px;
+  font-family: var(--ff-display);
+  font-size: clamp(2rem, 7vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.team-hello p,
+.team-body,
+.team-notes,
+.team-what {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.team-section {
+  margin-top: 32px;
+}
+
+.team-section h2,
+.team-flow summary {
+  margin: 0 0 12px;
+  font-family: var(--ff-label);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.team-card,
+.team-flow-row {
+  background: #fffdf8;
+  border: 1px solid var(--cream-dark);
+  border-radius: 14px;
+  padding: 16px 16px 14px;
+  margin-bottom: 12px;
+}
+
+.team-card h3,
+.team-task h3 {
+  margin: 0;
+  font-family: var(--ff-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.team-badge {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--maroon);
+  color: var(--cream);
+  font-family: var(--ff-label);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.team-task-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.team-task-title .team-badge {
+  margin: 2px 0 0;
+  flex: none;
+}
+
+.team-day,
+.team-due,
+.team-time {
+  margin: 6px 0 0;
+  color: var(--gold);
+  font-family: var(--ff-label);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.team-body,
+.team-notes,
+.team-what {
+  margin-top: 8px;
+}
+
+.team-contact,
+.team-role,
+.team-lead {
+  margin: 8px 0 0;
+  font-family: var(--ff-label);
+  font-size: 0.86rem;
+  color: var(--maroon-mid);
+}
+
+.team-role {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.team-task.is-soon {
+  border-color: var(--gold);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+
+.team-flow {
+  border-top: 1px solid var(--cream-dark);
+  padding-top: 8px;
+}
+
+.team-flow summary {
+  cursor: pointer;
+  padding: 8px 0;
+  list-style: none;
+}
+
+.team-flow summary::-webkit-details-marker {
+  display: none;
+}
+
+.team-flow-row.is-mine .team-what,
+.team-lead.is-mine,
+.team-what.is-mine {
+  font-weight: 600;
+}
+
+.team-extra {
+  display: grid;
+  grid-template-columns: minmax(88px, 34%) 1fr;
+  gap: 4px 12px;
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--cream-dark);
+  font-size: 0.92rem;
+}
+
+.team-extra dt {
+  font-family: var(--ff-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--maroon-mid);
+}
+
+.team-extra dd {
+  margin: 0;
+}
+
+.team-updated {
+  margin: 28px 0 0;
+  text-align: center;
+  font-family: var(--ff-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--maroon-mid);
+}
