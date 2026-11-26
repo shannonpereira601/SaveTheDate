@@ -171,9 +171,9 @@
       return list;
     }
 
-    // The name may start with the person's icon (e.g. "💪 Elisha"); drop it for matching.
+    // The name may end with the person's icon (e.g. "Elisha 💪"); drop it for matching.
     function plainName(name) {
-      return String(name || '').replace(/^[^\p{L}\p{N}]+/u, '').trim();
+      return String(name || '').replace(/[^\p{L}\p{N}]+$/u, '').trim();
     }
 
     function showMessage(text) {
@@ -708,7 +708,7 @@
     function render(data) {
       document.title = plainName(data.name) + ' · Wedding team';
       document.body.classList.add('has-nav');
-      hello.textContent = 'Hi ' + data.name + ' 👋';
+      hello.textContent = 'Hi ' + data.name;
 
       const root = el('div', 'team-page');
       const roles = renderRoles(data);
