@@ -171,6 +171,11 @@
       return list;
     }
 
+    // The name may start with the person's icon (e.g. "💪 Elisha"); drop it for matching.
+    function plainName(name) {
+      return String(name || '').replace(/^[^\p{L}\p{N}]+/u, '').trim();
+    }
+
     function showMessage(text) {
       document.body.classList.remove('has-nav');
       app.replaceChildren(el('p', 'team-status', text));
@@ -653,7 +658,7 @@
       chips.setAttribute('role', 'group');
       chips.setAttribute('aria-label', 'Choose a flow');
       const decks = el('div', 'team-decks');
-      const me = (data.name || '').toLowerCase();
+      const me = plainName(data.name).toLowerCase();
 
       flowNames.forEach((name, index) => {
         const chip = el('button', 'team-filter', name);
@@ -701,9 +706,9 @@
     /* ---------- Page ---------- */
 
     function render(data) {
-      document.title = data.name + ' · Wedding team';
+      document.title = plainName(data.name) + ' · Wedding team';
       document.body.classList.add('has-nav');
-      hello.textContent = 'Hi ' + data.name;
+      hello.textContent = 'Hi ' + data.name + ' 👋';
 
       const root = el('div', 'team-page');
       const roles = renderRoles(data);
