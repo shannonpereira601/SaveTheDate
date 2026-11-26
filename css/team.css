@@ -273,7 +273,7 @@ a:focus-visible {
 }
 
 .team-filter {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
