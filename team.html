@@ -2,31 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="Private wedding team page for Gloria and Shannon.">
+  <meta name="theme-color" content="#3d1534">
   <title>Wedding team</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/team.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/team.css?v=3">
 </head>
 <body>
   <header class="team-top">
-    <p class="team-kicker">Gloria &amp; Shannon</p>
-    <p class="team-when">19 December 2026 · Morjim, Goa</p>
+    <p class="team-kicker">Gloria &amp; Shannon <span aria-hidden="true">·</span> 19 Dec 2026 <span aria-hidden="true">·</span> Morjim</p>
+    <h1 id="hello" class="team-hello">Wedding team</h1>
+    <p id="countdown" class="team-countdown"></p>
   </header>
   <main id="app" class="team-main">
     <p class="team-status">Loading your page…</p>
   </main>
   <script>
     const WORKER_URL = 'https://team-api.shannonpereira601.workers.dev';
+    const WEDDING_DAY = Date.UTC(2026, 11, 19);
 
     const ROLE_KNOWN = ['Role', 'Day', 'Responsibilities', 'Contact to call'];
-    const TASK_KNOWN = ['Task', 'Due', 'Detailed notes', 'Contact to call', 'Role'];
+    const TASK_KNOWN = ['ID', 'Task', 'Due', 'Detailed notes', 'Contact to call', 'Role', 'Critical', 'Critical?'];
     const FLOW_KNOWN = ['Flow', 'Time', 'What happens', 'Lead', 'Notes'];
 
+    const ICONS = {
+      roles: '<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4 20c1.2-3.6 4.2-5.5 8-5.5s6.8 1.9 8 5.5"/>',
+      tasks: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/>',
+      flows: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+      critical: '<path d="M12 2.8 21.2 12 12 21.2 2.8 12Z" fill="currentColor" stroke="none"/><path d="M12 7.6v5.3" style="stroke:var(--crit-ink,#fff)" stroke-width="2.2"/><circle cx="12" cy="16.3" r="1.3" style="fill:var(--crit-ink,#fff)" stroke="none"/>',
+      phone: '<path d="M5 3.5h3.2l1.6 4.3-2.1 1.3a11 11 0 0 0 5.2 5.2l1.3-2.1 4.3 1.6V17a2.5 2.5 0 0 1-2.7 2.5C9.7 19 5 14.3 4.5 6.2A2.5 2.5 0 0 1 5 3.5Z"/>',
+      chevron: '<path d="m7 10 5 5 5-5"/>',
+    };
+
     const app = document.getElementById('app');
+    const hello = document.getElementById('hello');
+    const countdown = document.getElementById('countdown');
     const params = new URLSearchParams(location.search);
     const code = (params.get('k') || '').trim();
 
@@ -37,27 +51,14 @@
       return node;
     }
 
-    function showMessage(text) {
-      app.replaceChildren(el('p', 'team-status', text));
-      document.title = 'Wedding team';
+    function icon(name, className) {
+      const span = el('span', 'team-icon' + (className ? ' ' + className : ''));
+      span.setAttribute('aria-hidden', 'true');
+      span.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ICONS[name] + '</svg>';
+      return span;
     }
 
-    function formatDue(iso) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return iso || '';
-      const [y, m, d] = iso.split('-').map(Number);
-      const date = new Date(Date.UTC(y, m - 1, d));
-      return date.toLocaleDateString('en-GB', {
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short',
-        timeZone: 'UTC',
-      });
-    }
-
-    function dueSoon(iso) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return false;
-      const [y, m, d] = iso.split('-').map(Number);
-      const due = Date.UTC(y, m - 1, d);
+    function todayIST() {
       const parts = new Intl.DateTimeFormat('en-GB', {
         timeZone: 'Asia/Kolkata',
         year: 'numeric',
@@ -65,9 +66,40 @@
         day: '2-digit',
       }).formatToParts(new Date());
       const get = (type) => Number(parts.find((p) => p.type === type).value);
-      const today = Date.UTC(get('year'), get('month') - 1, get('day'));
-      const days = (due - today) / 86400000;
-      return days >= 0 && days <= 7;
+      return Date.UTC(get('year'), get('month') - 1, get('day'));
+    }
+
+    const TODAY = todayIST();
+
+    function parseDue(iso) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return null;
+      const [y, m, d] = iso.split('-').map(Number);
+      return Date.UTC(y, m - 1, d);
+    }
+
+    function daysUntil(iso) {
+      const due = parseDue(iso);
+      return due == null ? null : Math.round((due - TODAY) / 86400000);
+    }
+
+    function formatDue(iso) {
+      const due = parseDue(iso);
+      if (due == null) return iso || '';
+      return new Date(due).toLocaleDateString('en-GB', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'UTC',
+      });
+    }
+
+    function relativeDue(days) {
+      if (days == null) return '';
+      if (days === 0) return 'Today';
+      if (days === 1) return 'Tomorrow';
+      if (days === -1) return 'Yesterday';
+      if (days > 1 && days <= 14) return 'in ' + days + ' days';
+      return '';
     }
 
     function formatUpdated(iso) {
@@ -77,115 +109,376 @@
         timeZone: 'Asia/Kolkata',
         day: 'numeric',
         month: 'short',
-        year: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
       });
     }
 
+    function setCountdown() {
+      const days = Math.round((WEDDING_DAY - TODAY) / 86400000);
+      if (days > 1) countdown.textContent = days + ' days to go';
+      else if (days === 1) countdown.textContent = 'Tomorrow!';
+      else if (days === 0) countdown.textContent = 'Today’s the day!';
+      else countdown.textContent = '';
+    }
+
+    function isCritical(row) {
+      const key = Object.keys(row).find((k) => /^critical\??$/i.test(k.trim()));
+      return key ? String(row[key]).trim().toLowerCase() === 'yes' : false;
+    }
+
+    // Turns phone numbers inside free text into tap-to-call links.
+    function withPhoneLinks(node, text) {
+      const pattern = /(\+?\d[\d\s-]{7,}\d)/g;
+      let last = 0;
+      let match;
+      while ((match = pattern.exec(text))) {
+        const digits = match[0].replace(/[^\d+]/g, '');
+        if (digits.replace('+', '').length < 8) continue;
+        node.append(text.slice(last, match.index));
+        const link = el('a', 'team-tel', match[0]);
+        link.href = 'tel:' + digits;
+        node.append(link);
+        last = match.index + match[0].length;
+      }
+      node.append(text.slice(last));
+      return node;
+    }
+
+    function contact(text) {
+      const row = el('p', 'team-contact');
+      row.append(icon('phone'));
+      row.append(withPhoneLinks(el('span'), text));
+      return row;
+    }
+
     function extras(row, columns, known) {
-      const skip = new Set([...known, 'as']);
-      const fields = (columns || Object.keys(row)).filter((key) => !skip.has(key) && row[key]);
+      const skip = new Set(known.map((key) => key.toLowerCase()));
+      skip.add('as');
+      const fields = (columns || Object.keys(row)).filter((key) => {
+        return key && !skip.has(key.toLowerCase()) && row[key];
+      });
       if (!fields.length) return null;
       const list = el('dl', 'team-extra');
       for (const key of fields) {
-        list.append(el('dt', '', key), el('dd', '', row[key]));
+        list.append(el('dt', '', key), withPhoneLinks(el('dd'), String(row[key])));
       }
       return list;
     }
 
+    function showMessage(text) {
+      document.body.classList.remove('has-nav');
+      app.replaceChildren(el('p', 'team-status', text));
+      document.title = 'Wedding team';
+    }
+
+    /* ---------- Roles ---------- */
+
+    function renderRoles(data) {
+      const section = el('section', 'team-section');
+      section.dataset.panel = 'roles';
+      if (!data.roles?.length) {
+        section.append(el('p', 'team-empty', 'No roles assigned yet.'));
+        return section;
+      }
+      for (const role of data.roles) {
+        const card = el('article', 'team-card' + (role.as === 'backup' ? ' is-backup' : ''));
+        const head = el('div', 'team-card-head');
+        head.append(el('h2', 'team-title', role.Role || 'Role'));
+        if (role.as === 'backup') head.append(el('span', 'team-badge', 'Backup'));
+        card.append(head);
+        if (role.Day) card.append(el('p', 'team-meta', role.Day));
+        if (role.Responsibilities) card.append(el('p', 'team-body', role.Responsibilities));
+        if (role['Contact to call']) card.append(contact(role['Contact to call']));
+        const more = extras(role, data.columns?.roles, ROLE_KNOWN);
+        if (more) card.append(more);
+        section.append(card);
+      }
+      return section;
+    }
+
+    /* ---------- Tasks ---------- */
+
+    function taskGroup(days) {
+      if (days == null) return 'none';
+      if (days < 0) return 'past';
+      if (days <= 7) return 'week';
+      return 'later';
+    }
+
+    const GROUPS = [
+      ['past', 'Earlier'],
+      ['week', 'This week'],
+      ['later', 'Coming up'],
+      ['none', 'No date'],
+    ];
+
+    function taskCard(task, data) {
+      const days = daysUntil(task.Due);
+      const critical = isCritical(task);
+      const notes = task['Detailed notes'];
+      const phone = task['Contact to call'];
+      const more = extras(task, data.columns?.tasks, TASK_KNOWN);
+      const hasBody = notes || phone || more;
+
+      const card = el(hasBody ? 'details' : 'article', 'team-card team-task');
+      if (critical) card.classList.add('is-critical');
+      if (days != null && days >= 0 && days <= 7) card.classList.add('is-soon');
+      if (days != null && days < 0) card.classList.add('is-past');
+
+      const summary = el(hasBody ? 'summary' : 'div', 'team-task-head');
+      const titleRow = el('div', 'team-card-head');
+      const title = el('h3', 'team-title');
+      if (critical) {
+        const flag = icon('critical', 'team-crit-icon');
+        flag.setAttribute('aria-hidden', 'false');
+        flag.setAttribute('role', 'img');
+        flag.setAttribute('aria-label', 'Critical');
+        title.append(flag);
+      }
+      title.append(task.Task || 'Task');
+      titleRow.append(title);
+      if (hasBody) titleRow.append(icon('chevron', 'team-chevron'));
+      summary.append(titleRow);
+
+      const meta = el('p', 'team-task-meta');
+      if (task.Due) {
+        const due = el('span', 'team-due', formatDue(task.Due));
+        const rel = relativeDue(days);
+        if (rel) due.append(el('b', '', ' · ' + rel));
+        meta.append(due);
+      }
+      if (task.Role) meta.append(el('span', 'team-role', task.Role));
+      if (task.as === 'backup') meta.append(el('span', 'team-badge', 'Backup'));
+      if (meta.childNodes.length) summary.append(meta);
+      card.append(summary);
+
+      if (hasBody) {
+        const body = el('div', 'team-task-body');
+        if (notes) body.append(withPhoneLinks(el('p', 'team-body'), notes));
+        if (phone) body.append(contact(phone));
+        if (more) body.append(more);
+        card.append(body);
+      }
+      return card;
+    }
+
+    function renderTasks(data) {
+      const section = el('section', 'team-section');
+      section.dataset.panel = 'tasks';
+      const tasks = (data.tasks || []).map((task, index) => ({
+        task,
+        index,
+        days: daysUntil(task.Due),
+        critical: isCritical(task),
+      }));
+      if (!tasks.length) {
+        section.append(el('p', 'team-empty', 'No tasks assigned yet.'));
+        return section;
+      }
+
+      const counts = {
+        all: tasks.length,
+        critical: tasks.filter((t) => t.critical).length,
+        week: tasks.filter((t) => taskGroup(t.days) === 'week').length,
+        backup: tasks.filter((t) => t.task.as === 'backup').length,
+      };
+      const filters = [
+        ['all', 'All', null],
+        ['critical', 'Critical', 'critical'],
+        ['week', 'This week', null],
+      ];
+      if (counts.backup && counts.backup < counts.all) filters.push(['backup', 'Backup', null]);
+
+      const bar = el('div', 'team-filters');
+      bar.setAttribute('role', 'group');
+      bar.setAttribute('aria-label', 'Filter tasks');
+      const list = el('div', 'team-task-list');
+
+      const matches = {
+        all: () => true,
+        critical: (t) => t.critical,
+        week: (t) => taskGroup(t.days) === 'week',
+        backup: (t) => t.task.as === 'backup',
+      };
+      const emptyText = {
+        critical: 'No critical tasks for you.',
+        week: 'Nothing due in the next 7 days.',
+        backup: 'No backup tasks.',
+      };
+
+      function draw(filter) {
+        bar.querySelectorAll('button').forEach((b) => {
+          b.setAttribute('aria-pressed', b.dataset.filter === filter ? 'true' : 'false');
+        });
+        const shown = tasks.filter(matches[filter]);
+        list.replaceChildren();
+        if (!shown.length) {
+          list.append(el('p', 'team-empty', emptyText[filter] || 'No tasks.'));
+          return;
+        }
+        for (const [id, label] of GROUPS) {
+          const items = shown
+            .filter((t) => taskGroup(t.days) === id)
+            .sort((a, b) => (a.days ?? 1e9) - (b.days ?? 1e9) || b.critical - a.critical || a.index - b.index);
+          if (!items.length) continue;
+          const group = el('div', 'team-group' + (id === 'past' ? ' is-past' : ''));
+          const head = el('h2', 'team-group-head', label);
+          head.append(el('span', '', String(items.length)));
+          group.append(head);
+          for (const t of items) group.append(taskCard(t.task, data));
+          list.append(group);
+        }
+      }
+
+      for (const [id, label, iconName] of filters) {
+        const button = el('button', 'team-filter' + (id === 'critical' ? ' is-critical' : ''));
+        button.type = 'button';
+        button.dataset.filter = id;
+        if (iconName) button.append(icon(iconName));
+        button.append(label);
+        button.append(el('span', 'team-filter-count', String(counts[id])));
+        if (id === 'critical' && !counts.critical) button.disabled = true;
+        button.addEventListener('click', () => draw(id));
+        bar.append(button);
+      }
+
+      section.append(bar, list);
+      section.showFilter = draw;
+      draw('all');
+      return section;
+    }
+
+    /* ---------- Flows ---------- */
+
+    function renderFlows(data) {
+      const section = el('section', 'team-section');
+      section.dataset.panel = 'flows';
+      const flowNames = Object.keys(data.flows || {});
+      if (!flowNames.length) {
+        section.append(el('p', 'team-empty', 'No day flows for your roles yet.'));
+        return section;
+      }
+      const chips = el('div', 'team-filters');
+      chips.setAttribute('role', 'group');
+      chips.setAttribute('aria-label', 'Choose a flow');
+      const decks = el('div', 'team-decks');
+      const me = (data.name || '').toLowerCase();
+
+      flowNames.forEach((name, index) => {
+        const chip = el('button', 'team-filter', name);
+        chip.type = 'button';
+        chip.setAttribute('aria-pressed', index === 0 ? 'true' : 'false');
+        const deck = el('ol', 'team-timeline');
+        deck.hidden = index !== 0;
+        const rows = data.flows[name] || [];
+        if (!rows.length) {
+          deck.append(el('li', 'team-empty', 'No lines in this flow yet.'));
+        }
+        for (const row of rows) {
+          const line = el('li', 'team-line');
+          const lead = row.Lead || '';
+          if (me && lead.toLowerCase().includes(me)) line.classList.add('is-mine');
+          line.append(el('span', 'team-time', row.Time || ''));
+          const body = el('div', 'team-line-body');
+          body.append(el('p', 'team-what', row['What happens'] || ''));
+          if (lead) {
+            const leadRow = el('p', 'team-lead', lead);
+            if (line.classList.contains('is-mine')) leadRow.append(el('span', 'team-you', 'You'));
+            body.append(leadRow);
+          }
+          if (row.Notes) body.append(withPhoneLinks(el('p', 'team-notes'), row.Notes));
+          const more = extras(row, data.columns?.flows, FLOW_KNOWN);
+          if (more) body.append(more);
+          line.append(body);
+          deck.append(line);
+        }
+        chip.addEventListener('click', () => {
+          chips.querySelectorAll('button').forEach((b) => {
+            b.setAttribute('aria-pressed', b === chip ? 'true' : 'false');
+          });
+          decks.querySelectorAll('.team-timeline').forEach((panel) => {
+            panel.hidden = panel !== deck;
+          });
+        });
+        chips.append(chip);
+        decks.append(deck);
+      });
+      section.append(chips, decks);
+      return section;
+    }
+
+    /* ---------- Page ---------- */
+
     function render(data) {
       document.title = data.name + ' · Wedding team';
+      document.body.classList.add('has-nav');
+      hello.textContent = 'Hi ' + data.name;
+
       const root = el('div', 'team-page');
+      const roles = renderRoles(data);
+      const tasks = renderTasks(data);
+      const flows = renderFlows(data);
+      const panels = { roles, tasks, flows };
 
-      const hello = el('section', 'team-hello');
-      hello.append(el('h1', '', 'Hi ' + data.name + ' 👋'));
-      hello.append(el('p', '', "Your roles and tasks for Gloria & Shannon's wedding. This page updates automatically."));
-      root.append(hello);
-
-      const roles = el('section', 'team-section');
-      roles.append(el('h2', '', 'My roles'));
-      if (!data.roles?.length) {
-        roles.append(el('p', 'team-empty', 'No roles assigned yet.'));
-      } else {
-        for (const role of data.roles) {
-          const card = el('article', 'team-card' + (role.as === 'backup' ? ' is-backup' : ''));
-          if (role.as === 'backup') card.append(el('p', 'team-badge', 'Backup for'));
-          card.append(el('h3', '', role.Role || 'Role'));
-          if (role.Day) card.append(el('p', 'team-day', role.Day));
-          if (role.Responsibilities) card.append(el('p', 'team-body', role.Responsibilities));
-          if (role['Contact to call']) card.append(el('p', 'team-contact', 'Contact: ' + role['Contact to call']));
-          const more = extras(role, data.columns?.roles, ROLE_KNOWN);
-          if (more) card.append(more);
-          roles.append(card);
-        }
-      }
-      root.append(roles);
-
-      const tasks = el('section', 'team-section');
-      tasks.append(el('h2', '', 'My tasks'));
-      if (!data.tasks?.length) {
-        tasks.append(el('p', 'team-empty', 'No tasks assigned yet.'));
-      } else {
-        const list = el('div', 'team-tasks');
-        for (const task of data.tasks) {
-          const card = el('article', 'team-card team-task' + (dueSoon(task.Due) ? ' is-soon' : ''));
-          const title = el('div', 'team-task-title');
-          title.append(el('h3', '', task.Task || 'Task'));
-          if (task.as === 'backup') title.append(el('p', 'team-badge', 'Backup'));
-          card.append(title);
-          if (task.Due) card.append(el('p', 'team-due', formatDue(task.Due)));
-          if (task['Detailed notes']) card.append(el('p', 'team-body', task['Detailed notes']));
-          if (task['Contact to call']) card.append(el('p', 'team-contact', 'Contact: ' + task['Contact to call']));
-          if (task.Role) card.append(el('p', 'team-role', task.Role));
-          const more = extras(task, data.columns?.tasks, TASK_KNOWN);
-          if (more) card.append(more);
-          list.append(card);
-        }
-        tasks.append(list);
-      }
-      root.append(tasks);
-
-      const flowNames = Object.keys(data.flows || {});
-      const flows = el('section', 'team-section');
-      flows.append(el('h2', '', 'Day flows'));
-      if (!flowNames.length) {
-        flows.append(el('p', 'team-empty', 'No day flows for your roles yet.'));
-      } else {
-        flowNames.forEach((name, index) => {
-          const details = document.createElement('details');
-          details.className = 'team-flow';
-          if (index === 0) details.open = true;
-          details.append(el('summary', '', name));
-          const rows = data.flows[name] || [];
-          if (!rows.length) {
-            details.append(el('p', 'team-empty', 'No lines in this flow yet.'));
-          } else {
-            for (const row of rows) {
-              const line = el('article', 'team-flow-row');
-              const lead = row.Lead || '';
-              const mine = data.name && lead.toLowerCase().includes(data.name.toLowerCase());
-              if (mine) line.classList.add('is-mine');
-              if (row.Time) line.append(el('p', 'team-time', row.Time));
-              line.append(el('p', 'team-what' + (mine ? ' is-mine' : ''), row['What happens'] || ''));
-              if (lead) line.append(el('p', 'team-lead' + (mine ? ' is-mine' : ''), lead));
-              if (row.Notes) line.append(el('p', 'team-notes', row.Notes));
-              const more = extras(row, data.columns?.flows, FLOW_KNOWN);
-              if (more) line.append(more);
-              details.append(line);
-            }
-          }
-          flows.append(details);
+      const critical = (data.tasks || []).filter(isCritical);
+      let alert = null;
+      if (critical.length) {
+        alert = el('button', 'team-alert');
+        alert.type = 'button';
+        alert.append(icon('critical'));
+        const label = critical.length === 1 ? '1 critical task' : critical.length + ' critical tasks';
+        alert.append(el('span', '', label + ' — tap to view'));
+        alert.addEventListener('click', () => {
+          show('tasks');
+          tasks.showFilter?.('critical');
         });
+        root.append(alert);
       }
-      root.append(flows);
+
+      root.append(roles, tasks, flows);
 
       const when = formatUpdated(data.updated);
-      if (when) root.append(el('p', 'team-updated', 'Last updated ' + when + ' IST'));
+      if (when) root.append(el('p', 'team-updated', 'Updated ' + when + ' IST'));
+
+      const nav = el('nav', 'team-nav');
+      nav.setAttribute('aria-label', 'Sections');
+      const tabs = [
+        ['roles', 'Roles', (data.roles || []).length],
+        ['tasks', 'Tasks', (data.tasks || []).length],
+        ['flows', 'Flows', Object.keys(data.flows || {}).length],
+      ];
+      for (const [id, label, count] of tabs) {
+        const button = el('button');
+        button.type = 'button';
+        button.dataset.tab = id;
+        const glyph = icon(id);
+        if (count) glyph.append(el('span', 'team-count', String(count)));
+        if (id === 'tasks' && critical.length) glyph.classList.add('has-critical');
+        button.append(glyph, el('span', 'team-nav-label', label));
+        button.addEventListener('click', () => show(id));
+        nav.append(button);
+      }
+      root.append(nav);
+
+      function show(name, keepScroll) {
+        for (const [id, panel] of Object.entries(panels)) panel.hidden = id !== name;
+        if (alert) alert.hidden = name === 'tasks';
+        nav.querySelectorAll('button').forEach((b) => {
+          if (b.dataset.tab === name) b.setAttribute('aria-current', 'page');
+          else b.removeAttribute('aria-current');
+        });
+        try { history.replaceState(null, '', '#' + name); } catch (e) { /* ignore */ }
+        if (!keepScroll) window.scrollTo(0, 0);
+      }
+
       app.replaceChildren(root);
+      const start = location.hash.slice(1);
+      show(panels[start] ? start : 'roles', true);
     }
 
     async function load() {
+      setCountdown();
       if (!code) {
         showMessage("This link isn't recognised. Please check with Shannon or Gloria.");
         return;
