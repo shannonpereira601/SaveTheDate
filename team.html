@@ -465,7 +465,6 @@
         meta.append(due);
       }
       if (task.Role) meta.append(el('span', 'team-role', task.Role));
-      if (task.as === 'backup') meta.append(el('span', 'team-badge', 'Backup'));
       if (meta.childNodes.length) main.append(meta);
 
       const side = el('span', 'team-task-side');
@@ -599,25 +598,39 @@
           }, redraw);
           group.append(card);
         };
-        const addGroup = (className, label, items) => {
+        const addGroup = (parent, headTag, className, label, items) => {
           const group = el('div', 'team-group' + className);
-          const head = el('h2', 'team-group-head', label);
+          const head = el(headTag, 'team-group-head', label);
           head.append(el('span', '', String(items.length)));
           const box = el('div', 'team-group-list');
           for (const t of items) addCard(box, t);
           group.append(head, box);
-          list.append(group);
+          parent.append(group);
+        };
+        // One timeline (date groups, then Done) for a set of tasks.
+        const addTimeline = (parent, headTag, items) => {
+          const openItems = items.filter((t) => taskStatus(t.task) !== 'Done');
+          for (const [id, label] of GROUPS) {
+            const group = openItems.filter((t) => taskGroup(t.days) === id).sort(byDue);
+            if (group.length) addGroup(parent, headTag, id === 'past' ? ' is-past' : '', label, group);
+          }
+          const doneItems = items.filter((t) => taskStatus(t.task) === 'Done').sort(byDue);
+          if (doneItems.length) addGroup(parent, headTag, ' is-done-group', 'Done', doneItems);
         };
         if (!shown.length) {
           list.append(el('p', 'team-empty', emptyText[filter] || 'No tasks.'));
         } else {
-          const openItems = shown.filter((t) => taskStatus(t.task) !== 'Done');
-          for (const [id, label] of GROUPS) {
-            const items = openItems.filter((t) => taskGroup(t.days) === id).sort(byDue);
-            if (items.length) addGroup(id === 'past' ? ' is-past' : '', label, items);
+          const own = shown.filter((t) => t.task.as !== 'backup');
+          const backup = shown.filter((t) => t.task.as === 'backup');
+          addTimeline(list, 'h2', own);
+          if (backup.length) {
+            const section = el('section', 'team-backup');
+            const head = el('h2', 'team-backup-head', 'Backup tasks');
+            head.append(el('span', '', String(backup.length)));
+            section.append(head, el('p', 'team-backup-note', 'The main person in charge will do these tasks. You don’t need to do anything unless they can’t and you’re asked to step in.'));
+            addTimeline(section, 'h3', backup);
+            list.append(section);
           }
-          const doneItems = shown.filter((t) => taskStatus(t.task) === 'Done').sort(byDue);
-          if (doneItems.length) addGroup(' is-done-group', 'Done', doneItems);
         }
         publishCritical(counts.critical);
         window.scrollTo(0, y);

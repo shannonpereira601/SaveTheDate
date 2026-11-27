@@ -370,6 +370,47 @@ a:focus-visible {
   color: var(--crit);
 }
 
+/* Backup tasks: a separate timeline below the person's own tasks. */
+.team-backup {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--cream-dark);
+}
+
+.team-task-list > .team-backup:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.team-backup-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 4px 2px;
+  font-family: var(--ff-label);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--maroon);
+}
+
+.team-backup-head span {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.team-backup-note {
+  margin: 0 4px 12px;
+  font-size: 0.8rem;
+  color: var(--maroon-mid);
+}
+
+.team-backup .team-group-list {
+  border-style: dashed;
+}
+
 /* One card per group, tasks as rows inside it. */
 .team-group-list {
   background: var(--paper);
