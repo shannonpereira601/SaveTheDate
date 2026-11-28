@@ -1220,18 +1220,11 @@ body.admin {
   padding: 0;
 }
 
-.admin-person {
-  display: flex;
-  align-items: stretch;
-}
-
 .admin-person + .admin-person {
   border-top: 1px solid var(--cream-dark);
 }
 
 .admin-person button {
-  flex: 1 1 auto;
-  min-width: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 6px 10px;
@@ -1248,26 +1241,7 @@ body.admin {
   box-shadow: inset 3px 0 0 var(--maroon);
 }
 
-.admin-person-open {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  border-left: 1px solid var(--cream-dark);
-  color: var(--maroon-mid);
-  font-size: 1.1rem;
-  text-decoration: none;
-}
-
-.admin-person-open:hover,
-.admin-person-open:focus-visible {
-  background: #fff;
-  color: var(--maroon);
-}
-
 .admin-person-name {
-  overflow-wrap: anywhere;
   font-size: 0.95rem;
   font-weight: 600;
 }
